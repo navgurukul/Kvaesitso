@@ -61,8 +61,8 @@ import de.mm20.launcher2.ui.settings.media.MediaIntegrationSettingsScreen
 import de.mm20.launcher2.ui.settings.nextcloud.NextcloudSettingsScreen
 import de.mm20.launcher2.ui.settings.osm.OsmSettingsScreen
 import de.mm20.launcher2.ui.settings.owncloud.OwncloudSettingsScreen
-import de.mm20.launcher2.ui.settings.plugins.PluginSettingsScreen
-import de.mm20.launcher2.ui.settings.plugins.PluginsSettingsScreen
+//import de.mm20.launcher2.ui.settings.plugins.PluginSettingsScreen
+//import de.mm20.launcher2.ui.settings.plugins.PluginsSettingsScreen
 import de.mm20.launcher2.ui.settings.search.SearchSettingsScreen
 import de.mm20.launcher2.ui.settings.searchactions.SearchActionsSettingsScreen
 import de.mm20.launcher2.ui.settings.tags.TagsSettingsScreen
@@ -229,14 +229,14 @@ class SettingsActivity : BaseActivity() {
                                 composable("settings/integrations/google") {
                                     GoogleSettingsScreen()
                                 }
-                                composable("settings/plugins") {
-                                    PluginsSettingsScreen()
-                                }
-                                composable("settings/plugins/{id}") {
-                                    PluginSettingsScreen(
-                                        it.arguments?.getString("id") ?: return@composable
-                                    )
-                                }
+//                                composable("settings/plugins") {
+//                                    PluginsSettingsScreen()
+//                                }
+//                                composable("settings/plugins/{id}") {
+//                                    PluginSettingsScreen(
+//                                        it.arguments?.getString("id") ?: return@composable
+//                                    )
+//                                }
                                 composable("settings/about") {
                                     AboutSettingsScreen()
                                 }

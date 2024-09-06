@@ -155,4 +155,5 @@ dependencies {
     implementation(project(":services:widgets"))
     implementation(project(":services:favorites"))
     implementation(project(":core:devicepose"))
+    implementation(libs.androidx.preference.ktx)
 }
