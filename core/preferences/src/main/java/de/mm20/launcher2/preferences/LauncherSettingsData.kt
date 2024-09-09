@@ -303,12 +303,6 @@ enum class IconShape {
     Circle,
     Square,
     RoundedSquare,
-    Triangle,
-    Squircle,
-    Hexagon,
-    Pentagon,
-    Teardrop,
-    Pebble,
     EasterEgg,
 }
 

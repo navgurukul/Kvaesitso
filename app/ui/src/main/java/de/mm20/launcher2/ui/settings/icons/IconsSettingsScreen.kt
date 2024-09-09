@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -403,16 +404,10 @@ fun IconShapePreference(
 private fun getShapeName(shape: IconShape?): String? {
     return stringResource(
         when (shape) {
-            IconShape.Triangle -> R.string.preference_icon_shape_triangle
-            IconShape.Hexagon -> R.string.preference_icon_shape_hexagon
             IconShape.RoundedSquare -> R.string.preference_icon_shape_rounded_square
-            IconShape.Squircle -> R.string.preference_icon_shape_squircle
             IconShape.Square -> R.string.preference_icon_shape_square
-            IconShape.Pentagon -> R.string.preference_icon_shape_pentagon
             IconShape.PlatformDefault -> R.string.preference_icon_shape_platform
             IconShape.Circle -> R.string.preference_icon_shape_circle
-            IconShape.Teardrop -> R.string.preference_icon_shape_teardrop
-            IconShape.Pebble -> R.string.preference_icon_shape_pebble
             else -> return null
         }
     )
