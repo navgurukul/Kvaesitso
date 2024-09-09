@@ -32,19 +32,7 @@ fun AppearanceSettingsScreen() {
         item {
             PreferenceCategory {
                 val theme by viewModel.colorScheme.collectAsState()
-                ListPreference(
-                    title = stringResource(id = R.string.preference_theme),
-                    items = listOf(
-                        stringResource(id = R.string.preference_theme_system) to ColorScheme.System,
-                        stringResource(id = R.string.preference_theme_light) to ColorScheme.Light,
-                        stringResource(id = R.string.preference_theme_dark) to ColorScheme.Dark,
-                    ),
-                    value = theme,
-                    onValueChanged = { newValue ->
-                        if (newValue == null) return@ListPreference
-                        viewModel.setColorScheme(newValue)
-                    }
-                )
+// *** REMOVED theme preference ***
                 Preference(
                     title = stringResource(id = R.string.preference_screen_colors),
                     summary = themeName,
@@ -81,22 +69,25 @@ fun AppearanceSettingsScreen() {
             }
         }
 
-        if (isAtLeastApiLevel(31)) {
-            item {
-                PreferenceCategory(stringResource(R.string.preference_category_advanced)) {
-                    ListPreference(
-                        title = stringResource(R.string.preference_mdy_color_source),
-                        items = listOf(
-                            stringResource(R.string.preference_mdy_color_source_system) to false,
-                            stringResource(R.string.preference_mdy_color_source_wallpaper) to true,
-                        ),
-                        value = compatModeColors,
-                        onValueChanged = {
-                            viewModel.setCompatModeColors(it)
-                        }
-                    )
-                }
-            }
-        }
+
+        // *** advance Source for dynamic colors  from appearance***
+
+//        if (isAtLeastApiLevel(31)) {
+//            item {
+//                PreferenceCategory(stringResource(R.string.preference_category_advanced)) {
+//                    ListPreference(
+//                        title = stringResource(R.string.preference_mdy_color_source),
+//                        items = listOf(
+//                            stringResource(R.string.preference_mdy_color_source_system) to false,
+//                            stringResource(R.string.preference_mdy_color_source_wallpaper) to true,
+//                        ),
+//                        value = compatModeColors,
+//                        onValueChanged = {
+//                            viewModel.setCompatModeColors(it)
+//                        }
+//                    )
+//                }
+//            }
+//        }
     }
 }

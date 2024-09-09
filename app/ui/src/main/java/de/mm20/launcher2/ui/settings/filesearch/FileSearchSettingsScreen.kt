@@ -87,71 +87,8 @@ fun FileSearchSettingsScreen() {
                     enabled = hasFilePermission == true
                 )
 
-                val nextcloud by viewModel.nextcloud.collectAsState()
-                val nextcloudAccount by viewModel.nextcloudAccount
-                AnimatedVisibility(nextcloudAccount == null) {
-                    Banner(
-                        text = stringResource(R.string.no_account_nextcloud),
-                        icon = Icons.Rounded.AccountBox,
-                        primaryAction = {
-                            TextButton(onClick = {
-                                viewModel.login(
-                                    context as AppCompatActivity,
-                                    AccountType.Nextcloud
-                                )
-                            }) {
-                                Text(
-                                    stringResource(R.string.connect_account),
-                                )
-                            }
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                SwitchPreference(
-                    title = stringResource(R.string.preference_search_nextcloud),
-                    summary = nextcloudAccount?.let {
-                        stringResource(R.string.preference_search_cloud_summary, it.userName)
-                    } ?: stringResource(R.string.preference_summary_not_logged_in),
-                    value = nextcloud == true && nextcloudAccount != null,
-                    onValueChanged = {
-                        viewModel.setNextcloud(it)
-                    },
-                    enabled = nextcloudAccount != null
-                )
 
-                val owncloud by viewModel.owncloud.collectAsState()
-                val owncloudAccount by viewModel.owncloudAccount
-                AnimatedVisibility(owncloudAccount == null) {
-                    Banner(
-                        text = stringResource(R.string.no_account_owncloud),
-                        icon = Icons.Rounded.AccountBox,
-                        primaryAction = {
-                            TextButton(onClick = {
-                                viewModel.login(
-                                    context as AppCompatActivity,
-                                    AccountType.Owncloud
-                                )
-                            }) {
-                                Text(
-                                    stringResource(R.string.connect_account),
-                                )
-                            }
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-                SwitchPreference(
-                    title = stringResource(R.string.preference_search_owncloud),
-                    summary = owncloudAccount?.let {
-                        stringResource(R.string.preference_search_cloud_summary, it.userName)
-                    } ?: stringResource(R.string.preference_summary_not_logged_in),
-                    value = owncloud == true && owncloudAccount != null,
-                    onValueChanged = {
-                        viewModel.setOwncloud(it)
-                    },
-                    enabled = owncloudAccount != null
-                )
+                // *** REMOVED CODE for ownCLoud and NEXTCLOUD***
 
                 if (viewModel.googleAvailable) {
                     val gdrive by viewModel.gdrive.collectAsState()

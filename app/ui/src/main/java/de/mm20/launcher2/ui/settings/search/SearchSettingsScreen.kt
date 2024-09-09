@@ -201,46 +201,49 @@ fun SearchSettingsScreen() {
                         viewModel.setWebsites(it)
                     }
                 )
+//                *** REMOVED CODE for search locations and search actions***
 
-                Preference(
-                    title = stringResource(R.string.preference_search_locations),
-                    summary = stringResource(R.string.preference_search_locations_summary),
-                    icon = Icons.Rounded.Place,
-                    onClick = {
-                        navController?.navigate("settings/search/locations")
-                    }
-                )
-
-                Preference(
-                    title = stringResource(R.string.preference_screen_search_actions),
-                    summary = stringResource(R.string.preference_search_search_actions_summary),
-                    icon = Icons.Rounded.ArrowOutward,
-                    onClick = {
-                        navController?.navigate("settings/search/searchactions")
-                    }
-                )
+//                Preference(
+//                    title = stringResource(R.string.preference_search_locations),
+//                    summary = stringResource(R.string.preference_search_locations_summary),
+//                    icon = Icons.Rounded.Place,
+//                    onClick = {
+//                        navController?.navigate("settings/search/locations")
+//                    }
+//                )
+//
+//                Preference(
+//                    title = stringResource(R.string.preference_screen_search_actions),
+//                    summary = stringResource(R.string.preference_search_search_actions_summary),
+//                    icon = Icons.Rounded.ArrowOutward,
+//                    onClick = {
+//                        navController?.navigate("settings/search/searchactions")
+//                    }
+//                )
             }
         }
-        item {
-            PreferenceCategory {
-                Preference(
-                    title = stringResource(R.string.preference_hidden_items),
-                    summary = stringResource(R.string.preference_hidden_items_summary),
-                    icon = Icons.Rounded.VisibilityOff,
-                    onClick = {
-                        navController?.navigate("settings/search/hiddenitems")
-                    }
-                )
-                Preference(
-                    title = stringResource(R.string.preference_screen_tags),
-                    summary = stringResource(R.string.preference_screen_tags_summary),
-                    icon = Icons.Rounded.Tag,
-                    onClick = {
-                        navController?.navigate("settings/search/tags")
-                    }
-                )
-            }
-        }
+
+        // *** REMOVED CODE for hidden items and screen tags***
+//        item {
+//            PreferenceCategory {
+//                Preference(
+//                    title = stringResource(R.string.preference_hidden_items),
+//                    summary = stringResource(R.string.preference_hidden_items_summary),
+//                    icon = Icons.Rounded.VisibilityOff,
+//                    onClick = {
+//                        navController?.navigate("settings/search/hiddenitems")
+//                    }
+//                )
+//                Preference(
+//                    title = stringResource(R.string.preference_screen_tags),
+//                    summary = stringResource(R.string.preference_screen_tags_summary),
+//                    icon = Icons.Rounded.Tag,
+//                    onClick = {
+//                        navController?.navigate("settings/search/tags")
+//                    }
+//                )
+//            }
+//        }
         item {
             val filterBar by viewModel.filterBar.collectAsStateWithLifecycle(null)
             PreferenceCategory {
@@ -252,82 +255,10 @@ fun SearchSettingsScreen() {
                         showFilterEditor = true
                     },
                 )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_filter_bar),
-                    summary = stringResource(R.string.preference_filter_bar_summary),
-                    value = filterBar == true,
-                    onValueChanged = {
-                        viewModel.setFilterBar(it)
-                    }
-                )
-                AnimatedVisibility(filterBar == true) {
-                    Preference(
-                        title = stringResource(R.string.preference_customize_filter_bar),
-                        summary = stringResource(R.string.preference_customize_filter_bar_summary),
-                        onClick =  {
-                            navController?.navigate("settings/search/filterbar")
-                        }
-                    )
-                }
             }
         }
-        item {
-            PreferenceCategory {
-                val autoFocus by viewModel.autoFocus.collectAsStateWithLifecycle(null)
-                SwitchPreference(
-                    title = stringResource(R.string.preference_search_bar_auto_focus),
-                    summary = stringResource(R.string.preference_search_bar_auto_focus_summary),
-                    icon = Icons.Rounded.Keyboard,
-                    value = autoFocus == true,
-                    onValueChanged = {
-                        viewModel.setAutoFocus(it)
-                    }
-                )
-                val launchOnEnter by viewModel.launchOnEnter.collectAsStateWithLifecycle(null)
-                SwitchPreference(
-                    title = stringResource(R.string.preference_search_bar_launch_on_enter),
-                    summary = stringResource(R.string.preference_search_bar_launch_on_enter_summary),
-                    value = launchOnEnter == true,
-                    onValueChanged = {
-                        viewModel.setLaunchOnEnter(it)
-                    }
-                )
-            }
-        }
-        item {
-            PreferenceCategory {
-                val searchResultOrdering by viewModel.searchResultOrdering.collectAsStateWithLifecycle(
-                    null
-                )
-                ListPreference(
-                    title = stringResource(R.string.preference_search_result_ordering),
-                    items = listOf(
-                        stringResource(R.string.preference_search_result_ordering_alphabetic) to SearchResultOrder.Alphabetical,
-                        stringResource(R.string.preference_search_result_ordering_weighted) to SearchResultOrder.Weighted
-                    ),
-                    value = searchResultOrdering,
-                    onValueChanged = {
-                        if (it != null) viewModel.setSearchResultOrdering(it)
-                    },
-                    icon = Icons.Rounded.Sort
-                )
-
-                val reverseSearchResults by viewModel.reverseSearchResults.collectAsStateWithLifecycle(
-                    null
-                )
-                ListPreference(
-                    title = stringResource(R.string.preference_layout_search_results),
-                    items = listOf(
-                        stringResource(R.string.search_results_order_top_down) to false,
-                        stringResource(R.string.search_results_order_bottom_up) to true,
-                    ),
-                    value = reverseSearchResults,
-                    onValueChanged = {
-                        if (it != null) viewModel.setReverseSearchResults(it)
-                    },
-                )
-            }
-        }
+//  *** REMOVED CODE for search result ordering and layout search results***
+       // *** REMOVED CODE for search result ordering and layout search results***
     }
 
     if (showFilterEditor) {
