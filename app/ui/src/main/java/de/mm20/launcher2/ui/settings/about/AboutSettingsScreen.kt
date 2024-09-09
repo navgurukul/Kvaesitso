@@ -111,18 +111,7 @@ fun AboutSettingsScreen() {
                 )
             }
         }
-        item {
-            PreferenceCategory(title = stringResource(id = R.string.preference_category_licenses)) {
-                for (library in OpenSourceLicenses.sortedBy { it.name.lowercase() }) {
-                    Preference(
-                        title = library.name,
-                        summary = library.description,
-                        onClick = {
-                            navController?.navigate("settings/license?library=${library.name}")
-                        }
-                    )
-                }
-            }
-        }
+
+        // **** removed the Open Source Licenses**** //
     }
 }
