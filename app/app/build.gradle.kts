@@ -27,12 +27,12 @@ android {
 
     compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
-        applicationId = "org.samyarth.tez-launcher"
+        applicationId = "de.mm20.launcher2"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         @SuppressLint("HighAppVersionCode")
         versionCode = System.getenv("VERSION_CODE_OVERRIDE")?.toIntOrNull() ?: 2024081700
-        versionName = "1.0"
+        versionName = "1.33.0"
         signingConfig = signingConfigs.getByName("debug")
     }
 
