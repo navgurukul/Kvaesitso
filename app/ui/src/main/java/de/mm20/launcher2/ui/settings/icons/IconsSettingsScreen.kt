@@ -95,24 +95,6 @@ fun IconsSettingsScreen() {
         item {
             PreferenceCategory(title = stringResource(R.string.preference_category_grid)) {
                 SliderPreference(
-                    title = stringResource(R.string.preference_grid_icon_size),
-                    value = grid.iconSize,
-                    step = 8,
-                    min = 32,
-                    max = 64,
-                    onValueChanged = {
-                        viewModel.setIconSize(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_grid_labels),
-                    summary = stringResource(R.string.preference_grid_labels_summary),
-                    value = grid.showLabels,
-                    onValueChanged = {
-                        viewModel.setShowLabels(it)
-                    }
-                )
-                SliderPreference(
                     title = stringResource(R.string.preference_grid_column_count),
                     value = grid.columnCount,
                     min = 3,
