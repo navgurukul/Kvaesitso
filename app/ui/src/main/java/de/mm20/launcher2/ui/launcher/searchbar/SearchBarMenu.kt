@@ -106,25 +106,5 @@ fun RowScope.SearchBarMenu(
             }
         )
         val colorScheme = MaterialTheme.colorScheme
-        DropdownMenuItem(
-            onClick = {
-                CustomTabsIntent.Builder()
-                    .setDefaultColorSchemeParams(
-                        CustomTabColorSchemeParams.Builder()
-                            .setToolbarColor(colorScheme.primaryContainer.toArgb())
-                            .setSecondaryToolbarColor(colorScheme.secondaryContainer.toArgb())
-                            .build()
-                    )
-                    .build()
-                    .launchUrl(context, Uri.parse("https://kvaesitso.mm20.de/docs/user-guide"))
-                showOverflowMenu = false
-            },
-            text = {
-                Text(stringResource(R.string.help))
-            },
-            leadingIcon = {
-                Icon(imageVector = Icons.Rounded.HelpOutline, contentDescription = null)
-            }
-        )
     }
 }
