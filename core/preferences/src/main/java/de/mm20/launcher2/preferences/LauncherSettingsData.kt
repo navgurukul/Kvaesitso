@@ -17,7 +17,7 @@ data class LauncherSettingsData internal constructor(
     val uiBaseLayout: BaseLayout = BaseLayout.Pager,
     val uiOrientation: ScreenOrientation = ScreenOrientation.Auto,
 
-    val wallpaperDim: Boolean = false,
+    val wallpaperDim: Boolean = true,
     val wallpaperBlur: Boolean = true,
     val wallpaperBlurRadius: Int = 32,
 
@@ -86,7 +86,7 @@ data class LauncherSettingsData internal constructor(
     val searchBarKeyboard: Boolean = true,
     val searchLaunchOnEnter: Boolean = true,
     val searchBarBottom: Boolean = false,
-    val searchBarFixed: Boolean = false,
+    val searchBarFixed: Boolean = true,
 
     val searchResultsReversed: Boolean = false,
     val searchResultOrder: SearchResultOrder = SearchResultOrder.Weighted,
