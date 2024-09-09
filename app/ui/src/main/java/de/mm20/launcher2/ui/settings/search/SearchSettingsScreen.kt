@@ -244,19 +244,22 @@ fun SearchSettingsScreen() {
 //                )
 //            }
 //        }
-        item {
-            val filterBar by viewModel.filterBar.collectAsStateWithLifecycle(null)
-            PreferenceCategory {
-                Preference(
-                    title = stringResource(R.string.preference_default_filter),
-                    summary = stringResource(R.string.preference_default_filter_summary),
-                    icon = Icons.Rounded.FilterAlt,
-                    onClick = {
-                        showFilterEditor = true
-                    },
-                )
-            }
-        }
+
+
+        // *** REMOVED CODE for Defualt filter***
+//        item {
+//            val filterBar by viewModel.filterBar.collectAsStateWithLifecycle(null)
+//            PreferenceCategory {
+//                Preference(
+//                    title = stringResource(R.string.preference_default_filter),
+//                    summary = stringResource(R.string.preference_default_filter_summary),
+//                    icon = Icons.Rounded.FilterAlt,
+//                    onClick = {
+//                        showFilterEditor = true
+//                    },
+//                )
+//            }
+//        }
 //  *** REMOVED CODE for search result ordering and layout search results***
        // *** REMOVED CODE for search result ordering and layout search results***
     }
