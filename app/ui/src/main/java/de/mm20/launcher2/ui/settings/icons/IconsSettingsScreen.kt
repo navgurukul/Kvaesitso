@@ -82,10 +82,6 @@ fun IconsSettingsScreen() {
     )
 
     val notificationBadges by viewModel.notificationBadges.collectAsStateWithLifecycle(null)
-    val cloudFileBadges by viewModel.cloudFileBadges.collectAsStateWithLifecycle(null)
-    val suspendedAppBadges by viewModel.suspendedAppBadges.collectAsStateWithLifecycle(null)
-    val shortcutBadges by viewModel.shortcutBadges.collectAsStateWithLifecycle(null)
-    val pluginBadges by viewModel.pluginBadges.collectAsStateWithLifecycle(null)
 
     val iconSize = with(density) { grid.iconSize.dp.toPx() }.toInt()
 
@@ -185,24 +181,6 @@ fun IconsSettingsScreen() {
                         viewModel.setForceThemedIcons(it)
                     }
                 )
-                val iconPack by remember {
-                    derivedStateOf { installedIconPacks.firstOrNull { it.packageName == icons?.iconPack } }
-                }
-                val items = installedIconPacks.map {
-                    it.name to it
-                }
-                Preference(
-                    title = stringResource(R.string.preference_icon_pack),
-                    summary = if (items.size <= 1) {
-                        stringResource(R.string.preference_icon_pack_summary_empty)
-                    } else {
-                        iconPack?.name ?: "System"
-                    },
-                    enabled = installedIconPacks.size > 1,
-                    onClick = {
-                        showIconPackSheet = true
-                    },
-                )
             }
         }
         item {
@@ -225,38 +203,6 @@ fun IconsSettingsScreen() {
                     value = notificationBadges == true && hasNotificationsPermission == true,
                     onValueChanged = {
                         viewModel.setNotifications(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_cloud_badges),
-                    summary = stringResource(R.string.preference_cloud_badges_summary),
-                    value = cloudFileBadges == true,
-                    onValueChanged = {
-                        viewModel.setCloudFiles(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_suspended_badges),
-                    summary = stringResource(R.string.preference_suspended_badges_summary),
-                    value = suspendedAppBadges == true,
-                    onValueChanged = {
-                        viewModel.setSuspendedApps(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_shortcut_badges),
-                    summary = stringResource(R.string.preference_shortcut_badges_summary),
-                    value = shortcutBadges == true,
-                    onValueChanged = {
-                        viewModel.setShortcuts(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_plugin_badges),
-                    summary = stringResource(R.string.preference_plugin_badges_summary),
-                    value = pluginBadges == true,
-                    onValueChanged = {
-                        viewModel.setPluginBadges(it)
                     }
                 )
             }
