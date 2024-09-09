@@ -58,14 +58,6 @@ fun AppearanceSettingsScreen() {
                         Text(it.first, style = typography.titleMedium)
                     }
                 )
-
-                Preference(
-                    title = stringResource(R.string.preference_cards),
-                    summary = stringResource(R.string.preference_cards_summary),
-                    onClick = {
-                        navController?.navigate("settings/appearance/cards")
-                    }
-                )
             }
         }
 
