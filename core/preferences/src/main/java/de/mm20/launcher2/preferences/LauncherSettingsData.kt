@@ -14,7 +14,7 @@ data class LauncherSettingsData internal constructor(
     val uiTheme: ThemeDescriptor = ThemeDescriptor.Default,
     val uiCompatModeColors: Boolean = false,
     val uiFont: Font = Font.Outfit,
-    val uiBaseLayout: BaseLayout = BaseLayout.PullDown,
+    val uiBaseLayout: BaseLayout = BaseLayout.Pager,
     val uiOrientation: ScreenOrientation = ScreenOrientation.Auto,
 
     val wallpaperDim: Boolean = false,
