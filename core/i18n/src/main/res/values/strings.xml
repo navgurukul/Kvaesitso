@@ -55,6 +55,7 @@
     <string name="settings">Settings</string>
     <!-- Menu entry for launcher help -->
     <string name="help">Help</string>
+    <string name="set_as_default_laucher">Set as Default</string>
     <!-- Set the device's wallpaper -->
     <string name="wallpaper">Wallpaper</string>
     <!-- Wind direction, used in weather widget -->
@@ -740,6 +741,7 @@
     <string name="open_search_pull_down">Swipe down</string>
     <string name="open_search_swipe_left">Swipe left</string>
     <string name="open_search_swipe_right">Swipe right</string>
+    <string name="open_search_pull_up">Swipe Up</string>
     <string name="preference_layout_search_bar_position">Search bar position</string>
     <string name="search_bar_position_top">Top</string>
     <string name="search_bar_position_bottom">Bottom</string>
@@ -753,6 +755,7 @@
     <string name="preference_screen_gestures">Gestures</string>
     <string name="preference_screen_gestures_summary">Gestures and gesture actions</string>
     <string name="preference_gesture_swipe_down">Swipe down</string>
+    <string name="preference_gesture_swipe_up">Swipe Up</string>
     <string name="preference_gesture_swipe_left">Swipe left</string>
     <string name="preference_gesture_swipe_right">Swipe right</string>
     <string name="preference_gesture_double_tap">Double tap</string>

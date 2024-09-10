@@ -203,6 +203,27 @@ abstract class SharedLauncherActivity(
                                         }
                                     }
 
+                                    BaseLayout.PullUp -> {
+                                        key(bottomSearchBar, reverseSearchResults) {
+                                            PullUpScaffold(
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .graphicsLayer {
+                                                        scaleX =
+                                                            0.5f + enterTransitionProgress.value * 0.5f
+                                                        scaleY =
+                                                            0.5f + enterTransitionProgress.value * 0.5f
+                                                        alpha = enterTransitionProgress.value
+                                                    },
+                                                darkStatusBarIcons = lightStatus,
+                                                darkNavBarIcons = lightNav,
+                                                bottomSearchBar = bottomSearchBar,
+                                                reverseSearchResults = reverseSearchResults,
+                                                fixedSearchBar = fixedSearchBar,
+                                            )
+                                        }
+                                    }
+
                                     BaseLayout.Pager,
                                     BaseLayout.PagerReversed -> {
                                         key(bottomSearchBar, reverseSearchResults) {

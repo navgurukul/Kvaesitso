@@ -146,6 +146,11 @@ fun LauncherGestureHandler(
                     viewModel.handleGesture(context, Gesture.SwipeDown)
                 }
 
+                it.y < swipeActionThreshold && it.y.absoluteValue < it.x.absoluteValue * 2f -> {
+                    viewModel.handleGesture(context, Gesture.SwipeUp)
+                }
+
+
                 else -> false
             }
         },

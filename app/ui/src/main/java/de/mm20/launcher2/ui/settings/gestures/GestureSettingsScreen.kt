@@ -65,7 +65,7 @@ fun GestureSettingsScreen() {
                 ListPreference(title = stringResource(R.string.preference_layout_open_search),
                     items = listOf(
                         stringResource(R.string.open_search_swipe_left) to BaseLayout.Pager,
-                        stringResource(R.string.open_search_pull_down) to BaseLayout.PullDown,
+                        stringResource(R.string.open_search_pull_up) to BaseLayout.PullUp,
                         stringResource(R.string.open_search_swipe_right) to BaseLayout.PagerReversed,
                     ),
                     value = baseLayout,

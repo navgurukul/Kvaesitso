@@ -145,6 +145,8 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
                 ?: GestureAction.NoAction
             val swipeDownAction =
                 settings.swipeDown.takeIf { layout != BaseLayout.PullDown } ?: GestureAction.NoAction
+            val swipeUpAction = settings.swipeUp.takeIf { layout != BaseLayout.PullUp }
+                ?: GestureAction.NoAction
             val longPressAction = settings.longPress
             val doubleTapAction = settings.doubleTap
             val homeButtonAction = settings.homeButton
@@ -161,6 +163,8 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
                 if (doubleTapAction is GestureAction.Launch) doubleTapAction.key else null
             val homeButtonAppKey =
                 if (homeButtonAction is GestureAction.Launch) homeButtonAction.key else null
+            val swipeUpAppKey =
+                if (swipeUpAction is GestureAction.Launch) swipeUpAction.key else null
             val apps = listOfNotNull(
                 swipeLeftAppKey,
                 swipeRightAppKey,
@@ -168,6 +172,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
                 longPressAppKey,
                 doubleTapAppKey,
                 homeButtonAppKey,
+                swipeUpAppKey
             ).let { searchableRepository.getByKeys(it).first() }
 
             GestureState(
@@ -177,9 +182,11 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
                 longPressAction = longPressAction,
                 doubleTapAction = doubleTapAction,
                 homeButtonAction = homeButtonAction,
+                swipeUpAction = swipeUpAction,
                 swipeLeftApp = apps.firstOrNull { it.key == swipeLeftAppKey },
                 swipeRightApp = apps.firstOrNull { it.key == swipeRightAppKey },
                 swipeDownApp = apps.firstOrNull { it.key == swipeDownAppKey },
+                swipeUpApp = apps.firstOrNull { it.key == swipeUpAppKey },
                 longPressApp = apps.firstOrNull { it.key == longPressAppKey },
                 doubleTapApp = apps.firstOrNull { it.key == doubleTapAppKey },
                 homeButtonApp = apps.firstOrNull { it.key == homeButtonAppKey },
@@ -192,6 +199,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
             Gesture.DoubleTap -> gestureState.value.doubleTapAction
             Gesture.LongPress -> gestureState.value.longPressAction
             Gesture.SwipeDown -> gestureState.value.swipeDownAction.takeIf { baseLayout.value != BaseLayout.PullDown }
+            Gesture.SwipeUp -> gestureState.value.swipeUpAction.takeIf { baseLayout.value != BaseLayout.PullUp }
             Gesture.SwipeLeft -> gestureState.value.swipeLeftAction.takeIf { baseLayout.value != BaseLayout.Pager }
             Gesture.SwipeRight -> gestureState.value.swipeRightAction.takeIf { baseLayout.value != BaseLayout.PagerReversed }
             Gesture.HomeButton -> gestureState.value.homeButtonAction
@@ -259,6 +267,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
                     Gesture.LongPress -> gestureState.value.longPressApp
                     Gesture.DoubleTap -> gestureState.value.doubleTapApp
                     Gesture.HomeButton -> gestureState.value.homeButtonApp
+                    Gesture.SwipeUp -> gestureState.value.swipeUpApp
                 }?.launch(context, options.toBundle())
                 true
             }
@@ -279,12 +288,15 @@ data class GestureState(
     val longPressAction: GestureAction = GestureAction.NoAction,
     val doubleTapAction: GestureAction = GestureAction.NoAction,
     val homeButtonAction: GestureAction = GestureAction.NoAction,
+    val swipeUpAction: GestureAction = GestureAction.NoAction,
     val swipeLeftApp: SavableSearchable? = null,
     val swipeRightApp: SavableSearchable? = null,
     val swipeDownApp: SavableSearchable? = null,
+    val swipeUpApp: SavableSearchable? = null,
     val longPressApp: SavableSearchable? = null,
     val doubleTapApp: SavableSearchable? = null,
     val homeButtonApp: SavableSearchable? = null,
+
 )
 
 data class FailedGesture(val gesture: Gesture, val action: GestureAction)
