@@ -184,9 +184,9 @@ class SettingsActivity : BaseActivity() {
                                 composable("settings/search/wikipedia") {
                                     WikipediaSettingsScreen()
                                 }
-                                composable("settings/search/locations") {
-                                    LocationsSettingsScreen()
-                                }
+//                                composable("settings/search/locations") {
+//                                    LocationsSettingsScreen()
+//                                }
                                 composable("settings/search/locations/osm") {
                                     OsmSettingsScreen()
                                 }

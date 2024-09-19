@@ -3,12 +3,10 @@ package de.mm20.launcher2.ui.settings.main
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Apps
 import androidx.compose.material.icons.rounded.BugReport
-import androidx.compose.material.icons.rounded.Extension
 import androidx.compose.material.icons.rounded.Gesture
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Palette
-import androidx.compose.material.icons.rounded.Power
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SettingsBackupRestore
 import androidx.compose.runtime.Composable
@@ -67,22 +65,9 @@ fun MainSettingsScreen() {
                         navController?.navigate("settings/gestures")
                     }
                 )
-                Preference(
-                    icon = Icons.Rounded.Power,
-                    title = stringResource(id = R.string.preference_screen_integrations),
-                    summary = stringResource(id = R.string.preference_screen_integrations_summary),
-                    onClick = {
-                        navController?.navigate("settings/integrations")
-                    }
-                )
-                Preference(
-                    icon = Icons.Rounded.Extension,
-                    title = stringResource(id = R.string.preference_screen_plugins),
-                    summary = stringResource(id = R.string.preference_screen_plugins_summary),
-                    onClick = {
-                        navController?.navigate("settings/plugins")
-                    }
-                )
+
+                // *** REMOVED integrations and plugins ***
+
                 Preference(
                     icon = Icons.Rounded.SettingsBackupRestore,
                     title = stringResource(id = R.string.preference_screen_backup),

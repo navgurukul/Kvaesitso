@@ -14,10 +14,10 @@ data class LauncherSettingsData internal constructor(
     val uiTheme: ThemeDescriptor = ThemeDescriptor.Default,
     val uiCompatModeColors: Boolean = false,
     val uiFont: Font = Font.Outfit,
-    val uiBaseLayout: BaseLayout = BaseLayout.PullDown,
+    val uiBaseLayout: BaseLayout = BaseLayout.Pager,
     val uiOrientation: ScreenOrientation = ScreenOrientation.Auto,
 
-    val wallpaperDim: Boolean = false,
+    val wallpaperDim: Boolean = true,
     val wallpaperBlur: Boolean = true,
     val wallpaperBlurRadius: Int = 32,
 
@@ -42,7 +42,7 @@ data class LauncherSettingsData internal constructor(
     val clockWidgetFillHeight: Boolean = true,
     val clockWidgetAlignment: ClockWidgetAlignment = ClockWidgetAlignment.Bottom,
 
-    val homeScreenDock: Boolean = false,
+    val homeScreenDock: Boolean = true,
 
     val favoritesEnabled: Boolean = true,
     val favoritesFrequentlyUsed: Boolean = true,
@@ -86,7 +86,7 @@ data class LauncherSettingsData internal constructor(
     val searchBarKeyboard: Boolean = true,
     val searchLaunchOnEnter: Boolean = true,
     val searchBarBottom: Boolean = false,
-    val searchBarFixed: Boolean = false,
+    val searchBarFixed: Boolean = true,
 
     val searchResultsReversed: Boolean = false,
     val searchResultOrder: SearchResultOrder = SearchResultOrder.Weighted,
@@ -303,12 +303,6 @@ enum class IconShape {
     Circle,
     Square,
     RoundedSquare,
-    Triangle,
-    Squircle,
-    Hexagon,
-    Pentagon,
-    Teardrop,
-    Pebble,
     EasterEgg,
 }
 

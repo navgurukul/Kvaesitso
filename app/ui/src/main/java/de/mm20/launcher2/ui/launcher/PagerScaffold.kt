@@ -519,14 +519,15 @@ fun PagerScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                // *** REMOVED widget column ***
 
-                                WidgetColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    editMode = isWidgetEditMode,
-                                    onEditModeChange = {
-                                        viewModel.setWidgetEditMode(it)
-                                    }
-                                )
+//                                WidgetColumn(
+//                                    modifier = Modifier.fillMaxWidth(),
+//                                    editMode = isWidgetEditMode,
+//                                    onEditModeChange = {
+//                                        viewModel.setWidgetEditMode(it)
+//                                    }
+//                                )
                             }
                         }
 

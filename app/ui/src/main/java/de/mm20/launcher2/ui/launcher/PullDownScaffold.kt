@@ -496,13 +496,13 @@ fun PullDownScaffold(
                                     fillScreenHeight = fillClockHeight,
                                 )
 
-                                WidgetColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    editMode = isWidgetEditMode,
-                                    onEditModeChange = {
-                                        viewModel.setWidgetEditMode(it)
-                                    }
-                                )
+//                                WidgetColumn(
+//                                    modifier = Modifier.fillMaxWidth(),
+//                                    editMode = isWidgetEditMode,
+//                                    onEditModeChange = {
+//                                        viewModel.setWidgetEditMode(it)
+//                                    }
+//                                )
                             }
                         }
 
