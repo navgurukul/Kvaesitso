@@ -84,7 +84,7 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:theme="@style/DialogTheme">
-            <intent-filter>
+            <intent-filter android:scheme="http">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="application/vnd.de.mm20.launcher2.theme" />

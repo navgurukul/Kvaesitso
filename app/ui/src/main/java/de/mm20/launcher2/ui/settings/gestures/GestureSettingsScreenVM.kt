@@ -44,6 +44,8 @@ class GestureSettingsScreenVM : ViewModel(), KoinComponent {
 
     val swipeDown = gestureSettings.swipeDown
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    val swipeUp = gestureSettings.swipeUp
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val swipeLeft = gestureSettings.swipeLeft
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val swipeRight = gestureSettings.swipeRight
@@ -57,6 +59,10 @@ class GestureSettingsScreenVM : ViewModel(), KoinComponent {
 
     fun setSwipeDown(action: GestureAction) {
         gestureSettings.setSwipeDown(action)
+    }
+
+    fun setSwipeUp(action: GestureAction) {
+        gestureSettings.setSwipeUp(action)
     }
 
     fun setSwipeLeft(action: GestureAction) {
@@ -119,6 +125,21 @@ class GestureSettingsScreenVM : ViewModel(), KoinComponent {
     fun setSwipeDownApp(searchable: SavableSearchable?) {
         searchable?.let { searchableRepository.insert(it) } ?: return
         setSwipeDown(GestureAction.Launch(searchable.key))
+    }
+
+
+    val swipeUpApp: Flow<SavableSearchable?> = swipeUp
+        .flatMapLatest {
+            if (it !is GestureAction.Launch || it.key == null) flowOf(null)
+            else searchableRepository.getByKeys(listOf(it.key!!)).map {
+                it.firstOrNull()
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(stopTimeoutMillis = 10000), null)
+
+    fun setSwipeUpApp(searchable: SavableSearchable?) {
+        searchable?.let { searchableRepository.insert(it) } ?: return
+        setSwipeUp(GestureAction.Launch(searchable.key))
     }
 
     val longPressApp: Flow<SavableSearchable?> = longPress
