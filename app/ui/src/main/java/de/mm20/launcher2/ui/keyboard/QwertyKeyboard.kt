@@ -15,27 +15,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 
-@Composable
-fun KeyboardWithBackground() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            QwertyKeyboard()
-        }
-    }
-}
+//@Composable
+//fun KeyboardWithBackground() {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.Black)
+//    ) {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(16.dp),
+//            verticalArrangement = Arrangement.Bottom,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            QwertyKeyboard()
+//        }
+//    }
+//}
 
 @Composable
-fun QwertyKeyboard() {
+fun QwertyKeyboard(
+    onKeyPress : (String) -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,49 +46,52 @@ fun QwertyKeyboard() {
     ) {
         KeyboardRow(
             letters = listOf('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'),
+            onKeyPress = onKeyPress,
             modifier = Modifier.fillMaxWidth()
         )
 
         KeyboardRow(
             letters = listOf('a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'),
+            onKeyPress = onKeyPress,
             modifier = Modifier.fillMaxWidth(0.9f)
         )
 
         KeyboardRowWithBackspace(
             letters = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm'),
+            onKeyPress = onKeyPress,
             modifier = Modifier.fillMaxWidth(0.8f)
         )
     }
 }
 
 @Composable
-fun KeyboardRow(letters: List<Char>, modifier: Modifier) {
+fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
             .padding(horizontal = 4.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress)
         }
     }
 }
 
 @Composable
-fun KeyboardRowWithBackspace(letters: List<Char>, modifier: Modifier) {
+fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
             .padding(horizontal = 2.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress)
         }
-        BackspaceKey()
+        BackspaceKey(onKeyPress = onKeyPress)
     }
 }
 @Composable
-fun KeyboardKey(letter: Char) {
+fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -106,7 +111,7 @@ fun KeyboardKey(letter: Char) {
 }
 
 @Composable
-fun BackspaceKey() {
+fun BackspaceKey( onKeyPress: (String) -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -125,8 +130,9 @@ fun BackspaceKey() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    KeyboardWithBackground()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    KeyboardWithBackground()
+//}
+//you can see the preview of the keyboard with this function
