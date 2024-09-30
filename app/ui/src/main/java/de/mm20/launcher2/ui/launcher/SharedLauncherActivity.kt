@@ -238,7 +238,10 @@ abstract class SharedLauncherActivity(
                                     .padding(bottom = 100.dp)
                                     .align(Alignment.BottomCenter)
                             ) {
-                                QwertyKeyboard()
+                                QwertyKeyboard(
+                                    searchVM = searchVM,
+                                    onKeyPress = { key -> searchVM.search(key) }
+                                )
                             }
                             SnackbarHost(
                                 snackbarHostState,

@@ -2,6 +2,7 @@ package de.mm20.launcher2.ui.keyboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import de.mm20.launcher2.ui.launcher.search.SearchVM
 
 //@Composable
 //fun KeyboardWithBackground() {
@@ -36,7 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun QwertyKeyboard(
-    onKeyPress : (String) -> Unit = {}
+    searchVM: SearchVM,
+    onKeyPress : (String) -> Unit = {key -> searchVM.search(key) }
 ) {
     Column(
         modifier = Modifier
@@ -98,6 +101,7 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
             .size(32.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(Color(0x80000000), RoundedCornerShape(8.dp))
+            .clickable { onKeyPress(letter.toString()) } // Trigger key press
             .padding(2.dp)
     ) {
         Text(
@@ -110,14 +114,14 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
     }
 }
 
+
 @Composable
-fun BackspaceKey( onKeyPress: (String) -> Unit) {
+fun BackspaceKey(onKeyPress: (String) -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(32.dp)
-            //.border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            //.background(Color.Transparent, RoundedCornerShape(8.dp))
+            .clickable { onKeyPress("") }
             .padding(2.dp)
     ) {
         Text(
@@ -129,6 +133,7 @@ fun BackspaceKey( onKeyPress: (String) -> Unit) {
         )
     }
 }
+
 
 //@Preview(showBackground = true)
 //@Composable
