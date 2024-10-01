@@ -240,7 +240,15 @@ abstract class SharedLauncherActivity(
                             ) {
                                 QwertyKeyboard(
                                     searchVM = searchVM,
-                                    onKeyPress = { key -> searchVM.search(key) }
+                                    onKeyPress = { key ->
+                                        val currentQuery = searchVM.searchQuery.value
+                                        if (key == "") {
+                                            searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                        } else {
+                                            searchVM.searchQuery.value = currentQuery + key
+                                        }
+                                        searchVM.search(searchVM.searchQuery.value)
+                                    }
                                 )
                             }
                             SnackbarHost(

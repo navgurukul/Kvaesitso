@@ -177,7 +177,6 @@ class SearchVM : ViewModel(), KoinComponent {
         if (query.isEmpty() && searchQuery.value.isNotEmpty()) {
             filters.value = defaultFilters.value
         }
-        searchQuery.value = query
         isSearchEmpty.value = query.isEmpty()
         hiddenResults.value = emptyList()
 

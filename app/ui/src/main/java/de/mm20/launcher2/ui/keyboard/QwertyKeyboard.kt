@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +40,15 @@ import de.mm20.launcher2.ui.launcher.search.SearchVM
 @Composable
 fun QwertyKeyboard(
     searchVM: SearchVM,
-    onKeyPress : (String) -> Unit = {key -> searchVM.search(key) }
+    onKeyPress : (String) -> Unit = { key ->
+        val currentQuery = searchVM.searchQuery.value
+        if (key == "") { // Backspace key
+            searchVM.searchQuery.value = currentQuery.dropLast(1)
+        } else {
+            searchVM.searchQuery.value = currentQuery + key
+        }
+        searchVM.search(currentQuery)
+    }
 ) {
     Column(
         modifier = Modifier
