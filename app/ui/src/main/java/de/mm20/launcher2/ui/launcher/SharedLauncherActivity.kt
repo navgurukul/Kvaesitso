@@ -242,12 +242,14 @@ abstract class SharedLauncherActivity(
                                     searchVM = searchVM,
                                     onKeyPress = { key ->
                                         val currentQuery = searchVM.searchQuery.value
-                                        if (key == "") {
+                                        if (key == "") { // Backspace key
                                             searchVM.searchQuery.value = currentQuery.dropLast(1)
                                         } else {
                                             searchVM.searchQuery.value = currentQuery + key
                                         }
                                         searchVM.search(searchVM.searchQuery.value)
+                                        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                        searchVM.search(searchVM.searchQuery.value, forceRestart = true)
                                     }
                                 )
                             }

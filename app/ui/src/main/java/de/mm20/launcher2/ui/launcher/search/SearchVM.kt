@@ -69,7 +69,7 @@ class SearchVM : ViewModel(), KoinComponent {
     private val devicePoseProvider: DevicePoseProvider by inject()
     private val searchFilterSettings: SearchFilterSettings by inject()
 
-    val launchOnEnter = searchUiSettings.launchOnEnter
+    var launchOnEnter = searchUiSettings.launchOnEnter
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val searchService: SearchService by inject()

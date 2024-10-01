@@ -47,7 +47,9 @@ fun QwertyKeyboard(
         } else {
             searchVM.searchQuery.value = currentQuery + key
         }
-        searchVM.search(currentQuery)
+        searchVM.search(searchVM.searchQuery.value)
+        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+        searchVM.search(searchVM.searchQuery.value, forceRestart = true)
     }
 ) {
     Column(
