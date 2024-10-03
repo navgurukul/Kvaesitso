@@ -72,7 +72,7 @@ class SearchVM : ViewModel(), KoinComponent {
     var launchOnEnter = searchUiSettings.launchOnEnter
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    private val searchService: SearchService by inject()
+     val searchService: SearchService by inject()
 
     val searchQuery = mutableStateOf("")
     val isSearchEmpty = mutableStateOf(true)

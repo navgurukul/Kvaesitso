@@ -61,6 +61,9 @@ import de.mm20.launcher2.ui.locals.LocalWindowSize
 import de.mm20.launcher2.ui.overlays.OverlayHost
 import de.mm20.launcher2.ui.theme.LauncherTheme
 import de.mm20.launcher2.ui.theme.wallpaperColorsAsState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 
 
@@ -250,6 +253,11 @@ abstract class SharedLauncherActivity(
                                         searchVM.search(searchVM.searchQuery.value)
                                         searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
                                         searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                        CoroutineScope(Dispatchers.Default).launch {
+                                            searchVM.searchService.getAllApps().collect { results ->
+                                                searchVM.appResults.value = results.standardProfileApps
+                                            }
+                                        }
                                     }
                                 )
                             }
