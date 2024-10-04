@@ -535,7 +535,7 @@ fun PagerScaffold(
                                     modifier = Modifier
                                         .fillMaxWidth().align(
                                             Alignment.BottomCenter
-                                        )
+                                        ).padding(bottom = 60.dp)
                                 ) {
                                     QwertyKeyboard(
                                         searchVM = searchVM,
