@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -235,32 +236,32 @@ abstract class SharedLauncherActivity(
                                     else -> {}
                                 }
                             }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 100.dp)
-                                    .align(Alignment.BottomCenter)
-                            ) {
-                                QwertyKeyboard(
-                                    searchVM = searchVM,
-                                    onKeyPress = { key ->
-                                        val currentQuery = searchVM.searchQuery.value
-                                        if (key == "") { // Backspace key
-                                            searchVM.searchQuery.value = currentQuery.dropLast(1)
-                                        } else {
-                                            searchVM.searchQuery.value = currentQuery + key
-                                        }
-                                        searchVM.search(searchVM.searchQuery.value)
-                                        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
-                                        searchVM.search(searchVM.searchQuery.value, forceRestart = true)
-                                        CoroutineScope(Dispatchers.Default).launch {
-                                            searchVM.searchService.getAllApps().collect { results ->
-                                                searchVM.appResults.value = results.standardProfileApps
-                                            }
-                                        }
-                                    }
-                                )
-                            }
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(bottom = 100.dp)
+//                                    .align(Alignment.BottomCenter)
+//                            ) {
+//                                QwertyKeyboard(
+//                                    searchVM = searchVM,
+//                                    onKeyPress = { key ->
+//                                        val currentQuery = searchVM.searchQuery.value
+//                                        if (key == "") { // Backspace key
+//                                            searchVM.searchQuery.value = currentQuery.dropLast(1)
+//                                        } else {
+//                                            searchVM.searchQuery.value = currentQuery + key
+//                                        }
+//                                        searchVM.search(searchVM.searchQuery.value)
+//                                        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+//                                        searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+//                                        CoroutineScope(Dispatchers.Default).launch {
+//                                            searchVM.searchService.getAllApps().collect { results ->
+//                                                searchVM.appResults.value = results.standardProfileApps
+//                                            }
+//                                        }
+//                                    }
+//                                )
+//                            }
                             SnackbarHost(
                                 snackbarHostState,
                                 modifier = Modifier

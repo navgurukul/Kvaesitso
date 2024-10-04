@@ -1,5 +1,6 @@
 package de.mm20.launcher2.ui.launcher
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -13,6 +14,7 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -54,6 +57,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
@@ -87,6 +91,7 @@ import de.mm20.launcher2.searchactions.actions.SearchAction
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.component.SearchBarLevel
 import de.mm20.launcher2.ui.gestures.LocalGestureDetector
+import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.ktx.animateTo
 import de.mm20.launcher2.ui.ktx.toPixels
 import de.mm20.launcher2.ui.launcher.gestures.LauncherGestureHandler
@@ -99,6 +104,8 @@ import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -269,6 +276,12 @@ fun PagerScaffold(
                 pagerState.animateScrollToPage(0)
             }
             searchVM.reset()
+        }
+    }
+
+    LaunchedEffect(currentPage) {
+        if (currentPage==0){
+
         }
     }
 
@@ -468,7 +481,7 @@ fun PagerScaffold(
                                 }
                             }
 
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .requiredWidth(width)
                                     .fillMaxHeight()
@@ -497,7 +510,6 @@ fun PagerScaffold(
                                         reversePager = reverse,
                                         disablePager = isWidgetEditMode,
                                     )
-                                    .verticalScroll(widgetsScrollState, enabled = false)
                                     .windowInsetsPadding(WindowInsets.safeDrawing)
                                     .graphicsLayer {
                                         val pagerProgress =
@@ -519,6 +531,32 @@ fun PagerScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth().align(
+                                            Alignment.BottomCenter
+                                        )
+                                ) {
+                                    QwertyKeyboard(
+                                        searchVM = searchVM,
+                                        onKeyPress = { key ->
+                                            val currentQuery = searchVM.searchQuery.value
+                                            if (key == "") { // Backspace key
+                                                searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                            } else {
+                                                searchVM.searchQuery.value = currentQuery + key
+                                            }
+                                            searchVM.search(searchVM.searchQuery.value)
+                                            searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                            searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                            CoroutineScope(Dispatchers.Default).launch {
+                                                searchVM.searchService.getAllApps().collect { results ->
+                                                    searchVM.appResults.value = results.standardProfileApps
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
                                 // *** REMOVED widget column ***
 
 //                                WidgetColumn(
