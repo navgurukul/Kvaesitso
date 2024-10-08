@@ -97,6 +97,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
         isSearchOpen.value = true
         viewModelScope.launch {
             if (autoFocusSearch.first()) setSearchbarFocus(true)
+
         }
     }
 

@@ -1,12 +1,15 @@
 package de.mm20.launcher2.ui.launcher
 
+import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -19,6 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -30,9 +34,12 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -85,8 +92,13 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import de.mm20.launcher2.badges.BadgeIcon
+import de.mm20.launcher2.icons.LauncherIcon
+import de.mm20.launcher2.icons.StaticLauncherIcon
 import de.mm20.launcher2.preferences.SearchBarColors
+import de.mm20.launcher2.search.SavableSearchable
 import de.mm20.launcher2.searchactions.actions.SearchAction
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.component.SearchBarLevel
@@ -106,6 +118,7 @@ import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -276,12 +289,6 @@ fun PagerScaffold(
                 pagerState.animateScrollToPage(0)
             }
             searchVM.reset()
-        }
-    }
-
-    LaunchedEffect(currentPage) {
-        if (currentPage==0){
-
         }
     }
 
@@ -489,15 +496,11 @@ fun PagerScaffold(
                                         detectTapGestures(
                                             onDoubleTap = if (gestureManager.shouldDetectDoubleTaps) {
                                                 {
-                                                    if (!isWidgetEditMode) gestureManager.dispatchDoubleTap(
-                                                        it
-                                                    )
+                                                    if (!isWidgetEditMode) gestureManager.dispatchDoubleTap(it)
                                                 }
                                             } else null,
                                             onLongPress = {
-                                                if (!isWidgetEditMode) gestureManager.dispatchLongPress(
-                                                    it
-                                                )
+                                                if (!isWidgetEditMode) gestureManager.dispatchLongPress(it)
                                             },
                                             onTap = {
                                                 if (!isWidgetEditMode) gestureManager.dispatchTap(it)
@@ -533,39 +536,42 @@ fun PagerScaffold(
                                 )
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth().align(
-                                            Alignment.BottomCenter
-                                        ).padding(bottom = 60.dp)
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 20.dp)
                                 ) {
-                                    QwertyKeyboard(
-                                        searchVM = searchVM,
-                                        onKeyPress = { key ->
-                                            val currentQuery = searchVM.searchQuery.value
-                                            if (key == "") { // Backspace key
-                                                searchVM.searchQuery.value = currentQuery.dropLast(1)
-                                            } else {
-                                                searchVM.searchQuery.value = currentQuery + key
-                                            }
-                                            searchVM.search(searchVM.searchQuery.value)
-                                            searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
-                                            searchVM.search(searchVM.searchQuery.value, forceRestart = true)
-                                            CoroutineScope(Dispatchers.Default).launch {
-                                                searchVM.searchService.getAllApps().collect { results ->
-                                                    searchVM.appResults.value = results.standardProfileApps
-                                                }
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        LazyRow(
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            items(searchVM.appResults.value) { app ->
+                                                AppItem(app = app)
                                             }
                                         }
-                                    )
+                                        QwertyKeyboard(
+                                            searchVM = searchVM,
+                                            onKeyPress = { key ->
+                                                val currentQuery = searchVM.searchQuery.value
+                                                if (key == "") { // Backspace key
+                                                    searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                                } else {
+                                                    searchVM.searchQuery.value = currentQuery + key
+                                                }
+                                                searchVM.search(searchVM.searchQuery.value)
+                                                searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                                searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                                CoroutineScope(Dispatchers.Default).launch {
+                                                    searchVM.searchService.getAllApps().collect { results ->
+                                                        searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
                                 }
-                                // *** REMOVED widget column ***
-
-//                                WidgetColumn(
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    editMode = isWidgetEditMode,
-//                                    onEditModeChange = {
-//                                        viewModel.setWidgetEditMode(it)
-//                                    }
-//                                )
                             }
                         }
 
@@ -822,3 +828,34 @@ fun Modifier.pagerScaffoldScrollHandler(
 }
 
 internal object DefaultNestedScrollConnection : NestedScrollConnection {}
+
+@Composable
+fun AppItem(app: SavableSearchable) {
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
+            .clickable(onClick = {
+                 app.launch(context, null)
+            })
+            .padding(16.dp)
+    ) {
+
+        val icon = remember { mutableStateOf<StaticLauncherIcon?>(null) }
+
+        LaunchedEffect(app) {
+            icon.value = app.getPlaceholderIcon(context)
+        }
+        Log.d("Icons","${icon.value}")
+        icon.value?.let {
+            Image(
+                painter = rememberAsyncImagePainter(it),
+                contentDescription = app.label,
+                modifier = Modifier.size(30.dp)
+            )
+        }
+
+        Text(text = app.label, modifier = Modifier.padding(start = 8.dp))
+    }
+}
+
+
