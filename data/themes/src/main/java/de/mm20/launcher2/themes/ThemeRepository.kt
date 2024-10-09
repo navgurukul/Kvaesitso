@@ -86,7 +86,7 @@ class ThemeRepository(
             name = context.getString(R.string.preference_colors_bw),
             corePalette = EmptyCorePalette,
             lightColorScheme = BlackAndWhiteLightColorScheme,
-            darkColorScheme = BlackAndWhiteDarkColorScheme,
+//            darkColorScheme = BlackAndWhiteDarkColorScheme,
         )
     }
 
