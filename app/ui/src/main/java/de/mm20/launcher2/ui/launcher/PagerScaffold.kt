@@ -544,11 +544,13 @@ fun PagerScaffold(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ){
-                                        LazyRow(
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            items(searchVM.appResults.value) { app ->
-                                                AppItem(app = app)
+                                        if(searchVM.searchQuery.value.isNotEmpty() && searchVM.appResults.value.isNotEmpty()){
+                                            LazyRow(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                items(searchVM.appResults.value) { app ->
+                                                    AppItem(app = app)
+                                                }
                                             }
                                         }
                                         QwertyKeyboard(
