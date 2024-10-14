@@ -1,7 +1,9 @@
 package de.mm20.launcher2.ui.launcher
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -70,7 +72,9 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
@@ -96,6 +100,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import de.mm20.launcher2.badges.BadgeIcon
 import de.mm20.launcher2.icons.LauncherIcon
+import de.mm20.launcher2.icons.LauncherIconRenderSettings
 import de.mm20.launcher2.icons.StaticLauncherIcon
 import de.mm20.launcher2.preferences.SearchBarColors
 import de.mm20.launcher2.search.SavableSearchable
@@ -115,6 +120,7 @@ import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
+import de.mm20.launcher2.ui.locals.LocalGridSettings
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -834,30 +840,34 @@ internal object DefaultNestedScrollConnection : NestedScrollConnection {}
 @Composable
 fun AppItem(app: SavableSearchable) {
     val context = LocalContext.current
-    Column(
-        modifier = Modifier
-            .clickable(onClick = {
-                 app.launch(context, null)
-            })
-            .padding(16.dp)
-    ) {
+    val defaultIconSize = LocalGridSettings.current.iconSize.dp
+    val iconBitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-        val icon = remember { mutableStateOf<StaticLauncherIcon?>(null) }
+    val settings = LauncherIconRenderSettings(
+        size = defaultIconSize.toPixels().toInt(),
+        fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
+        bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+        fgTone = 1,
+        bgTone = 1
+    )
 
-        LaunchedEffect(app) {
-            icon.value = app.getPlaceholderIcon(context)
-        }
-        Log.d("Icons","${icon.value}")
-        icon.value?.let {
-            Image(
-                painter = rememberAsyncImagePainter(it),
-                contentDescription = app.label,
-                modifier = Modifier.size(30.dp)
-            )
-        }
-
-        Text(text = app.label, modifier = Modifier.padding(start = 8.dp))
+    LaunchedEffect(app) {
+        val icon = app.loadIcon(context, 48, false) as? StaticLauncherIcon
+        iconBitmap.value = icon?.render(settings)
     }
+
+    iconBitmap.value?.let { bitmap ->
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = app.label,
+            modifier = Modifier.size(30.dp)
+        )
+    } ?: run {
+        Text(text = "No icon", modifier = Modifier.padding(start = 8.dp))
+    }
+
+    Text(text = app.label, modifier = Modifier.padding(start = 8.dp))
 }
+
 
 
