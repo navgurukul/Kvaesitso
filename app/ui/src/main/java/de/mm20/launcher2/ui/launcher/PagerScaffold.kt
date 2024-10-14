@@ -49,6 +49,7 @@ import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
@@ -69,6 +70,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -91,10 +93,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -856,18 +860,30 @@ fun AppItem(app: SavableSearchable) {
         iconBitmap.value = icon?.render(settings)
     }
 
-    iconBitmap.value?.let { bitmap ->
-        Image(
-            bitmap = bitmap.asImageBitmap(),
-            contentDescription = app.label,
-            modifier = Modifier.size(30.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable { app.launch(context, null) }
+            .padding(12.dp)
+    ) {
+        iconBitmap.value?.let { bitmap ->
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = app.label,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+        }
+        Text(
+            text = app.label,
+            modifier = Modifier.padding(top = 8.dp),
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
         )
-    } ?: run {
-        Text(text = "No icon", modifier = Modifier.padding(start = 8.dp))
     }
-
-    Text(text = app.label, modifier = Modifier.padding(start = 8.dp))
 }
+
 
 
 
