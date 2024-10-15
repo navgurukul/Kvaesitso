@@ -164,8 +164,9 @@ class SearchVM : ViewModel(), KoinComponent {
 
     fun reset() {
         closeFilters()
-        filters.value = defaultFilters.value
+        //filters.value = defaultFilters.value
         search("")
+        searchQuery.value = ""
     }
 
     private var searchJob: Job? = null

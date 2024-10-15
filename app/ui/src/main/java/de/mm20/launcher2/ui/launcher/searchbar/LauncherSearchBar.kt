@@ -137,6 +137,7 @@ fun LauncherSearchBar(
                 }
                 SearchBarMenu(searchBarValue = _value, onInputClear = {
                     searchVM.reset()
+                    searchVM.showFilters.value = false
                 })
             },
             actions = {
