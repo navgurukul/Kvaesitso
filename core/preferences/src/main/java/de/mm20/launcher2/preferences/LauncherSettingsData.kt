@@ -40,7 +40,7 @@ data class LauncherSettingsData internal constructor(
     val clockWidgetMusicPart: Boolean = true,
     val clockWidgetDatePart: Boolean = true,
     val clockWidgetFillHeight: Boolean = true,
-    val clockWidgetAlignment: ClockWidgetAlignment = ClockWidgetAlignment.Bottom,
+    val clockWidgetAlignment: ClockWidgetAlignment = ClockWidgetAlignment.Center,
 
     val homeScreenDock: Boolean = true,
 

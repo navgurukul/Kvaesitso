@@ -69,10 +69,10 @@ class SearchVM : ViewModel(), KoinComponent {
     private val devicePoseProvider: DevicePoseProvider by inject()
     private val searchFilterSettings: SearchFilterSettings by inject()
 
-    val launchOnEnter = searchUiSettings.launchOnEnter
+    var launchOnEnter = searchUiSettings.launchOnEnter
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    private val searchService: SearchService by inject()
+     val searchService: SearchService by inject()
 
     val searchQuery = mutableStateOf("")
     val isSearchEmpty = mutableStateOf(true)
@@ -164,8 +164,9 @@ class SearchVM : ViewModel(), KoinComponent {
 
     fun reset() {
         closeFilters()
-        filters.value = defaultFilters.value
+        //filters.value = defaultFilters.value
         search("")
+        searchQuery.value = ""
     }
 
     private var searchJob: Job? = null
@@ -177,7 +178,6 @@ class SearchVM : ViewModel(), KoinComponent {
         if (query.isEmpty() && searchQuery.value.isNotEmpty()) {
             filters.value = defaultFilters.value
         }
-        searchQuery.value = query
         isSearchEmpty.value = query.isEmpty()
         hiddenResults.value = emptyList()
 

@@ -1,11 +1,17 @@
 package de.mm20.launcher2.ui.launcher
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -13,10 +19,12 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -28,8 +36,12 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -37,6 +49,7 @@ import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
@@ -54,12 +67,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
@@ -76,17 +93,26 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import de.mm20.launcher2.badges.BadgeIcon
+import de.mm20.launcher2.icons.LauncherIcon
+import de.mm20.launcher2.icons.LauncherIconRenderSettings
+import de.mm20.launcher2.icons.StaticLauncherIcon
 import de.mm20.launcher2.preferences.SearchBarColors
+import de.mm20.launcher2.search.SavableSearchable
 import de.mm20.launcher2.searchactions.actions.SearchAction
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.component.SearchBarLevel
 import de.mm20.launcher2.ui.gestures.LocalGestureDetector
+import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.ktx.animateTo
 import de.mm20.launcher2.ui.ktx.toPixels
 import de.mm20.launcher2.ui.launcher.gestures.LauncherGestureHandler
@@ -98,7 +124,11 @@ import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
+import de.mm20.launcher2.ui.locals.LocalGridSettings
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -468,7 +498,7 @@ fun PagerScaffold(
                                 }
                             }
 
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .requiredWidth(width)
                                     .fillMaxHeight()
@@ -476,15 +506,11 @@ fun PagerScaffold(
                                         detectTapGestures(
                                             onDoubleTap = if (gestureManager.shouldDetectDoubleTaps) {
                                                 {
-                                                    if (!isWidgetEditMode) gestureManager.dispatchDoubleTap(
-                                                        it
-                                                    )
+                                                    if (!isWidgetEditMode) gestureManager.dispatchDoubleTap(it)
                                                 }
                                             } else null,
                                             onLongPress = {
-                                                if (!isWidgetEditMode) gestureManager.dispatchLongPress(
-                                                    it
-                                                )
+                                                if (!isWidgetEditMode) gestureManager.dispatchLongPress(it)
                                             },
                                             onTap = {
                                                 if (!isWidgetEditMode) gestureManager.dispatchTap(it)
@@ -497,7 +523,6 @@ fun PagerScaffold(
                                         reversePager = reverse,
                                         disablePager = isWidgetEditMode,
                                     )
-                                    .verticalScroll(widgetsScrollState, enabled = false)
                                     .windowInsetsPadding(WindowInsets.safeDrawing)
                                     .graphicsLayer {
                                         val pagerProgress =
@@ -519,15 +544,46 @@ fun PagerScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
-                                // *** REMOVED widget column ***
-
-//                                WidgetColumn(
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    editMode = isWidgetEditMode,
-//                                    onEditModeChange = {
-//                                        viewModel.setWidgetEditMode(it)
-//                                    }
-//                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 20.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        if(searchVM.searchQuery.value.isNotEmpty() && searchVM.appResults.value.isNotEmpty()){
+                                            LazyRow(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                items(searchVM.appResults.value) { app ->
+                                                    AppItem(app = app)
+                                                }
+                                            }
+                                        }
+                                        QwertyKeyboard(
+                                            searchVM = searchVM,
+                                            onKeyPress = { key ->
+                                                val currentQuery = searchVM.searchQuery.value
+                                                if (key == "") { // Backspace key
+                                                    searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                                } else {
+                                                    searchVM.searchQuery.value = currentQuery + key
+                                                }
+                                                searchVM.search(searchVM.searchQuery.value)
+                                                searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                                searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                                CoroutineScope(Dispatchers.Default).launch {
+                                                    searchVM.searchService.getAllApps().collect { results ->
+                                                        searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
 
@@ -784,3 +840,50 @@ fun Modifier.pagerScaffoldScrollHandler(
 }
 
 internal object DefaultNestedScrollConnection : NestedScrollConnection {}
+
+@Composable
+fun AppItem(app: SavableSearchable) {
+    val context = LocalContext.current
+    val defaultIconSize = LocalGridSettings.current.iconSize.dp
+    val iconBitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+    val settings = LauncherIconRenderSettings(
+        size = defaultIconSize.toPixels().toInt(),
+        fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
+        bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+        fgTone = 1,
+        bgTone = 1
+    )
+
+    LaunchedEffect(app) {
+        val icon = app.loadIcon(context, 48, false) as? StaticLauncherIcon
+        iconBitmap.value = icon?.render(settings)
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable { app.launch(context, null) }
+            .padding(12.dp)
+    ) {
+        iconBitmap.value?.let { bitmap ->
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = app.label,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+        }
+        Text(
+            text = app.label,
+            modifier = Modifier.padding(top = 8.dp),
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+
+

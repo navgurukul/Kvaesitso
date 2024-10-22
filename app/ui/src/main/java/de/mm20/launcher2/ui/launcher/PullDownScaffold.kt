@@ -28,7 +28,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -75,6 +77,7 @@ import de.mm20.launcher2.searchactions.actions.SearchAction
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.component.SearchBarLevel
 import de.mm20.launcher2.ui.gestures.LocalGestureDetector
+import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.ktx.animateTo
 import de.mm20.launcher2.ui.launcher.gestures.LauncherGestureHandler
 import de.mm20.launcher2.ui.launcher.helper.WallpaperBlur
@@ -86,6 +89,8 @@ import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -448,7 +453,7 @@ fun PullDownScaffold(
                                     }
                                 }
                             }
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .graphicsLayer {
                                         val progress =
@@ -495,6 +500,46 @@ fun PullDownScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 40.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        if(searchVM.searchQuery.value.isNotEmpty() && searchVM.appResults.value.isNotEmpty()){
+                                            LazyRow(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                items(searchVM.appResults.value) { app ->
+                                                    AppItem(app = app)
+                                                }
+                                            }
+                                        }
+                                        QwertyKeyboard(
+                                            searchVM = searchVM,
+                                            onKeyPress = { key ->
+                                                val currentQuery = searchVM.searchQuery.value
+                                                if (key == "") { // Backspace key
+                                                    searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                                } else {
+                                                    searchVM.searchQuery.value = currentQuery + key
+                                                }
+                                                searchVM.search(searchVM.searchQuery.value)
+                                                searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                                searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                                CoroutineScope(Dispatchers.Default).launch {
+                                                    searchVM.searchService.getAllApps().collect { results ->
+                                                        searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
 
 //                                WidgetColumn(
 //                                    modifier = Modifier.fillMaxWidth(),

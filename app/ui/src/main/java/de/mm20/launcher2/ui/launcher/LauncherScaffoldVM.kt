@@ -89,7 +89,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
     val autoFocusSearch = uiSettings.openKeyboardOnSearch
 
     fun setSearchbarFocus(focused: Boolean) {
-        if (searchBarFocused.value != focused) searchBarFocused.value = focused
+        //if (searchBarFocused.value != focused) searchBarFocused.value = focused
     }
 
     fun openSearch() {
@@ -97,6 +97,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
         isSearchOpen.value = true
         viewModelScope.launch {
             if (autoFocusSearch.first()) setSearchbarFocus(true)
+
         }
     }
 

@@ -137,6 +137,7 @@ fun LauncherSearchBar(
                 }
                 SearchBarMenu(searchBarValue = _value, onInputClear = {
                     searchVM.reset()
+                    searchVM.showFilters.value = false
                 })
             },
             actions = {
@@ -147,8 +148,8 @@ fun LauncherSearchBar(
                 )
             },
             focusRequester = focusRequester,
-            onFocus = { onFocusChange(true) },
-            onUnfocus = { onFocusChange(false) },
+            onFocus = {  }, //onFocus = { onFocusChange(true) },
+            onUnfocus = { },  //onUnfocus = { onFocusChange(false) },
             onKeyboardActionGo = onKeyboardActionGo
         )
 
