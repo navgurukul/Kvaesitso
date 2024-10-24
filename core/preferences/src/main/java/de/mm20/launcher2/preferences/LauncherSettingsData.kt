@@ -27,7 +27,7 @@ data class LauncherSettingsData internal constructor(
     val clockWidgetCompact: Boolean = false,
     @Deprecated("")
     @SerialName("clockWidgetStyle")
-    val _clockWidgetStyle: ClockWidgetStyle = ClockWidgetStyle.Digital1(),
+    val _clockWidgetStyle: ClockWidgetStyle = ClockWidgetStyle.Analog,
     @SerialName("clockWidgetStyle2")
     internal val clockWidgetStyle: ClockWidgetStyleEnum = ClockWidgetStyleEnum.Digital1,
     val clockWidgetDigital1: ClockWidgetStyle.Digital1 = ClockWidgetStyle.Digital1(),
@@ -118,7 +118,7 @@ data class LauncherSettingsData internal constructor(
 
     val widgetsEditButton: Boolean = true,
 
-    val gesturesSwipeDown: GestureAction = GestureAction.Notifications,
+    val gesturesSwipeDown: GestureAction = GestureAction.NoAction,
     val gesturesSwipeLeft: GestureAction = GestureAction.NoAction,
     val gesturesSwipeRight: GestureAction = GestureAction.NoAction,
     val gesturesDoubleTap: GestureAction = GestureAction.ScreenLock,
