@@ -33,6 +33,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
@@ -465,6 +466,16 @@ fun AppItem(
                 }
             )
         }
+
+        toolbarActions.add(
+            DefaultToolbarAction(
+                label = stringResource(R.string.widget_action_remove),
+                icon = Icons.Rounded.RemoveCircle
+            ) {
+                onBack()
+            }
+        )
+
 
         Toolbar(
             leftActions = listOf(
