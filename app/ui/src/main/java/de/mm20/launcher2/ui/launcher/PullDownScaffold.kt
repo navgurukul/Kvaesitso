@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -507,26 +508,32 @@ fun PullDownScaffold(
                         }
 
                         1 -> {
+                            val statusBarPadding = WindowInsets.statusBars.asPaddingValues()
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
+                            val paddingValues = PaddingValues(
+                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 64.dp + webSearchPadding else 8.dp,
+                                bottom = windowInsets.calculateBottomPadding() + keyboardFilterBarPadding +
+                                        if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
+                            )
                             SearchColumn(
                                 modifier = Modifier
-                                    .graphicsLayer {
-                                        val progress =
-                                            pagerState.currentPage + pagerState.currentPageOffsetFraction
-                                        transformOrigin = TransformOrigin.Center
-                                        alpha = min(progress, 1f - dragProgress * 0.1f)
-                                        scaleX = min(
-                                            1f - (dragProgress * 0.05f),
-                                            1f - (1f - progress) * 0.1f
-                                        )
-                                        scaleY = min(
-                                            1f - (dragProgress * 0.05f),
-                                            1f - (1f - progress) * 0.1f
-                                        )
-                                    }
+//                                    .graphicsLayer {
+//                                        val progress =
+//                                            pagerState.currentPage + pagerState.currentPageOffsetFraction
+//                                        transformOrigin = TransformOrigin.Center
+//                                        alpha = min(progress, 1f - dragProgress * 0.1f)
+//                                        scaleX = min(
+//                                            1f - (dragProgress * 0.05f),
+//                                            1f - (1f - progress) * 0.1f
+//                                        )
+//                                        scaleY = min(
+//                                            1f - (dragProgress * 0.05f),
+//                                            1f - (1f - progress) * 0.1f
+//                                        )
+//                                    }
                                     .fillMaxSize()
                                     .padding(
                                         start = windowInsets.calculateStartPadding(
@@ -535,13 +542,10 @@ fun PullDownScaffold(
                                         end = windowInsets.calculateStartPadding(
                                             LocalLayoutDirection.current
                                         ),
+                                        top = paddingValues.calculateTopPadding(),
+                                        bottom = paddingValues.calculateBottomPadding()
                                     ),
-                                paddingValues = PaddingValues(
-                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 64.dp + webSearchPadding else 8.dp,
-                                    bottom = windowInsets.calculateBottomPadding() +
-                                            keyboardFilterBarPadding +
-                                            if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
-                                ),
+                                paddingValues = paddingValues,
                                 state = searchState,
                                 reverse = reverseSearchResults,
                             )

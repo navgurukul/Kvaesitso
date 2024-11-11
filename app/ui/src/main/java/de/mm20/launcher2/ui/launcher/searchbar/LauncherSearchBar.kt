@@ -139,13 +139,15 @@ fun LauncherSearchBar(
                     searchVM.reset()
                 })
             },
-            actions = {
-                SearchBarActions(
-                    actions = actions,
-                    reverse = bottomSearchBar,
-                    highlightedAction = highlightedAction
-                )
-            },
+
+            // Removing the quick action from search bar
+//            actions = {
+//                SearchBarActions(
+//                    actions = actions,
+//                    reverse = bottomSearchBar,
+//                    highlightedAction = highlightedAction
+//                )
+//            },
             focusRequester = focusRequester,
             onFocus = { onFocusChange(true) },
             onUnfocus = { onFocusChange(false) },
