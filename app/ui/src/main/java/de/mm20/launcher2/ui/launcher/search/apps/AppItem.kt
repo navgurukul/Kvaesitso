@@ -467,14 +467,17 @@ fun AppItem(
             )
         }
 
-        toolbarActions.add(
-            DefaultToolbarAction(
-                label = stringResource(R.string.widget_action_remove),
-                icon = Icons.Rounded.RemoveCircle
-            ) {
-                onBack()
-            }
-        )
+        if (app.canRemoveApp){
+            toolbarActions.add(
+                DefaultToolbarAction(
+                    label = stringResource(R.string.widget_action_remove),
+                    icon = Icons.Rounded.RemoveCircle
+                ) {
+                    app.remove(context)
+                    onBack()
+                }
+            )
+        }
 
 
         Toolbar(
