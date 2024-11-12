@@ -188,18 +188,21 @@ internal data class LauncherApp(
     }
 
     override fun remove(context: Context) {
+        val packageManager = context.packageManager
+        val launcherApps = context.getSystemService<LauncherApps>()!!
         try {
-            val packageManager = context.packageManager
-            packageManager.setComponentEnabledSetting(
-                componentName,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-            )
-        } catch (e: SecurityException) {
-            Log.e("LauncherApp", "Failed to remove app due to security restrictions", e)
-        } catch (e: InflateException) {
-            Log.e("LauncherApp", "Failed to inflate component", e)
-        } catch (e: Exception) {
+            val apps = launcherApps.getActivityList(null, Process.myUserHandle())
+            for (app in apps) {
+                if (app.componentName == componentName) {
+                    packageManager.setComponentEnabledSetting(
+                        componentName,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP
+                    )
+                    break
+                }
+            }
+            }catch (e: Exception) {
             Log.e("LauncherApp", "An unexpected error occurred while attempting to remove app", e)
         }
     }
