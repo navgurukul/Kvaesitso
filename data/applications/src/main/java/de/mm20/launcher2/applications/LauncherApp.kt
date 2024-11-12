@@ -187,28 +187,6 @@ internal data class LauncherApp(
         )
     }
 
-    override fun remove(context: Context) {
-        val packageManager = context.packageManager
-        val launcherApps = context.getSystemService<LauncherApps>()!!
-        try {
-            val apps = launcherApps.getActivityList(null, Process.myUserHandle())
-            for (app in apps) {
-                if (app.componentName == componentName) {
-                    packageManager.setComponentEnabledSetting(
-                        componentName,
-                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                        PackageManager.DONT_KILL_APP
-                    )
-                    break
-                }
-            }
-            }catch (e: Exception) {
-            Log.e("LauncherApp", "An unexpected error occurred while attempting to remove app", e)
-        }
-    }
-
-
-
     override val canShareApk: Boolean = true
     override suspend fun shareApkFile(context: Context) {
         val launcherApps = context.getSystemService<LauncherApps>()!!

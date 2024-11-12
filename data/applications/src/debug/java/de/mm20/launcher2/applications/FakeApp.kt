@@ -25,9 +25,6 @@ class FakeApp: Application {
 
     }
 
-    override fun remove(context: Context) {
-
-    }
 
     override val canRemoveApp: Boolean
         get() = TODO("Not yet implemented")
