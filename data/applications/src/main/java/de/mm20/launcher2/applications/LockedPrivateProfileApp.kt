@@ -40,6 +40,10 @@ internal data class LockedPrivateProfileApp(
         // Do nothing
     }
 
+
+    override val canRemoveApp: Boolean
+        get() = TODO("Not yet implemented")
+
     override val domain: String = LauncherApp.Domain
     override val canShareApk: Boolean = false
 

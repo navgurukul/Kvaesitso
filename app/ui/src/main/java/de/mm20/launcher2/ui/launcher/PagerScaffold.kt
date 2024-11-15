@@ -82,6 +82,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import de.mm20.launcher2.applications.isAppAtFirstPage
 import de.mm20.launcher2.preferences.SearchBarColors
 import de.mm20.launcher2.searchactions.actions.SearchAction
 import de.mm20.launcher2.ui.R
@@ -450,6 +451,7 @@ fun PagerScaffold(
                 ) {
                     when (it) {
                         0 -> {
+                            isAppAtFirstPage = true
                             val editModePadding by animateDpAsState(if (isWidgetEditMode && bottomSearchBar) 56.dp else 0.dp)
 
                             val clockPadding by animateDpAsState(
@@ -532,6 +534,7 @@ fun PagerScaffold(
                         }
 
                         1 -> {
+                            isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )

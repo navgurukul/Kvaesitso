@@ -39,6 +39,7 @@ interface Application: SavableSearchable {
     }
 
     val canUninstall: Boolean
+    val canRemoveApp: Boolean
     fun uninstall(context: Context)
     fun openAppDetails(context: Context)
 
