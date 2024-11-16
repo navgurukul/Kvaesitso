@@ -91,7 +91,7 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
     Row(
         modifier = modifier
             .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress)
@@ -104,7 +104,7 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
     Row(
         modifier = modifier
             .padding( vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress)
@@ -117,7 +117,7 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(38.dp)
+            .size(35.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(Color(0x80000000), RoundedCornerShape(8.dp))
             .clickable { onKeyPress(letter.toString()) } // Trigger key press
@@ -125,7 +125,7 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
