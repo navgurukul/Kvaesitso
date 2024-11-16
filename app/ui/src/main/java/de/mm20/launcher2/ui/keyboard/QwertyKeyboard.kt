@@ -63,8 +63,7 @@ fun QwertyKeyboard(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         KeyboardRow(
@@ -91,8 +90,8 @@ fun QwertyKeyboard(
 fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
-            .padding(horizontal = 4.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress)
@@ -104,8 +103,8 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
 fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
-            .padding(horizontal = 2.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+            .padding( vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress)
@@ -118,15 +117,15 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(32.dp)
+            .size(38.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(Color(0x80000000), RoundedCornerShape(8.dp))
             .clickable { onKeyPress(letter.toString()) } // Trigger key press
-            .padding(2.dp)
+//            .padding(2.dp)
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
