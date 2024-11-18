@@ -10,7 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter() // For tinypinyin
     }
 }
 
@@ -63,6 +62,7 @@ include(":libs:address-formatter")
 include(":services:global-actions")
 include(":services:widgets")
 include(":services:favorites")
+include(":libs:tinypinyin")
 
 include(":plugins:sdk")
 include(":data:locations")

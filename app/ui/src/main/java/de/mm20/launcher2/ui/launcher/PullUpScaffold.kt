@@ -87,6 +87,7 @@ import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
+import de.mm20.launcher2.applications.isAppAtFirstPage
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -431,6 +432,7 @@ fun PullUpScaffold(
                     when (it) {
 
                         0 -> {
+                            isAppAtFirstPage = true
                             val clockPadding by animateDpAsState(
                                 if (isWidgetsAtStart && fillClockHeight)
                                     insets.calculateBottomPadding() + if (bottomSearchBar) 64.dp else 0.dp
@@ -508,6 +510,7 @@ fun PullUpScaffold(
 
                         1 -> {
                             val statusBarPadding = WindowInsets.statusBars.asPaddingValues()
+                            isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )

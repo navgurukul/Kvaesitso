@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.firebase) apply false
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -126,6 +128,11 @@ dependencies {
 
 
     implementation(libs.koin.android)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
+
 
     implementation(project(":services:accounts"))
     implementation(project(":data:applications"))
