@@ -507,7 +507,7 @@ fun PullUpScaffold(
 
                         1 -> {
                             val webSearchPadding by animateDpAsState(
-                                if (actions.isEmpty()) 0.dp else 48.dp
+                                if (actions.isEmpty()) 0.dp else 0.dp
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
                             SearchColumn(
@@ -536,7 +536,7 @@ fun PullUpScaffold(
                                         ),
                                     ),
                                 paddingValues = PaddingValues(
-                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 64.dp + webSearchPadding else 8.dp,
+                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 200.dp + webSearchPadding else 8.dp,
                                     bottom = windowInsets.calculateBottomPadding() +
                                             keyboardFilterBarPadding +
                                             if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
