@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.Process
 import android.os.UserHandle
 import android.util.Log
+import android.view.InflateException
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import de.mm20.launcher2.compat.PackageManagerCompat
@@ -64,6 +65,9 @@ internal data class LauncherApp(
 
     override val canUninstall: Boolean
         get() = !isSystemApp && isMainProfile
+
+    override val canRemoveApp: Boolean
+        get() = isAppAtFirstPage
 
     override val domain: String = Domain
     override val preferDetailsOverLaunch: Boolean = false
@@ -182,6 +186,25 @@ internal data class LauncherApp(
             null
         )
     }
+
+    override fun remove(context: Context) {
+        try {
+            val packageManager = context.packageManager
+            packageManager.setComponentEnabledSetting(
+                componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+        } catch (e: SecurityException) {
+            Log.e("LauncherApp", "Failed to remove app due to security restrictions", e)
+        } catch (e: InflateException) {
+            Log.e("LauncherApp", "Failed to inflate component", e)
+        } catch (e: Exception) {
+            Log.e("LauncherApp", "An unexpected error occurred while attempting to remove app", e)
+        }
+    }
+
+
 
     override val canShareApk: Boolean = true
     override suspend fun shareApkFile(context: Context) {

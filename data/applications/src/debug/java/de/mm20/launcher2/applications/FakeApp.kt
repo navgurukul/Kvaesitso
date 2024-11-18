@@ -25,6 +25,13 @@ class FakeApp: Application {
 
     }
 
+    override fun remove(context: Context) {
+
+    }
+
+    override val canRemoveApp: Boolean
+        get() = TODO("Not yet implemented")
+
     override val canShareApk: Boolean = false
     override val key: String = "fake://${randomString()}"
     override val label: String = randomString()
