@@ -678,7 +678,7 @@ fun PagerScaffold(
         val searchBarStyle by viewModel.searchBarStyle.collectAsState()
 
         val launchOnEnter by searchVM.launchOnEnter.collectAsState(false)
-
+    if (pagerState.currentPage == 0) {
         LauncherSearchBar(
             modifier = Modifier
                 .fillMaxSize(),
@@ -707,6 +707,7 @@ fun PagerScaffold(
                 { searchVM.launchBestMatchOrAction(context) }
             } else null
         )
+    }
     }
     LauncherGestureHandler(
         onHomeButtonPress = handleBackOrHomeEvent,
