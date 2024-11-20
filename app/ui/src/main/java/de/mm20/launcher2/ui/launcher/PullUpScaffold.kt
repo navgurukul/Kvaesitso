@@ -584,7 +584,7 @@ fun PullUpScaffold(
                                         ),
                                     ),
                                 paddingValues = PaddingValues(
-                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 64.dp + webSearchPadding else 8.dp,
+                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 0.dp + webSearchPadding else 8.dp,
                                     bottom = windowInsets.calculateBottomPadding() +
                                             keyboardFilterBarPadding +
                                             if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp

@@ -600,7 +600,7 @@ fun PagerScaffold(
                             } else {
                                 PaddingValues(
                                     bottom = 8.dp + windowInsets.calculateBottomPadding() + keyboardFilterBarPadding,
-                                    top = 64.dp + webSearchPadding + windowInsets.calculateTopPadding()
+                                    top = 0.dp + webSearchPadding + windowInsets.calculateTopPadding()
                                 )
                             }
                             SearchColumn(
