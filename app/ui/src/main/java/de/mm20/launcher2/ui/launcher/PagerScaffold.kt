@@ -12,6 +12,7 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -93,6 +94,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -119,6 +121,7 @@ import de.mm20.launcher2.ui.launcher.gestures.LauncherGestureHandler
 import de.mm20.launcher2.ui.launcher.helper.WallpaperBlur
 import de.mm20.launcher2.ui.launcher.search.SearchColumn
 import de.mm20.launcher2.ui.launcher.search.SearchVM
+import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.searchbar.LauncherSearchBar
 import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
@@ -554,12 +557,44 @@ fun PagerScaffold(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ){
-                                        if(searchVM.searchQuery.value.isNotEmpty() && searchVM.appResults.value.isNotEmpty()){
-                                            LazyRow(
-                                                modifier = Modifier.fillMaxWidth()
-                                            ) {
-                                                items(searchVM.appResults.value) { app ->
-                                                    AppItem(app = app)
+                                        if(searchVM.searchQuery.value.isNotEmpty()){
+                                            if (searchVM.appResults.value.isNotEmpty()){
+                                                LazyRow(
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    items(searchVM.appResults.value) { app ->
+                                                        AppItem(app = app)
+                                                    }
+                                                }
+                                            }else{
+                                                LazyRow(
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    items(searchVM.contactResults.value) { contact ->
+                                                        Column(
+                                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                                            modifier = Modifier
+                                                                .clickable { contact.launch(context, null) }
+                                                                .padding(2.dp)
+                                                        ){
+                                                            Box(
+
+                                                            ){
+                                                                ContactItem(
+                                                                    modifier = Modifier
+                                                                        .fillMaxWidth(),
+                                                                    contact = contact,
+                                                                    showDetails = false,
+                                                                    onBack = {},
+                                                                )
+                                                            }
+                                                            Text(
+                                                                text = contact.displayName,
+                                                                fontSize = 12.sp,
+                                                                textAlign = TextAlign.Center
+                                                            )
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -578,6 +613,9 @@ fun PagerScaffold(
                                                 CoroutineScope(Dispatchers.Default).launch {
                                                     searchVM.searchService.getAllApps().collect { results ->
                                                         searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                    searchVM.searchService.getAllContacts().collect{
+                                                        searchVM.contactResults.value= it.homeContact
                                                     }
                                                 }
                                             }

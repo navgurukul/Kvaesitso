@@ -11,6 +11,7 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -67,9 +68,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import de.mm20.launcher2.preferences.SearchBarColors
@@ -90,6 +93,7 @@ import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import de.mm20.launcher2.applications.isAppAtFirstPage
 import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
+import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -505,18 +509,50 @@ fun PullUpScaffold(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.BottomCenter)
-                                        .padding(bottom = 40.dp)
+                                        .padding(bottom = 60.dp)
                                 ) {
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ){
-                                        if(searchVM.searchQuery.value.isNotEmpty() && searchVM.appResults.value.isNotEmpty()){
-                                            LazyRow(
-                                                modifier = Modifier.fillMaxWidth()
-                                            ) {
-                                                items(searchVM.appResults.value) { app ->
-                                                    AppItem(app = app)
+                                        if(searchVM.searchQuery.value.isNotEmpty()){
+                                            if (searchVM.appResults.value.isNotEmpty()){
+                                                LazyRow(
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    items(searchVM.appResults.value) { app ->
+                                                        AppItem(app = app)
+                                                    }
+                                                }
+                                            }else{
+                                                LazyRow(
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    items(searchVM.contactResults.value) { contact ->
+                                                        Column(
+                                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                                            modifier = Modifier
+                                                                .clickable { contact.launch(context, null) }
+                                                                .padding(2.dp)
+                                                        ){
+                                                            Box(
+
+                                                            ){
+                                                                ContactItem(
+                                                                    modifier = Modifier
+                                                                        .fillMaxWidth(),
+                                                                    contact = contact,
+                                                                    showDetails = false,
+                                                                    onBack = {},
+                                                                )
+                                                            }
+                                                            Text(
+                                                                text = contact.displayName,
+                                                                fontSize = 12.sp,
+                                                                textAlign = TextAlign.Center
+                                                            )
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -535,6 +571,9 @@ fun PullUpScaffold(
                                                 CoroutineScope(Dispatchers.Default).launch {
                                                     searchVM.searchService.getAllApps().collect { results ->
                                                         searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                    searchVM.searchService.getAllContacts().collect{
+                                                        searchVM.contactResults.value= it.homeContact
                                                     }
                                                 }
                                             }
