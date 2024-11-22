@@ -132,7 +132,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
 
 
     val fillClockHeight = uiSettings.clockFillScreen
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
     val searchBarColor = uiSettings.searchBarColor
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), SearchBarColors.Auto)
     val searchBarStyle = uiSettings.searchBarStyle

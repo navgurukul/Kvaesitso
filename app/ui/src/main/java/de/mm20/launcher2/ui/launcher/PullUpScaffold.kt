@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
@@ -94,6 +97,7 @@ import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import de.mm20.launcher2.applications.isAppAtFirstPage
 import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
+import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -111,6 +115,7 @@ fun PullUpScaffold(
     fixedSearchBar: Boolean = false,
 ) {
     val viewModel: LauncherScaffoldVM = viewModel()
+    val viewModelC: ClockWidgetVM = viewModel()
     val searchVM: SearchVM = viewModel()
 
     val density = LocalDensity.current
@@ -511,51 +516,107 @@ fun PullUpScaffold(
                                         .align(Alignment.BottomCenter)
                                         .padding(bottom = 60.dp)
                                 ) {
+
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ){
-                                        if(searchVM.searchQuery.value.isNotEmpty()){
-                                            if (searchVM.appResults.value.isNotEmpty()){
-                                                LazyRow(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    items(searchVM.appResults.value) { app ->
-                                                        AppItem(app = app)
-                                                    }
-                                                }
-                                            }else{
-                                                LazyRow(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    items(searchVM.contactResults.value) { contact ->
-                                                        Column(
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            modifier = Modifier
-                                                                .clickable { contact.launch(context, null) }
-                                                                .padding(2.dp)
-                                                        ){
-                                                            Box(
+                                        val appResults = searchVM.appResults.value ?: emptyList()
+                                        val contactResults = searchVM.contactResults.value ?: emptyList()
 
-                                                            ){
-                                                                ContactItem(
-                                                                    modifier = Modifier
-                                                                        .fillMaxWidth(),
-                                                                    contact = contact,
-                                                                    showDetails = false,
-                                                                    onBack = {},
-                                                                )
+//
+                                        if (searchVM.searchQuery.value.isNotEmpty()) {
+                                            when {
+                                                // If both appResults and contactResults have results
+                                                appResults.isNotEmpty() && contactResults.isNotEmpty() -> {
+                                                    Column {
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.appResults.value) { app ->
+                                                                AppItem(app = app)
                                                             }
-                                                            Text(
-                                                                text = contact.displayName,
-                                                                fontSize = 12.sp,
-                                                                textAlign = TextAlign.Center
-                                                            )
+                                                        }
+
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.contactResults.value) { contact ->
+                                                                Column(
+                                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                                    modifier = Modifier
+                                                                        .clickable { contact.launch(context, null) }
+                                                                        .padding(2.dp)
+                                                                ) {
+                                                                    Box {
+                                                                        ContactItem(
+                                                                            modifier = Modifier.fillMaxWidth(),
+                                                                            contact = contact,
+                                                                            showDetails = false,
+                                                                            onBack = {}
+                                                                        )
+                                                                    }
+                                                                    Text(
+                                                                        text = contact.displayName,
+                                                                        fontSize = 14.sp,
+                                                                        textAlign = TextAlign.Center,
+                                                                    )
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
+
+                                                appResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.appResults.value) { app ->
+                                                            AppItem(app = app)
+                                                        }
+                                                    }
+                                                }
+                                                contactResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.contactResults.value) { contact ->
+                                                            Column(
+                                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                                modifier = Modifier
+                                                                    .clickable { contact.launch(context, null) }
+                                                                    .padding(2.dp)
+                                                            ) {
+                                                                Box {
+                                                                    ContactItem(
+                                                                        modifier = Modifier.fillMaxWidth(),
+                                                                        contact = contact,
+                                                                        showDetails = false,
+                                                                        onBack = {}
+                                                                    )
+                                                                }
+                                                                Text(
+                                                                    text = contact.displayName,
+                                                                    fontSize = 14.sp,
+                                                                    textAlign = TextAlign.Center,
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                else -> {
+                                                    Text(
+                                                        text = "No results found",
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 16.sp
+                                                    )
+                                                }
                                             }
                                         }
+
+//
                                         QwertyKeyboard(
                                             searchVM = searchVM,
                                             onKeyPress = { key ->
@@ -578,8 +639,18 @@ fun PullUpScaffold(
                                                 }
                                             }
                                         )
+                                        val dockProvider by viewModelC.dockProvider.collectAsState()
+                                        if (dockProvider != null) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ){
+                                                dockProvider?.Component(false)
+                                            }
+                                        }
+
                                     }
                                 }
+
 
 //                                WidgetColumn(
 //                                    modifier = Modifier.fillMaxWidth(),

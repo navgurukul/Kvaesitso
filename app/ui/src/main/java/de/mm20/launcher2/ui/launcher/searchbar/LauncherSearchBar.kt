@@ -140,13 +140,13 @@ fun LauncherSearchBar(
                     searchVM.showFilters.value = false
                 })
             },
-            actions = {
-                SearchBarActions(
-                    actions = actions,
-                    reverse = bottomSearchBar,
-                    highlightedAction = highlightedAction
-                )
-            },
+//            actions = {
+//                SearchBarActions(
+//                    actions = actions,
+//                    reverse = bottomSearchBar,
+//                    highlightedAction = highlightedAction
+//                )
+//            },
             focusRequester = focusRequester,
             onFocus = {  }, //onFocus = { onFocusChange(true) },
             onUnfocus = { },  //onUnfocus = { onFocusChange(false) },
