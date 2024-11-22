@@ -5,7 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,30 +68,28 @@ fun QwertyKeyboard(
     ) {
         KeyboardRow(
             letters = listOf('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'),
-            onKeyPress = onKeyPress,
-            modifier = Modifier.fillMaxWidth()
+            onKeyPress = onKeyPress
         )
 
         KeyboardRow(
             letters = listOf('a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'),
-            onKeyPress = onKeyPress,
-            modifier = Modifier.fillMaxWidth(0.9f)
+            onKeyPress = onKeyPress
         )
 
         KeyboardRowWithBackspace(
             letters = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm'),
-            onKeyPress = onKeyPress,
-            modifier = Modifier.fillMaxWidth(0.8f)
+            onKeyPress = onKeyPress
         )
     }
 }
 
 @Composable
-fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Modifier) {
+fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit) {
     Row(
-        modifier = modifier
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress)
@@ -100,11 +98,12 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
 }
 
 @Composable
-fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
+fun KeyboardRowWithBackspace(letters: List<Char>, onKeyPress: (String) -> Unit) {
     Row(
-        modifier = modifier
-            .padding( vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress)
