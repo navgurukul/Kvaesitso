@@ -140,6 +140,8 @@ fun LauncherSearchBar(
                     searchVM.showFilters.value = false
                 })
             },
+
+            // Removing the quick action from search bar
 //            actions = {
 //                SearchBarActions(
 //                    actions = actions,

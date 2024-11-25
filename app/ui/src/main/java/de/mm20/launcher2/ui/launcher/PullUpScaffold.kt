@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -663,11 +664,18 @@ fun PullUpScaffold(
                         }
 
                         1 -> {
+                            val statusBarPadding = WindowInsets.statusBars.asPaddingValues()
                             isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
+                            val paddingValues = PaddingValues(
+                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 12.dp else 2.dp,
+//                                bottom = windowInsets.calculateBottomPadding() + keyboardFilterBarPadding +
+                                bottom = windowInsets.calculateBottomPadding() +
+                                        if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
+                            )
                             SearchColumn(
                                 modifier = Modifier
                                     .graphicsLayer {
@@ -692,13 +700,10 @@ fun PullUpScaffold(
                                         end = windowInsets.calculateStartPadding(
                                             LocalLayoutDirection.current
                                         ),
+                                        top = paddingValues.calculateTopPadding(),
+                                        bottom = paddingValues.calculateBottomPadding()
                                     ),
-                                paddingValues = PaddingValues(
-                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 0.dp + webSearchPadding else 8.dp,
-                                    bottom = windowInsets.calculateBottomPadding() +
-                                            keyboardFilterBarPadding +
-                                            if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
-                                ),
+                                paddingValues = paddingValues,
                                 state = searchState,
                                 reverse = reverseSearchResults,
                             )

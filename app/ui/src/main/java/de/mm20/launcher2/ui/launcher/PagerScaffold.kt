@@ -108,6 +108,7 @@ import de.mm20.launcher2.badges.BadgeIcon
 import de.mm20.launcher2.icons.LauncherIcon
 import de.mm20.launcher2.icons.LauncherIconRenderSettings
 import de.mm20.launcher2.icons.StaticLauncherIcon
+import de.mm20.launcher2.applications.isAppAtFirstPage
 import de.mm20.launcher2.preferences.SearchBarColors
 import de.mm20.launcher2.search.SavableSearchable
 import de.mm20.launcher2.searchactions.actions.SearchAction
@@ -483,6 +484,7 @@ fun PagerScaffold(
                 ) {
                     when (it) {
                         0 -> {
+                            isAppAtFirstPage = true
                             val editModePadding by animateDpAsState(if (isWidgetEditMode && bottomSearchBar) 56.dp else 0.dp)
 
                             val clockPadding by animateDpAsState(
@@ -626,6 +628,7 @@ fun PagerScaffold(
                         }
 
                         1 -> {
+                            isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )

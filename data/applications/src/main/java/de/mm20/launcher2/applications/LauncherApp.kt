@@ -187,25 +187,6 @@ internal data class LauncherApp(
         )
     }
 
-    override fun remove(context: Context) {
-        try {
-            val packageManager = context.packageManager
-            packageManager.setComponentEnabledSetting(
-                componentName,
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-            )
-        } catch (e: SecurityException) {
-            Log.e("LauncherApp", "Failed to remove app due to security restrictions", e)
-        } catch (e: InflateException) {
-            Log.e("LauncherApp", "Failed to inflate component", e)
-        } catch (e: Exception) {
-            Log.e("LauncherApp", "An unexpected error occurred while attempting to remove app", e)
-        }
-    }
-
-
-
     override val canShareApk: Boolean = true
     override suspend fun shareApkFile(context: Context) {
         val launcherApps = context.getSystemService<LauncherApps>()!!
