@@ -32,6 +32,7 @@ interface SearchService {
     ): Flow<SearchResults>
 
     fun getAllApps(): Flow<AllAppsResults>
+    fun getAllContacts(): Flow<AllContactsResults>
 }
 
 internal class SearchServiceImpl(
@@ -280,6 +281,41 @@ internal class SearchServiceImpl(
                 }
         }
     }
+
+    override fun getAllContacts(): Flow<AllContactsResults> {
+        return contactRepository.search("", false)
+            .withCustomLabels(customAttributesRepository)
+            .map { contacts ->
+                contactResults(contacts)
+            }
+    }
+
+    private fun contactResults(contacts: List<Contact>): AllContactsResults {
+        val homeContacts = mutableListOf<Contact>()
+        val mobileContacts = mutableListOf<Contact>()
+        val workContacts = mutableListOf<Contact>()
+        val otherContacts = mutableListOf<Contact>()
+
+
+        for (contact in contacts) {
+            when (contact.phoneNumbers.firstOrNull()?.type) {
+                ContactInfoType.Home -> homeContacts.add(contact)
+                ContactInfoType.Mobile -> mobileContacts.add(contact)
+                ContactInfoType.Work -> workContacts.add(contact)
+                ContactInfoType.Other -> otherContacts.add(contact)
+                null -> TODO()
+            }
+        }
+
+
+        return AllContactsResults(
+            homeContact = homeContacts.sortedBy { it.displayName },
+            mobileContact = mobileContacts.sortedBy { it.displayName },
+            workContact = workContacts.sortedBy { it.displayName },
+            otherContacts = otherContacts.sortedBy { it.displayName }
+        )
+    }
+
 }
 
 data class SearchResults(
@@ -300,6 +336,14 @@ data class AllAppsResults(
     val standardProfileApps: List<Application>,
     val workProfileApps: List<Application>,
     val privateSpaceApps: List<Application>,
+)
+
+data class AllContactsResults(
+    val homeContact: List<Contact>,
+    val mobileContact: List<Contact>,
+    val workContact: List<Contact>,
+    val otherContacts: List<Contact>
+
 )
 
 fun SearchResults.toList(): List<Searchable> {

@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -82,10 +83,6 @@ fun IconsSettingsScreen() {
     )
 
     val notificationBadges by viewModel.notificationBadges.collectAsStateWithLifecycle(null)
-    val cloudFileBadges by viewModel.cloudFileBadges.collectAsStateWithLifecycle(null)
-    val suspendedAppBadges by viewModel.suspendedAppBadges.collectAsStateWithLifecycle(null)
-    val shortcutBadges by viewModel.shortcutBadges.collectAsStateWithLifecycle(null)
-    val pluginBadges by viewModel.pluginBadges.collectAsStateWithLifecycle(null)
 
     val iconSize = with(density) { grid.iconSize.dp.toPx() }.toInt()
 
@@ -98,24 +95,6 @@ fun IconsSettingsScreen() {
     PreferenceScreen(title = stringResource(id = R.string.preference_screen_icons)) {
         item {
             PreferenceCategory(title = stringResource(R.string.preference_category_grid)) {
-                SliderPreference(
-                    title = stringResource(R.string.preference_grid_icon_size),
-                    value = grid.iconSize,
-                    step = 8,
-                    min = 32,
-                    max = 64,
-                    onValueChanged = {
-                        viewModel.setIconSize(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_grid_labels),
-                    summary = stringResource(R.string.preference_grid_labels_summary),
-                    value = grid.showLabels,
-                    onValueChanged = {
-                        viewModel.setShowLabels(it)
-                    }
-                )
                 SliderPreference(
                     title = stringResource(R.string.preference_grid_column_count),
                     value = grid.columnCount,
@@ -185,24 +164,6 @@ fun IconsSettingsScreen() {
                         viewModel.setForceThemedIcons(it)
                     }
                 )
-                val iconPack by remember {
-                    derivedStateOf { installedIconPacks.firstOrNull { it.packageName == icons?.iconPack } }
-                }
-                val items = installedIconPacks.map {
-                    it.name to it
-                }
-                Preference(
-                    title = stringResource(R.string.preference_icon_pack),
-                    summary = if (items.size <= 1) {
-                        stringResource(R.string.preference_icon_pack_summary_empty)
-                    } else {
-                        iconPack?.name ?: "System"
-                    },
-                    enabled = installedIconPacks.size > 1,
-                    onClick = {
-                        showIconPackSheet = true
-                    },
-                )
             }
         }
         item {
@@ -225,38 +186,6 @@ fun IconsSettingsScreen() {
                     value = notificationBadges == true && hasNotificationsPermission == true,
                     onValueChanged = {
                         viewModel.setNotifications(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_cloud_badges),
-                    summary = stringResource(R.string.preference_cloud_badges_summary),
-                    value = cloudFileBadges == true,
-                    onValueChanged = {
-                        viewModel.setCloudFiles(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_suspended_badges),
-                    summary = stringResource(R.string.preference_suspended_badges_summary),
-                    value = suspendedAppBadges == true,
-                    onValueChanged = {
-                        viewModel.setSuspendedApps(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_shortcut_badges),
-                    summary = stringResource(R.string.preference_shortcut_badges_summary),
-                    value = shortcutBadges == true,
-                    onValueChanged = {
-                        viewModel.setShortcuts(it)
-                    }
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.preference_plugin_badges),
-                    summary = stringResource(R.string.preference_plugin_badges_summary),
-                    value = pluginBadges == true,
-                    onValueChanged = {
-                        viewModel.setPluginBadges(it)
                     }
                 )
             }
@@ -475,16 +404,10 @@ fun IconShapePreference(
 private fun getShapeName(shape: IconShape?): String? {
     return stringResource(
         when (shape) {
-            IconShape.Triangle -> R.string.preference_icon_shape_triangle
-            IconShape.Hexagon -> R.string.preference_icon_shape_hexagon
             IconShape.RoundedSquare -> R.string.preference_icon_shape_rounded_square
-            IconShape.Squircle -> R.string.preference_icon_shape_squircle
             IconShape.Square -> R.string.preference_icon_shape_square
-            IconShape.Pentagon -> R.string.preference_icon_shape_pentagon
             IconShape.PlatformDefault -> R.string.preference_icon_shape_platform
             IconShape.Circle -> R.string.preference_icon_shape_circle
-            IconShape.Teardrop -> R.string.preference_icon_shape_teardrop
-            IconShape.Pebble -> R.string.preference_icon_shape_pebble
             else -> return null
         }
     )

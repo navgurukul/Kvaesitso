@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.firebase) apply false
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -27,12 +29,12 @@ android {
 
     compileSdk = libs.versions.compileSdk.get().toInt()
     defaultConfig {
-        applicationId = "de.mm20.launcher2"
+        applicationId = "org.samyarth.tez_launcher"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         @SuppressLint("HighAppVersionCode")
         versionCode = System.getenv("VERSION_CODE_OVERRIDE")?.toIntOrNull() ?: 2024081700
-        versionName = "1.33.0"
+        versionName = "1.0"
         signingConfig = signingConfigs.getByName("debug")
     }
 
@@ -126,6 +128,11 @@ dependencies {
 
 
     implementation(libs.koin.android)
+
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
+
 
     implementation(project(":services:accounts"))
     implementation(project(":data:applications"))

@@ -1,13 +1,18 @@
 package de.mm20.launcher2.ui.launcher.searchbar
 
 import android.content.Intent
+import android.content.pm.LauncherApps
 import android.net.Uri
+import android.provider.Settings
+import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.HelpOutline
@@ -26,25 +31,38 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.mm20.launcher2.ktx.tryStartActivity
+import de.mm20.launcher2.permissions.PermissionGroup
+import de.mm20.launcher2.permissions.PermissionsManager
 import de.mm20.launcher2.ui.R
+import de.mm20.launcher2.ui.component.MissingPermissionBanner
 import de.mm20.launcher2.ui.launcher.LauncherScaffoldVM
 import de.mm20.launcher2.ui.launcher.widgets.WidgetsVM
 import de.mm20.launcher2.ui.settings.SettingsActivity
+import de.mm20.launcher2.ui.settings.search.SearchSettingsScreenVM
+import org.koin.androidx.compose.inject
+import org.koin.core.component.inject
 
 @Composable
 fun RowScope.SearchBarMenu(
     searchBarValue: String,
     onInputClear: () -> Unit,
 ) {
+    val viewModel: SearchSettingsScreenVM = viewModel()
     val context = LocalContext.current
     var showOverflowMenu by remember { mutableStateOf(false) }
     val rightIcon = AnimatedImageVector.animatedVectorResource(R.drawable.anim_ic_menu_clear)
     val launcherVM: LauncherScaffoldVM = viewModel()
     val widgetsVM: WidgetsVM = viewModel()
+    val permissionsManager: PermissionsManager by inject()
 
     IconButton(onClick = {
         if (searchBarValue.isNotBlank()) onInputClear()
@@ -77,9 +95,11 @@ fun RowScope.SearchBarMenu(
                 Icon(imageVector = Icons.Rounded.Wallpaper, contentDescription = null)
             }
         )
+
+        //  *** REMOVED EDIT WIDGET FROM SEARCH BAR MENU ***
         val editButton by widgetsVM.editButton.collectAsState()
         val searchOpen by launcherVM.isSearchOpen
-        if (!searchOpen && editButton == false) {
+        if (!searchOpen && editButton == true) {
             DropdownMenuItem(
                 onClick = {
                     launcherVM.setWidgetEditMode(editMode = true)
@@ -107,24 +127,18 @@ fun RowScope.SearchBarMenu(
         )
         val colorScheme = MaterialTheme.colorScheme
         DropdownMenuItem(
-            onClick = {
-                CustomTabsIntent.Builder()
-                    .setDefaultColorSchemeParams(
-                        CustomTabColorSchemeParams.Builder()
-                            .setToolbarColor(colorScheme.primaryContainer.toArgb())
-                            .setSecondaryToolbarColor(colorScheme.secondaryContainer.toArgb())
-                            .build()
-                    )
-                    .build()
-                    .launchUrl(context, Uri.parse("https://kvaesitso.mm20.de/docs/user-guide"))
-                showOverflowMenu = false
-            },
             text = {
-                Text(stringResource(R.string.help))
+                Text(stringResource(R.string.set_as_default_laucher))
+                   },
+            onClick = {
+                context.tryStartActivity(Intent(Settings.ACTION_HOME_SETTINGS))
+//                viewModel.requestAppShortcutsPermission(context as AppCompatActivity)
+
             },
             leadingIcon = {
                 Icon(imageVector = Icons.Rounded.HelpOutline, contentDescription = null)
             }
+
         )
     }
 }

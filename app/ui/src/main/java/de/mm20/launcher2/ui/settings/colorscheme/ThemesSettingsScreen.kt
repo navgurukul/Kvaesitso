@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -75,16 +76,9 @@ fun ThemesSettingsScreen() {
 
     PreferenceScreen(
         title = stringResource(R.string.preference_screen_colors),
-        topBarActions = {
-            IconButton(onClick = { importIntentLauncher.launch(arrayOf("*/*")) }) {
-                Icon(Icons.Rounded.Download, null)
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.createNew(context) }) {
-                Icon(Icons.Rounded.Add, null)
-            }
-        }
+
+        // *** REMOVED floatingActionButton ***
+
     ) {
         item {
             PreferenceCategory {
@@ -119,16 +113,18 @@ fun ThemesSettingsScreen() {
                                             }
                                         )
                                     }
-                                    DropdownMenuItem(
-                                        leadingIcon = {
-                                            Icon(Icons.Rounded.ContentCopy, null)
-                                        },
-                                        text = { Text(stringResource(R.string.duplicate)) },
-                                        onClick = {
-                                            viewModel.duplicate(theme)
-                                            showMenu = false
-                                        }
-                                    )
+
+                                    // *** REMOVED duplicate theme ***
+//                                    DropdownMenuItem(
+//                                        leadingIcon = {
+//                                            Icon(Icons.Rounded.ContentCopy, null)
+//                                        },
+//                                        text = { Text(stringResource(R.string.duplicate)) },
+//                                        onClick = {
+//                                            viewModel.duplicate(theme)
+//                                            showMenu = false
+//                                        }
+//                                    )
                                     if (!theme.builtIn) {
                                         DropdownMenuItem(
                                             leadingIcon = {

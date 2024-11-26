@@ -52,13 +52,13 @@ fun AssistantScaffold(
     val lifecycleOwner = LocalLifecycleOwner.current
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(null) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            searchBarFocused = false
-            if (!viewModel.autoFocusSearch.first()) return@repeatOnLifecycle
-            delay(100)
-            searchBarFocused = true
-            keyboardController?.show()
-        }
+//        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+//            searchBarFocused = false
+//            if (!viewModel.autoFocusSearch.first()) return@repeatOnLifecycle
+//            delay(100)
+//            searchBarFocused = true
+//            keyboardController?.show()
+//        }
     }
 
     val searchState = rememberLazyListState()

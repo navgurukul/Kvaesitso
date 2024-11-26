@@ -1,11 +1,18 @@
 package de.mm20.launcher2.ui.launcher
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -13,10 +20,12 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -28,8 +37,13 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -37,6 +51,7 @@ import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
@@ -54,12 +69,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
@@ -76,29 +95,46 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import de.mm20.launcher2.badges.BadgeIcon
+import de.mm20.launcher2.icons.LauncherIcon
+import de.mm20.launcher2.icons.LauncherIconRenderSettings
+import de.mm20.launcher2.icons.StaticLauncherIcon
+import de.mm20.launcher2.applications.isAppAtFirstPage
 import de.mm20.launcher2.preferences.SearchBarColors
+import de.mm20.launcher2.search.SavableSearchable
 import de.mm20.launcher2.searchactions.actions.SearchAction
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.component.SearchBarLevel
 import de.mm20.launcher2.ui.gestures.LocalGestureDetector
+import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.ktx.animateTo
 import de.mm20.launcher2.ui.ktx.toPixels
 import de.mm20.launcher2.ui.launcher.gestures.LauncherGestureHandler
 import de.mm20.launcher2.ui.launcher.helper.WallpaperBlur
 import de.mm20.launcher2.ui.launcher.search.SearchColumn
 import de.mm20.launcher2.ui.launcher.search.SearchVM
+import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.searchbar.LauncherSearchBar
 import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
+import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
+import de.mm20.launcher2.ui.locals.LocalGridSettings
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -116,6 +152,8 @@ fun PagerScaffold(
 ) {
     val viewModel: LauncherScaffoldVM = viewModel()
     val searchVM: SearchVM = viewModel()
+
+    val viewModelC: ClockWidgetVM = viewModel()
 
     val context = LocalContext.current
 
@@ -450,6 +488,7 @@ fun PagerScaffold(
                 ) {
                     when (it) {
                         0 -> {
+                            isAppAtFirstPage = true
                             val editModePadding by animateDpAsState(if (isWidgetEditMode && bottomSearchBar) 56.dp else 0.dp)
 
                             val clockPadding by animateDpAsState(
@@ -468,7 +507,7 @@ fun PagerScaffold(
                                 }
                             }
 
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .requiredWidth(width)
                                     .fillMaxHeight()
@@ -476,15 +515,11 @@ fun PagerScaffold(
                                         detectTapGestures(
                                             onDoubleTap = if (gestureManager.shouldDetectDoubleTaps) {
                                                 {
-                                                    if (!isWidgetEditMode) gestureManager.dispatchDoubleTap(
-                                                        it
-                                                    )
+                                                    if (!isWidgetEditMode) gestureManager.dispatchDoubleTap(it)
                                                 }
                                             } else null,
                                             onLongPress = {
-                                                if (!isWidgetEditMode) gestureManager.dispatchLongPress(
-                                                    it
-                                                )
+                                                if (!isWidgetEditMode) gestureManager.dispatchLongPress(it)
                                             },
                                             onTap = {
                                                 if (!isWidgetEditMode) gestureManager.dispatchTap(it)
@@ -497,7 +532,6 @@ fun PagerScaffold(
                                         reversePager = reverse,
                                         disablePager = isWidgetEditMode,
                                     )
-                                    .verticalScroll(widgetsScrollState, enabled = false)
                                     .windowInsetsPadding(WindowInsets.safeDrawing)
                                     .graphicsLayer {
                                         val pagerProgress =
@@ -519,33 +553,164 @@ fun PagerScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 60.dp)
+                                ) {
 
-                                WidgetColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    editMode = isWidgetEditMode,
-                                    onEditModeChange = {
-                                        viewModel.setWidgetEditMode(it)
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        val appResults = searchVM.appResults.value ?: emptyList()
+                                        val contactResults = searchVM.contactResults.value ?: emptyList()
+
+//
+                                        if (searchVM.searchQuery.value.isNotEmpty()) {
+                                            when {
+                                                // If both appResults and contactResults have results
+                                                appResults.isNotEmpty() && contactResults.isNotEmpty() -> {
+                                                    Column {
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.appResults.value) { app ->
+                                                                AppItem(app = app)
+                                                            }
+                                                        }
+
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.contactResults.value) { contact ->
+                                                                Column(
+                                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                                    modifier = Modifier
+                                                                        .clickable { contact.launch(context, null) }
+                                                                        .padding(2.dp)
+                                                                ) {
+                                                                    Box {
+                                                                        ContactItem(
+                                                                            modifier = Modifier.fillMaxWidth(),
+                                                                            contact = contact,
+                                                                            showDetails = false,
+                                                                            onBack = {}
+                                                                        )
+                                                                    }
+                                                                    Text(
+                                                                        text = contact.displayName,
+                                                                        fontSize = 14.sp,
+                                                                        textAlign = TextAlign.Center,
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                appResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.appResults.value) { app ->
+                                                            AppItem(app = app)
+                                                        }
+                                                    }
+                                                }
+                                                contactResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.contactResults.value) { contact ->
+                                                            Column(
+                                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                                modifier = Modifier
+                                                                    .clickable { contact.launch(context, null) }
+                                                                    .padding(2.dp)
+                                                            ) {
+                                                                Box {
+                                                                    ContactItem(
+                                                                        modifier = Modifier.fillMaxWidth(),
+                                                                        contact = contact,
+                                                                        showDetails = false,
+                                                                        onBack = {}
+                                                                    )
+                                                                }
+                                                                Text(
+                                                                    text = contact.displayName,
+                                                                    fontSize = 14.sp,
+                                                                    textAlign = TextAlign.Center,
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                else -> {
+                                                    Text(
+                                                        text = "No results found",
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 16.sp
+                                                    )
+                                                }
+                                            }
+                                        }
+
+//
+                                        QwertyKeyboard(
+                                            searchVM = searchVM,
+                                            scope = scope,
+                                            onKeyPress = { key ->
+                                                val currentQuery = searchVM.searchQuery.value
+                                                if (key == "") { // Backspace key
+                                                    searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                                } else {
+                                                    searchVM.searchQuery.value = currentQuery + key
+                                                }
+
+                                                searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                                searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+
+                                                scope.launch {
+                                                    searchVM.searchService.getAllApps().collect { results ->
+                                                        searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                    searchVM.searchService.getAllContacts().collect{
+                                                        searchVM.contactResults.value= it.homeContact
+                                                    }
+                                                }
+                                            }
+                                        )
+                                        val dockProvider by viewModelC.dockProvider.collectAsState()
+                                        if (dockProvider != null) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ){
+                                                dockProvider?.Component(false)
+                                            }
+                                        }
+
                                     }
-                                )
+                                }
                             }
                         }
 
                         1 -> {
+                            val statusBarPadding = WindowInsets.statusBars.asPaddingValues()
+                            isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
-                            val paddingValues = if (bottomSearchBar) {
-                                PaddingValues(
-                                    top = 8.dp + windowInsets.calculateTopPadding(),
-                                    bottom = 64.dp + webSearchPadding + windowInsets.calculateBottomPadding() + keyboardFilterBarPadding
-                                )
-                            } else {
-                                PaddingValues(
-                                    bottom = 8.dp + windowInsets.calculateBottomPadding() + keyboardFilterBarPadding,
-                                    top = 64.dp + webSearchPadding + windowInsets.calculateTopPadding()
-                                )
-                            }
+                            val paddingValues = PaddingValues(
+                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 0.dp else 2.dp,
+//                                bottom = windowInsets.calculateBottomPadding() + keyboardFilterBarPadding +
+                                bottom = windowInsets.calculateBottomPadding() +
+                                        if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
+                            )
                             SearchColumn(
                                 modifier = Modifier
                                     .requiredWidth(width)
@@ -569,6 +734,9 @@ fun PagerScaffold(
                                         end = windowInsets.calculateStartPadding(
                                             LocalLayoutDirection.current
                                         ),
+                                        top = paddingValues.calculateTopPadding(),
+                                        bottom = paddingValues.calculateBottomPadding()
+
                                     ),
                                 reverse = reverseSearchResults,
                                 state = searchState,
@@ -621,7 +789,7 @@ fun PagerScaffold(
         val searchBarStyle by viewModel.searchBarStyle.collectAsState()
 
         val launchOnEnter by searchVM.launchOnEnter.collectAsState(false)
-
+    if (pagerState.currentPage == 0) {
         LauncherSearchBar(
             modifier = Modifier
                 .fillMaxSize(),
@@ -650,6 +818,7 @@ fun PagerScaffold(
                 { searchVM.launchBestMatchOrAction(context) }
             } else null
         )
+    }
     }
     LauncherGestureHandler(
         onHomeButtonPress = handleBackOrHomeEvent,
@@ -783,3 +952,50 @@ fun Modifier.pagerScaffoldScrollHandler(
 }
 
 internal object DefaultNestedScrollConnection : NestedScrollConnection {}
+
+@Composable
+fun AppItem(app: SavableSearchable) {
+    val context = LocalContext.current
+    val defaultIconSize = LocalGridSettings.current.iconSize.dp
+    val iconBitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+    val settings = LauncherIconRenderSettings(
+        size = defaultIconSize.toPixels().toInt(),
+        fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
+        bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+        fgTone = 1,
+        bgTone = 1
+    )
+
+    LaunchedEffect(app) {
+        val icon = app.loadIcon(context, 48, false) as? StaticLauncherIcon
+        iconBitmap.value = icon?.render(settings)
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .clickable { app.launch(context, null) }
+            .padding(12.dp)
+    ) {
+        iconBitmap.value?.let { bitmap ->
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = app.label,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+        }
+        Text(
+            text = app.label,
+            modifier = Modifier.padding(top = 8.dp),
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+
+

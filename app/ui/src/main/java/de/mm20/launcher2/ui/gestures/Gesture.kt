@@ -7,4 +7,5 @@ enum class Gesture {
     SwipeLeft,
     SwipeRight,
     HomeButton,
+    SwipeUp
 }

@@ -14,10 +14,10 @@ data class LauncherSettingsData internal constructor(
     val uiTheme: ThemeDescriptor = ThemeDescriptor.Default,
     val uiCompatModeColors: Boolean = false,
     val uiFont: Font = Font.Outfit,
-    val uiBaseLayout: BaseLayout = BaseLayout.PullDown,
+    val uiBaseLayout: BaseLayout = BaseLayout.PullUp,
     val uiOrientation: ScreenOrientation = ScreenOrientation.Auto,
 
-    val wallpaperDim: Boolean = false,
+    val wallpaperDim: Boolean = true,
     val wallpaperBlur: Boolean = true,
     val wallpaperBlurRadius: Int = 32,
 
@@ -39,10 +39,10 @@ data class LauncherSettingsData internal constructor(
     val clockWidgetBatteryPart: Boolean = true,
     val clockWidgetMusicPart: Boolean = true,
     val clockWidgetDatePart: Boolean = true,
-    val clockWidgetFillHeight: Boolean = true,
-    val clockWidgetAlignment: ClockWidgetAlignment = ClockWidgetAlignment.Bottom,
+    val clockWidgetFillHeight: Boolean = false,
+    val clockWidgetAlignment: ClockWidgetAlignment = ClockWidgetAlignment.Center,
 
-    val homeScreenDock: Boolean = false,
+    val homeScreenDock: Boolean = true,
 
     val favoritesEnabled: Boolean = true,
     val favoritesFrequentlyUsed: Boolean = true,
@@ -83,10 +83,10 @@ data class LauncherSettingsData internal constructor(
 
     val searchBarStyle: SearchBarStyle = SearchBarStyle.Transparent,
     val searchBarColors: SearchBarColors = SearchBarColors.Auto,
-    val searchBarKeyboard: Boolean = true,
-    val searchLaunchOnEnter: Boolean = true,
+    val searchBarKeyboard: Boolean = false,
+    val searchLaunchOnEnter: Boolean = false,
     val searchBarBottom: Boolean = false,
-    val searchBarFixed: Boolean = false,
+    val searchBarFixed: Boolean = true,
 
     val searchResultsReversed: Boolean = false,
     val searchResultOrder: SearchResultOrder = SearchResultOrder.Weighted,
@@ -124,6 +124,7 @@ data class LauncherSettingsData internal constructor(
     val gesturesDoubleTap: GestureAction = GestureAction.ScreenLock,
     val gesturesLongPress: GestureAction = GestureAction.NoAction,
     val gesturesHomeButton: GestureAction = GestureAction.NoAction,
+    val gesturesSwipeUp: GestureAction = GestureAction.NoAction,
 
     val animationsCharging: Boolean = true,
 
@@ -303,12 +304,6 @@ enum class IconShape {
     Circle,
     Square,
     RoundedSquare,
-    Triangle,
-    Squircle,
-    Hexagon,
-    Pentagon,
-    Teardrop,
-    Pebble,
     EasterEgg,
 }
 
@@ -330,6 +325,7 @@ enum class BaseLayout {
     PullDown,
     Pager,
     PagerReversed,
+    PullUp,
 }
 
 @Serializable

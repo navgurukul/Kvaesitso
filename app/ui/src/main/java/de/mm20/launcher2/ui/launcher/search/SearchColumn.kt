@@ -123,7 +123,7 @@ fun SearchColumn(
 
     AnimatedContent(
         showFilters,
-        modifier = modifier.padding(horizontal = 8.dp),
+        modifier = modifier.padding(horizontal = 8.dp), label = "",
     ) {
         if (it) {
             BackHandler {

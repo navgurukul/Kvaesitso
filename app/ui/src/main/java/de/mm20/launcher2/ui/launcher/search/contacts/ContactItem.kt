@@ -383,7 +383,7 @@ fun ContactItem(
                         .padding(
                             start = 8.dp,
                             top = 8.dp,
-                            bottom = 8.dp,
+                            bottom = 0.dp,
                             end = 16.dp
                         ),
                     verticalAlignment = Alignment.CenterVertically,
@@ -391,7 +391,7 @@ fun ContactItem(
                     ShapedLauncherIcon(
                         size = 48.dp,
                         modifier = Modifier
-                            .padding(8.dp)
+                            .padding(2.dp)
                             .sharedElement(
                                 rememberSharedContentState("icon"),
                                 this@AnimatedContent,

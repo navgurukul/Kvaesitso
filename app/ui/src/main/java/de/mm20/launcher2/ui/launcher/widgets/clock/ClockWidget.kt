@@ -133,7 +133,7 @@ fun ClockWidget(
                         modifier = Modifier.padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(modifier = Modifier.size(24.dp))
+                        Box(modifier = Modifier.size(4.dp))
                         Text(
                             text = stringResource(id = R.string.preference_screen_clockwidget),
                             style = MaterialTheme.typography.titleMedium,
@@ -237,20 +237,20 @@ fun ClockWidget(
                         }
                     }
                 }
-                val dockProvider by viewModel.dockProvider.collectAsState()
-                if (dockProvider != null) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp)
-                    ) {
-                        dockProvider?.Component(false)
-                    }
+//                val dockProvider by viewModel.dockProvider.collectAsState()
+//                if (dockProvider != null) {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(bottom = 16.dp)
+//                    ) {
+//                        dockProvider?.Component(false)
+//                    }
                 }
             }
         }
     }
-}
+
 
 /**
  * @param darkColors: use dark content color / suited for light backgrounds

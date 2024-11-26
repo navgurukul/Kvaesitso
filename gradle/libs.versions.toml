@@ -129,7 +129,7 @@ google-oauth2 = { group = "com.google.apis", name = "google-api-services-oauth2"
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidxcompose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 
-tinypinyin = { group = "com.github.promeg", name = "tinypinyin", version = "2.0.2" }
+tinypinyin = { group = "com.github.promeg", name = "tinypinyin", version = "2.0.3" }
 emoji4j = { group = "com.sigpwned", name = "emoji4j-core", version = "15.0.1" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -150,3 +150,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version = "1.9.20" }
+firebase = { id = "com.google.gms.google-services", version = "4.4.1" }
