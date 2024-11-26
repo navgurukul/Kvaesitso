@@ -56,7 +56,7 @@ fun SearchBar(
     value: String,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    onFocus: () -> Unit = {},
+    onFocus: () -> Unit = {false},
     onUnfocus: () -> Unit = {},
     reverse: Boolean = false,
     darkColors: Boolean = false,
@@ -171,7 +171,7 @@ fun SearchBar(
                         BasicTextField(
                             modifier = Modifier
                                 .onFocusChanged {
-                                    if (it.hasFocus) onFocus()
+                                    if (it.hasFocus) onUnfocus()
                                 }
                                 .focusRequester(focusRequester)
                                 .fillMaxWidth()
