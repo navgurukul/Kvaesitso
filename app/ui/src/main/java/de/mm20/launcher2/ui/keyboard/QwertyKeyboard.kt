@@ -83,10 +83,10 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
     Row(
         modifier = modifier
             .padding(vertical = 4.dp, horizontal = 4.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress,true)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress,true, modifier = Modifier.weight(1f))
         }
     }
 }
@@ -96,19 +96,19 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
     Row(
         modifier = modifier
             .padding( vertical = 4.dp, horizontal = 4.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
-        BackspaceKey(onKeyPress = onKeyPress)
+        BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
     }
 }
 @Composable
-fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = true) {
+fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = true, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(35.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
@@ -127,10 +127,10 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
 
 
 @Composable
-fun BackspaceKey(onKeyPress: (String) -> Unit) {
+fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(32.dp)
             .clickable { onKeyPress("") }
             .padding(2.dp)
