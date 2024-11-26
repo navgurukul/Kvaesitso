@@ -56,7 +56,7 @@ fun SearchBar(
     value: String,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() },
-    onFocus: () -> Unit = {false},
+    onFocus: () -> Unit = {},
     onUnfocus: () -> Unit = {},
     reverse: Boolean = false,
     darkColors: Boolean = false,
