@@ -671,7 +671,7 @@ fun PullUpScaffold(
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
                             val paddingValues = PaddingValues(
-                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 12.dp else 2.dp,
+                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 0.dp else 2.dp,
 //                                bottom = windowInsets.calculateBottomPadding() + keyboardFilterBarPadding +
                                 bottom = windowInsets.calculateBottomPadding() +
                                         if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp

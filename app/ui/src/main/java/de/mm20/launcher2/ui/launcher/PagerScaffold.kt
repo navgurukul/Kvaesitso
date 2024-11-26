@@ -126,6 +126,7 @@ import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.searchbar.LauncherSearchBar
 import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
+import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalGridSettings
@@ -150,6 +151,8 @@ fun PagerScaffold(
 ) {
     val viewModel: LauncherScaffoldVM = viewModel()
     val searchVM: SearchVM = viewModel()
+
+    val viewModelC: ClockWidgetVM = viewModel()
 
     val context = LocalContext.current
 
@@ -553,53 +556,109 @@ fun PagerScaffold(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.BottomCenter)
-                                        .padding(bottom = 20.dp)
+                                        .padding(bottom = 60.dp)
                                 ) {
+
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ){
-                                        if(searchVM.searchQuery.value.isNotEmpty()){
-                                            if (searchVM.appResults.value.isNotEmpty()){
-                                                LazyRow(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    items(searchVM.appResults.value) { app ->
-                                                        AppItem(app = app)
-                                                    }
-                                                }
-                                            }else{
-                                                LazyRow(
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    items(searchVM.contactResults.value) { contact ->
-                                                        Column(
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            modifier = Modifier
-                                                                .clickable { contact.launch(context, null) }
-                                                                .padding(2.dp)
-                                                        ){
-                                                            Box(
+                                        val appResults = searchVM.appResults.value ?: emptyList()
+                                        val contactResults = searchVM.contactResults.value ?: emptyList()
 
-                                                            ){
-                                                                ContactItem(
-                                                                    modifier = Modifier
-                                                                        .fillMaxWidth(),
-                                                                    contact = contact,
-                                                                    showDetails = false,
-                                                                    onBack = {},
-                                                                )
+//
+                                        if (searchVM.searchQuery.value.isNotEmpty()) {
+                                            when {
+                                                // If both appResults and contactResults have results
+                                                appResults.isNotEmpty() && contactResults.isNotEmpty() -> {
+                                                    Column {
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.appResults.value) { app ->
+                                                                AppItem(app = app)
                                                             }
-                                                            Text(
-                                                                text = contact.displayName,
-                                                                fontSize = 12.sp,
-                                                                textAlign = TextAlign.Center
-                                                            )
+                                                        }
+
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.contactResults.value) { contact ->
+                                                                Column(
+                                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                                    modifier = Modifier
+                                                                        .clickable { contact.launch(context, null) }
+                                                                        .padding(2.dp)
+                                                                ) {
+                                                                    Box {
+                                                                        ContactItem(
+                                                                            modifier = Modifier.fillMaxWidth(),
+                                                                            contact = contact,
+                                                                            showDetails = false,
+                                                                            onBack = {}
+                                                                        )
+                                                                    }
+                                                                    Text(
+                                                                        text = contact.displayName,
+                                                                        fontSize = 14.sp,
+                                                                        textAlign = TextAlign.Center,
+                                                                    )
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
+
+                                                appResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.appResults.value) { app ->
+                                                            AppItem(app = app)
+                                                        }
+                                                    }
+                                                }
+                                                contactResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.contactResults.value) { contact ->
+                                                            Column(
+                                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                                modifier = Modifier
+                                                                    .clickable { contact.launch(context, null) }
+                                                                    .padding(2.dp)
+                                                            ) {
+                                                                Box {
+                                                                    ContactItem(
+                                                                        modifier = Modifier.fillMaxWidth(),
+                                                                        contact = contact,
+                                                                        showDetails = false,
+                                                                        onBack = {}
+                                                                    )
+                                                                }
+                                                                Text(
+                                                                    text = contact.displayName,
+                                                                    fontSize = 14.sp,
+                                                                    textAlign = TextAlign.Center,
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                else -> {
+                                                    Text(
+                                                        text = "No results found",
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 16.sp
+                                                    )
+                                                }
                                             }
                                         }
+
+//
                                         QwertyKeyboard(
                                             searchVM = searchVM,
                                             onKeyPress = { key ->
@@ -622,6 +681,15 @@ fun PagerScaffold(
                                                 }
                                             }
                                         )
+                                        val dockProvider by viewModelC.dockProvider.collectAsState()
+                                        if (dockProvider != null) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ){
+                                                dockProvider?.Component(false)
+                                            }
+                                        }
+
                                     }
                                 }
                             }
