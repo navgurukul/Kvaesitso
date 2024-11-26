@@ -662,6 +662,7 @@ fun PagerScaffold(
 //
                                         QwertyKeyboard(
                                             searchVM = searchVM,
+                                            scope = scope,
                                             onKeyPress = { key ->
                                                 val currentQuery = searchVM.searchQuery.value
                                                 if (key == "") { // Backspace key
@@ -669,10 +670,11 @@ fun PagerScaffold(
                                                 } else {
                                                     searchVM.searchQuery.value = currentQuery + key
                                                 }
-                                                searchVM.search(searchVM.searchQuery.value)
+
                                                 searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
                                                 searchVM.search(searchVM.searchQuery.value, forceRestart = true)
-                                                CoroutineScope(Dispatchers.Default).launch {
+
+                                                scope.launch {
                                                     searchVM.searchService.getAllApps().collect { results ->
                                                         searchVM.appResults.value = results.standardProfileApps
                                                     }

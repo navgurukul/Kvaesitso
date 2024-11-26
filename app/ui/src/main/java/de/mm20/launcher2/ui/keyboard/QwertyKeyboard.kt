@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import de.mm20.launcher2.ui.launcher.search.SearchVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 //@Composable
@@ -44,6 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun QwertyKeyboard(
     searchVM: SearchVM,
+    scope: CoroutineScope = rememberCoroutineScope(),
     onKeyPress : (String) -> Unit = { key ->
         val currentQuery = searchVM.searchQuery.value
         if (key == "") { // Backspace key
@@ -51,10 +55,11 @@ fun QwertyKeyboard(
         } else {
             searchVM.searchQuery.value = currentQuery + key
         }
-        searchVM.search(searchVM.searchQuery.value)
+
         searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
         searchVM.search(searchVM.searchQuery.value, forceRestart = true)
-        CoroutineScope(Dispatchers.Default).launch {
+
+        scope.launch {
             searchVM.searchService.getAllApps().collect { results ->
                 searchVM.appResults.value = results.standardProfileApps
             }
@@ -94,7 +99,7 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress,true)
         }
     }
 }
@@ -107,20 +112,20 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true)
         }
         BackspaceKey(onKeyPress = onKeyPress)
     }
 }
 @Composable
-fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit) {
+fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = true) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(35.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .background(Color(0x80000000), RoundedCornerShape(8.dp))
-            .clickable { onKeyPress(letter.toString()) } // Trigger key press
+            .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
+            .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
 //            .padding(2.dp)
     ) {
         Text(
