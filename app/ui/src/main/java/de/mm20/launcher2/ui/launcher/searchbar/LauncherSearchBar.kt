@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -62,6 +63,7 @@ fun LauncherSearchBar(
     onKeyboardActionGo: (KeyboardActionScope.() -> Unit)? = null
 ) {
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
     val searchVM: SearchVM = viewModel()
@@ -71,8 +73,12 @@ fun LauncherSearchBar(
     val sheetManager = LocalBottomSheetManager.current
 
     LaunchedEffect(focused) {
-        if (focused) focusRequester.requestFocus()
-        else focusManager.clearFocus()
+        if (focused) {
+            focusRequester.requestFocus()
+            keyboardController?.hide()
+        } else {
+            focusManager.clearFocus()
+        }
     }
 
     val filterBar by searchVM.filterBar.collectAsState(false)
@@ -141,7 +147,7 @@ fun LauncherSearchBar(
                 })
             },
 
-            // Removing the quick action from search bar
+            //***// Removing the quick action from search bar
 //            actions = {
 //                SearchBarActions(
 //                    actions = actions,
@@ -150,9 +156,15 @@ fun LauncherSearchBar(
 //                )
 //            },
             focusRequester = focusRequester,
-            onFocus = {  }, //onFocus = { onFocusChange(true) },
-            onUnfocus = { },  //onUnfocus = { onFocusChange(false) },
-            onKeyboardActionGo = onKeyboardActionGo
+            onFocus = {
+                onFocusChange(true)
+                keyboardController?.hide()
+            }, //onFocus = { onFocusChange(true) },
+            onUnfocus = {
+                onFocusChange(false)
+                focusManager.clearFocus()
+            },  //onUnfocus = { onFocusChange(false) },
+            onKeyboardActionGo = null
         )
 
         AnimatedVisibility (filterBar && isSearchOpen && !searchVM.showFilters.value

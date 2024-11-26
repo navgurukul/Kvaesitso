@@ -171,7 +171,7 @@ fun SearchBar(
                         BasicTextField(
                             modifier = Modifier
                                 .onFocusChanged {
-                                    if (it.hasFocus) onFocus()
+                                    if (it.hasFocus) onUnfocus()
                                 }
                                 .focusRequester(focusRequester)
                                 .fillMaxWidth()
