@@ -5,13 +5,16 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
@@ -29,6 +32,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
@@ -42,6 +46,7 @@ import de.mm20.launcher2.ui.base.ProvideCompositionLocals
 import de.mm20.launcher2.ui.component.NavBarEffects
 import de.mm20.launcher2.ui.gestures.GestureDetector
 import de.mm20.launcher2.ui.gestures.LocalGestureDetector
+import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.ktx.animateTo
 import de.mm20.launcher2.ui.launcher.search.SearchVM
 import de.mm20.launcher2.ui.launcher.sheets.LauncherBottomSheetManager
@@ -57,6 +62,9 @@ import de.mm20.launcher2.ui.locals.LocalWindowSize
 import de.mm20.launcher2.ui.overlays.OverlayHost
 import de.mm20.launcher2.ui.theme.LauncherTheme
 import de.mm20.launcher2.ui.theme.wallpaperColorsAsState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 
 
@@ -127,7 +135,6 @@ abstract class SharedLauncherActivity(
                                 ActivityInfo.SCREEN_ORIENTATION_USER
                             }
                         }
-
 
                         val systemUiController = rememberSystemUiController()
 
@@ -250,6 +257,32 @@ abstract class SharedLauncherActivity(
                                     else -> {}
                                 }
                             }
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .padding(bottom = 100.dp)
+//                                    .align(Alignment.BottomCenter)
+//                            ) {
+//                                QwertyKeyboard(
+//                                    searchVM = searchVM,
+//                                    onKeyPress = { key ->
+//                                        val currentQuery = searchVM.searchQuery.value
+//                                        if (key == "") { // Backspace key
+//                                            searchVM.searchQuery.value = currentQuery.dropLast(1)
+//                                        } else {
+//                                            searchVM.searchQuery.value = currentQuery + key
+//                                        }
+//                                        searchVM.search(searchVM.searchQuery.value)
+//                                        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+//                                        searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+//                                        CoroutineScope(Dispatchers.Default).launch {
+//                                            searchVM.searchService.getAllApps().collect { results ->
+//                                                searchVM.appResults.value = results.standardProfileApps
+//                                            }
+//                                        }
+//                                    }
+//                                )
+//                            }
                             SnackbarHost(
                                 snackbarHostState,
                                 modifier = Modifier

@@ -72,11 +72,11 @@ fun DigitalClock1(
     val formattedString = format.format(time)
 
     val textStyle = MaterialTheme.typography.displayLarge.copy(
-        fontSize = if (verticalLayout) 100.sp else 48.sp,
+        fontSize = if (verticalLayout) 60.sp else 48.sp,
         fontWeight = FontWeight.Black,
         textAlign = TextAlign.Center,
         lineHeight = 0.8.em,
-        drawStyle = if (style.outlined) Stroke(width = 2.dp.toPixels()) else Fill,
+        drawStyle = if (style.outlined) Stroke(width = 1.dp.toPixels()) else Fill,
         color = color
     )
 

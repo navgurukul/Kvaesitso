@@ -11,8 +11,10 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -27,8 +29,13 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -65,9 +72,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import de.mm20.launcher2.preferences.SearchBarColors
@@ -87,6 +96,11 @@ import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import de.mm20.launcher2.applications.isAppAtFirstPage
+import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
+import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
+import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -102,6 +116,7 @@ fun PullUpScaffold(
     fixedSearchBar: Boolean = false,
 ) {
     val viewModel: LauncherScaffoldVM = viewModel()
+    val viewModelC: ClockWidgetVM = viewModel()
     val searchVM: SearchVM = viewModel()
 
     val density = LocalDensity.current
@@ -449,7 +464,7 @@ fun PullUpScaffold(
                                     }
                                 }
                             }
-                            Column(
+                            Box(
                                 modifier = Modifier
                                     .graphicsLayer {
                                         val progress =
@@ -496,23 +511,171 @@ fun PullUpScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .padding(bottom = 60.dp)
+                                ) {
 
-                                WidgetColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    editMode = isWidgetEditMode,
-                                    onEditModeChange = {
-                                        viewModel.setWidgetEditMode(it)
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ){
+                                        val appResults = searchVM.appResults.value ?: emptyList()
+                                        val contactResults = searchVM.contactResults.value ?: emptyList()
+
+//
+                                        if (searchVM.searchQuery.value.isNotEmpty()) {
+                                            when {
+                                                // If both appResults and contactResults have results
+                                                appResults.isNotEmpty() && contactResults.isNotEmpty() -> {
+                                                    Column {
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.appResults.value) { app ->
+                                                                AppItem(app = app)
+                                                            }
+                                                        }
+
+                                                        LazyRow(
+                                                            modifier = Modifier.fillMaxWidth()
+                                                        ) {
+                                                            items(searchVM.contactResults.value) { contact ->
+                                                                Column(
+                                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                                    modifier = Modifier
+                                                                        .clickable { contact.launch(context, null) }
+                                                                        .padding(2.dp)
+                                                                ) {
+                                                                    Box {
+                                                                        ContactItem(
+                                                                            modifier = Modifier.fillMaxWidth(),
+                                                                            contact = contact,
+                                                                            showDetails = false,
+                                                                            onBack = {}
+                                                                        )
+                                                                    }
+                                                                    Text(
+                                                                        text = contact.displayName,
+                                                                        fontSize = 14.sp,
+                                                                        textAlign = TextAlign.Center,
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                appResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.appResults.value) { app ->
+                                                            AppItem(app = app)
+                                                        }
+                                                    }
+                                                }
+                                                contactResults.isNotEmpty() -> {
+                                                    LazyRow(
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        items(searchVM.contactResults.value) { contact ->
+                                                            Column(
+                                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                                modifier = Modifier
+                                                                    .clickable { contact.launch(context, null) }
+                                                                    .padding(2.dp)
+                                                            ) {
+                                                                Box {
+                                                                    ContactItem(
+                                                                        modifier = Modifier.fillMaxWidth(),
+                                                                        contact = contact,
+                                                                        showDetails = false,
+                                                                        onBack = {}
+                                                                    )
+                                                                }
+                                                                Text(
+                                                                    text = contact.displayName,
+                                                                    fontSize = 14.sp,
+                                                                    textAlign = TextAlign.Center,
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                else -> {
+                                                    Text(
+                                                        text = "No results found",
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        textAlign = TextAlign.Center,
+                                                        fontSize = 16.sp
+                                                    )
+                                                }
+                                            }
+                                        }
+
+//
+                                        QwertyKeyboard(
+                                            searchVM = searchVM,
+                                            onKeyPress = { key ->
+                                                val currentQuery = searchVM.searchQuery.value
+                                                if (key == "") { // Backspace key
+                                                    searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                                } else {
+                                                    searchVM.searchQuery.value = currentQuery + key
+                                                }
+                                                searchVM.search(searchVM.searchQuery.value)
+                                                searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+                                                searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                                CoroutineScope(Dispatchers.Default).launch {
+                                                    searchVM.searchService.getAllApps().collect { results ->
+                                                        searchVM.appResults.value = results.standardProfileApps
+                                                    }
+                                                    searchVM.searchService.getAllContacts().collect{
+                                                        searchVM.contactResults.value= it.homeContact
+                                                    }
+                                                }
+                                            }
+                                        )
+                                        val dockProvider by viewModelC.dockProvider.collectAsState()
+                                        if (dockProvider != null) {
+                                            Box(
+                                                modifier = Modifier.fillMaxWidth()
+                                            ){
+                                                dockProvider?.Component(false)
+                                            }
+                                        }
+
                                     }
-                                )
+                                }
+
+
+//                                WidgetColumn(
+//                                    modifier = Modifier.fillMaxWidth(),
+//                                    editMode = isWidgetEditMode,
+//                                    onEditModeChange = {
+//                                        viewModel.setWidgetEditMode(it)
+//                                    }
+//                                )
                             }
                         }
 
                         1 -> {
+                            val statusBarPadding = WindowInsets.statusBars.asPaddingValues()
                             isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
+                            val paddingValues = PaddingValues(
+                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 0.dp else 2.dp,
+//                                bottom = windowInsets.calculateBottomPadding() + keyboardFilterBarPadding +
+                                bottom = windowInsets.calculateBottomPadding() +
+                                        if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
+                            )
                             SearchColumn(
                                 modifier = Modifier
                                     .graphicsLayer {
@@ -537,13 +700,10 @@ fun PullUpScaffold(
                                         end = windowInsets.calculateStartPadding(
                                             LocalLayoutDirection.current
                                         ),
+                                        top = paddingValues.calculateTopPadding(),
+                                        bottom = paddingValues.calculateBottomPadding()
                                     ),
-                                paddingValues = PaddingValues(
-                                    top = windowInsets.calculateTopPadding() + if (!bottomSearchBar) 64.dp + webSearchPadding else 8.dp,
-                                    bottom = windowInsets.calculateBottomPadding() +
-                                            keyboardFilterBarPadding +
-                                            if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
-                                ),
+                                paddingValues = paddingValues,
                                 state = searchState,
                                 reverse = reverseSearchResults,
                             )
@@ -597,7 +757,7 @@ fun PullUpScaffold(
         val searchBarStyle by viewModel.searchBarStyle.collectAsState()
 
         val launchOnEnter by searchVM.launchOnEnter.collectAsState(false)
-
+    if (pagerState.currentPage == 0) {
         LauncherSearchBar(
             modifier = Modifier
                 .fillMaxSize(),
@@ -628,6 +788,7 @@ fun PullUpScaffold(
                 { searchVM.launchBestMatchOrAction(context) }
             } else null
         )
+    }
 
     }
     LauncherGestureHandler(

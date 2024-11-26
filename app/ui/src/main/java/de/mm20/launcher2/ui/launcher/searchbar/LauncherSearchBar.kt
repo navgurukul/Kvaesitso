@@ -137,18 +137,21 @@ fun LauncherSearchBar(
                 }
                 SearchBarMenu(searchBarValue = _value, onInputClear = {
                     searchVM.reset()
+                    searchVM.showFilters.value = false
                 })
             },
-            actions = {
-                SearchBarActions(
-                    actions = actions,
-                    reverse = bottomSearchBar,
-                    highlightedAction = highlightedAction
-                )
-            },
+
+            // Removing the quick action from search bar
+//            actions = {
+//                SearchBarActions(
+//                    actions = actions,
+//                    reverse = bottomSearchBar,
+//                    highlightedAction = highlightedAction
+//                )
+//            },
             focusRequester = focusRequester,
-            onFocus = { onFocusChange(true) },
-            onUnfocus = { onFocusChange(false) },
+            onFocus = {  }, //onFocus = { onFocusChange(true) },
+            onUnfocus = { },  //onUnfocus = { onFocusChange(false) },
             onKeyboardActionGo = onKeyboardActionGo
         )
 

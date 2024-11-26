@@ -86,18 +86,19 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
 
     val searchBarFocused = mutableStateOf(false)
 
-    val autoFocusSearch = uiSettings.openKeyboardOnSearch
+    //val autoFocusSearch = uiSettings.openKeyboardOnSearch
 
     fun setSearchbarFocus(focused: Boolean) {
-        if (searchBarFocused.value != focused) searchBarFocused.value = focused
+        //if (searchBarFocused.value != focused) searchBarFocused.value = focused
     }
 
     fun openSearch() {
         if (isSearchOpen.value == true) return
         isSearchOpen.value = true
-        viewModelScope.launch {
-            if (autoFocusSearch.first()) setSearchbarFocus(true)
-        }
+//        viewModelScope.launch {
+//            if (autoFocusSearch.first()) setSearchbarFocus(true)
+//
+//        }
     }
 
     fun closeSearch() {
@@ -131,7 +132,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
 
 
     val fillClockHeight = uiSettings.clockFillScreen
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), true)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), false)
     val searchBarColor = uiSettings.searchBarColor
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), SearchBarColors.Auto)
     val searchBarStyle = uiSettings.searchBarStyle
