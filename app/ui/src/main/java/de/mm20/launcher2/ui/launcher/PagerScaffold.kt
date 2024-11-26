@@ -38,6 +38,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -696,22 +697,18 @@ fun PagerScaffold(
                         }
 
                         1 -> {
+                            val statusBarPadding = WindowInsets.statusBars.asPaddingValues()
                             isAppAtFirstPage = false
                             val webSearchPadding by animateDpAsState(
                                 if (actions.isEmpty()) 0.dp else 48.dp
                             )
                             val windowInsets = WindowInsets.safeDrawing.asPaddingValues()
-                            val paddingValues = if (bottomSearchBar) {
-                                PaddingValues(
-                                    top = 8.dp + windowInsets.calculateTopPadding(),
-                                    bottom = 64.dp + webSearchPadding + windowInsets.calculateBottomPadding() + keyboardFilterBarPadding
-                                )
-                            } else {
-                                PaddingValues(
-                                    bottom = 8.dp + windowInsets.calculateBottomPadding() + keyboardFilterBarPadding,
-                                    top = 0.dp + webSearchPadding + windowInsets.calculateTopPadding()
-                                )
-                            }
+                            val paddingValues = PaddingValues(
+                                top = statusBarPadding.calculateTopPadding() + if (!bottomSearchBar) 0.dp else 2.dp,
+//                                bottom = windowInsets.calculateBottomPadding() + keyboardFilterBarPadding +
+                                bottom = windowInsets.calculateBottomPadding() +
+                                        if (bottomSearchBar) 64.dp + webSearchPadding else 8.dp
+                            )
                             SearchColumn(
                                 modifier = Modifier
                                     .requiredWidth(width)
@@ -735,6 +732,9 @@ fun PagerScaffold(
                                         end = windowInsets.calculateStartPadding(
                                             LocalLayoutDirection.current
                                         ),
+                                        top = paddingValues.calculateTopPadding(),
+                                        bottom = paddingValues.calculateBottomPadding()
+
                                     ),
                                 reverse = reverseSearchResults,
                                 state = searchState,
