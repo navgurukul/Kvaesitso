@@ -25,25 +25,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-//@Composable
-//fun KeyboardWithBackground() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.Black)
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            verticalArrangement = Arrangement.Bottom,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            QwertyKeyboard()
-//        }
-//    }
-//}
-
 @Composable
 fun QwertyKeyboard(
     searchVM: SearchVM,
@@ -66,28 +47,34 @@ fun QwertyKeyboard(
         }
     }
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.Center
     ) {
-        KeyboardRow(
-            letters = listOf('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'),
-            onKeyPress = onKeyPress,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column (
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ){
+            KeyboardRow(
+                letters = listOf('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'),
+                onKeyPress = onKeyPress,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        KeyboardRow(
-            letters = listOf('a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'),
-            onKeyPress = onKeyPress,
-            modifier = Modifier.fillMaxWidth(0.9f)
-        )
+            KeyboardRow(
+                letters = listOf('a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'),
+                onKeyPress = onKeyPress,
+                modifier = Modifier.fillMaxWidth(0.9f)
+            )
 
-        KeyboardRowWithBackspace(
-            letters = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm'),
-            onKeyPress = onKeyPress,
-            modifier = Modifier.fillMaxWidth(0.8f)
-        )
+            KeyboardRowWithBackspace(
+                letters = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm'),
+                onKeyPress = onKeyPress,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
+        }
     }
 }
 
@@ -95,11 +82,11 @@ fun QwertyKeyboard(
 fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress,true)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress,true, modifier = Modifier.weight(1f))
         }
     }
 }
@@ -108,25 +95,25 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
 fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
-            .padding( vertical = 4.dp),
+            .padding( vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true)
+            KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
-        BackspaceKey(onKeyPress = onKeyPress)
+        BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
     }
 }
 @Composable
-fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = true) {
+fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = true, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(35.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
-//            .padding(2.dp)
+            .padding(6.dp)
     ) {
         Text(
             text = letter.toString(),
@@ -140,10 +127,10 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
 
 
 @Composable
-fun BackspaceKey(onKeyPress: (String) -> Unit) {
+fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .size(32.dp)
             .clickable { onKeyPress("") }
             .padding(2.dp)
@@ -158,10 +145,3 @@ fun BackspaceKey(onKeyPress: (String) -> Unit) {
     }
 }
 
-
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    KeyboardWithBackground()
-//}
-//you can see the preview of the keyboard with this function
