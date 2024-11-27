@@ -603,6 +603,7 @@ fun PagerScaffold(
                                                                         text = contact.displayName,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
+                                                                        color = Color.DarkGray
                                                                     )
                                                                 }
                                                             }
@@ -642,6 +643,7 @@ fun PagerScaffold(
                                                                     text = contact.displayName,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
+                                                                    color = Color.DarkGray
                                                                 )
                                                             }
                                                         }
@@ -653,7 +655,8 @@ fun PagerScaffold(
                                                         text = "No results found",
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 16.sp
+                                                        fontSize = 16.sp,
+                                                        color = Color.DarkGray
                                                     )
                                                 }
                                             }
@@ -991,7 +994,8 @@ fun AppItem(app: SavableSearchable) {
             text = app.label,
             modifier = Modifier.padding(top = 8.dp),
             fontSize = 12.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.DarkGray
         )
     }
 }

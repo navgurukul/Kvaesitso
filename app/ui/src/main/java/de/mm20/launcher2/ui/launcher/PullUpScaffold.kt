@@ -41,6 +41,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DrawerDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -258,6 +259,8 @@ fun PullUpScaffold(
 
     val blurEnabled by viewModel.wallpaperBlur.collectAsState()
     val blurRadius by viewModel.wallpaperBlurRadius.collectAsState()
+
+    val textColor = if (isColorDark(backgroundColor)) Color.White else Color.Black
 
     val blurWallpaper by remember {
         derivedStateOf {
@@ -561,6 +564,7 @@ fun PullUpScaffold(
                                                                         text = contact.displayName,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
+                                                                        color = Color.DarkGray
                                                                     )
                                                                 }
                                                             }
@@ -600,6 +604,7 @@ fun PullUpScaffold(
                                                                     text = contact.displayName,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
+                                                                    color = Color.DarkGray
                                                                 )
                                                             }
                                                         }
@@ -611,7 +616,8 @@ fun PullUpScaffold(
                                                         text = "No results found",
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 16.sp
+                                                        fontSize = 16.sp,
+                                                        color = Color.DarkGray
                                                     )
                                                 }
                                             }
@@ -798,3 +804,10 @@ fun PullUpScaffold(
     )
 }
 
+fun isColorDark(color: Color): Boolean {
+    val r = color.red * 255
+    val g = color.green * 255
+    val b = color.blue * 255
+    val brightness = (0.299 * r + 0.587 * g + 0.114 * b)
+    return brightness < 128
+}
