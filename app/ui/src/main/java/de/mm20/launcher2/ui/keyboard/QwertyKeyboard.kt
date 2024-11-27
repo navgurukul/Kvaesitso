@@ -83,7 +83,7 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
     Row(
         modifier = modifier
             .padding(vertical = 4.dp, horizontal = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress,true, modifier = Modifier.weight(1f))
@@ -96,7 +96,7 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
     Row(
         modifier = modifier
             .padding( vertical = 4.dp, horizontal = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
@@ -109,7 +109,7 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(35.dp)
+            .size(40.dp)
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
@@ -131,14 +131,14 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(32.dp)
+            .size(40.dp)
             .clickable { onKeyPress("") }
             .padding(2.dp)
     ) {
         Text(
             text = "⌫",
-            fontSize = 22.sp,
-            color = Color.White,
+            fontSize = 25.sp,
+            color = Color.Gray,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
         )
