@@ -467,18 +467,18 @@ fun AppItem(
             )
         }
 
-        if (app.canRemoveApp){
-            toolbarActions.add(
-                DefaultToolbarAction(
-                    label = stringResource(R.string.widget_action_remove),
-                    icon = Icons.Rounded.RemoveCircle,
-                    action =  {
-                        viewModel.delete(context)
-                        onBack()
-                    }
-                )
-            )
-        }
+//        if (app.canRemoveApp){
+//            toolbarActions.add(
+//                DefaultToolbarAction(
+//                    label = stringResource(R.string.widget_action_remove),
+//                    icon = Icons.Rounded.RemoveCircle,
+//                    action =  {
+//                        viewModel.delete(context)
+//                        onBack()
+//                    }
+//                )
+//            )
+//        }
 
 
         Toolbar(
