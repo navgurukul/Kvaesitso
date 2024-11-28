@@ -58,6 +58,7 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -991,7 +992,8 @@ fun AppItem(app: SavableSearchable) {
             text = app.label,
             modifier = Modifier.padding(top = 8.dp),
             fontSize = 12.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = contentColor
         )
     }
 }

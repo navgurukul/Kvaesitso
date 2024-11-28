@@ -46,6 +46,7 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -611,7 +612,8 @@ fun PullUpScaffold(
                                                         text = "No results found",
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 16.sp
+                                                        fontSize = 16.sp,
+                                                        color = contentColor
                                                     )
                                                 }
                                             }
