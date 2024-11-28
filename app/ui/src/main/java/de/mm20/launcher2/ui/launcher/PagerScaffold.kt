@@ -604,6 +604,7 @@ fun PagerScaffold(
                                                                         text = contact.displayName,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
+                                                                        color = contentColor
                                                                     )
                                                                 }
                                                             }
@@ -643,6 +644,7 @@ fun PagerScaffold(
                                                                     text = contact.displayName,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
+                                                                    color = contentColor
                                                                 )
                                                             }
                                                         }
@@ -654,7 +656,8 @@ fun PagerScaffold(
                                                         text = "No results found",
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 16.sp
+                                                        fontSize = 16.sp,
+                                                        color = contentColor
                                                     )
                                                 }
                                             }
