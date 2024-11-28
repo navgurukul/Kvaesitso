@@ -213,7 +213,7 @@ fun PagerScaffold(
     }
 
     val fillClockHeight by viewModel.fillClockHeight.collectAsState()
-
+    val dockProvider by viewModelC.dockProvider.collectAsState()
     val showNavBarScrim by remember {
         derivedStateOf {
             if (isSearchOpen) {
@@ -554,11 +554,12 @@ fun PagerScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                val padding1 = if(dockProvider==null) 60.dp else 0.dp
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.BottomCenter)
-                                        .padding(bottom = 60.dp)
+                                        .padding(bottom = padding1)
                                 ) {
 
                                     Column(
@@ -688,7 +689,6 @@ fun PagerScaffold(
                                                 }
                                             }
                                         )
-                                        val dockProvider by viewModelC.dockProvider.collectAsState()
                                         if (dockProvider != null) {
                                             Box(
                                                 modifier = Modifier.fillMaxWidth()

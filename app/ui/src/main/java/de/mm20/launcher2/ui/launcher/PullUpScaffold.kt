@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -217,6 +218,7 @@ fun PullUpScaffold(
 
     val colorSurface = MaterialTheme.colorScheme.surface
     val isDarkTheme = LocalDarkTheme.current
+    val dockProvider by viewModelC.dockProvider.collectAsState()
     LaunchedEffect(isWidgetEditMode, darkStatusBarIcons, colorSurface, showStatusBarScrim, isSearchOpen) {
         if (isWidgetEditMode) {
             systemUiController.setStatusBarColor(
@@ -512,11 +514,13 @@ fun PullUpScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                val padding1 = if(dockProvider==null) 60.dp else 0.dp
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.BottomCenter)
-                                        .padding(bottom = 60.dp)
+                                        .padding(bottom = padding1)
+
                                 ) {
 
                                     Column(
@@ -646,10 +650,10 @@ fun PullUpScaffold(
                                                 }
                                             }
                                         )
-                                        val dockProvider by viewModelC.dockProvider.collectAsState()
                                         if (dockProvider != null) {
                                             Box(
-                                                modifier = Modifier.fillMaxWidth()
+                                                modifier = Modifier.fillMaxWidth(),
+                                                contentAlignment = Alignment.BottomCenter
                                             ){
                                                 dockProvider?.Component(false)
                                             }
