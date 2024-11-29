@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -41,12 +42,12 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.DrawerDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -217,6 +218,7 @@ fun PullUpScaffold(
 
     val colorSurface = MaterialTheme.colorScheme.surface
     val isDarkTheme = LocalDarkTheme.current
+    val dockProvider by viewModelC.dockProvider.collectAsState()
     LaunchedEffect(isWidgetEditMode, darkStatusBarIcons, colorSurface, showStatusBarScrim, isSearchOpen) {
         if (isWidgetEditMode) {
             systemUiController.setStatusBarColor(
@@ -259,8 +261,6 @@ fun PullUpScaffold(
 
     val blurEnabled by viewModel.wallpaperBlur.collectAsState()
     val blurRadius by viewModel.wallpaperBlurRadius.collectAsState()
-
-    val textColor = if (isColorDark(backgroundColor)) Color.White else Color.Black
 
     val blurWallpaper by remember {
         derivedStateOf {
@@ -514,11 +514,13 @@ fun PullUpScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                val padding1 = if(dockProvider==null) 60.dp else 0.dp
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.BottomCenter)
-                                        .padding(bottom = 60.dp)
+                                        .padding(bottom = padding1)
+
                                 ) {
 
                                     Column(
@@ -564,7 +566,7 @@ fun PullUpScaffold(
                                                                         text = contact.displayName,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
-                                                                        color = Color.DarkGray
+                                                                        color = contentColor
                                                                     )
                                                                 }
                                                             }
@@ -604,7 +606,7 @@ fun PullUpScaffold(
                                                                     text = contact.displayName,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
-                                                                    color = Color.DarkGray
+                                                                    color = contentColor
                                                                 )
                                                             }
                                                         }
@@ -617,7 +619,7 @@ fun PullUpScaffold(
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
                                                         fontSize = 16.sp,
-                                                        color = Color.DarkGray
+                                                        color = contentColor
                                                     )
                                                 }
                                             }
@@ -648,10 +650,10 @@ fun PullUpScaffold(
                                                 }
                                             }
                                         )
-                                        val dockProvider by viewModelC.dockProvider.collectAsState()
                                         if (dockProvider != null) {
                                             Box(
-                                                modifier = Modifier.fillMaxWidth()
+                                                modifier = Modifier.fillMaxWidth(),
+                                                contentAlignment = Alignment.BottomCenter
                                             ){
                                                 dockProvider?.Component(false)
                                             }
@@ -804,10 +806,3 @@ fun PullUpScaffold(
     )
 }
 
-fun isColorDark(color: Color): Boolean {
-    val r = color.red * 255
-    val g = color.green * 255
-    val b = color.blue * 255
-    val brightness = (0.299 * r + 0.587 * g + 0.114 * b)
-    return brightness < 128
-}
