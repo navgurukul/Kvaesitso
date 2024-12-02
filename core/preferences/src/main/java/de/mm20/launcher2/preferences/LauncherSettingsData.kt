@@ -77,7 +77,7 @@ data class LauncherSettingsData internal constructor(
     val badgesShortcuts: Boolean = true,
     val badgesPlugins: Boolean = true,
 
-    val gridColumnCount: Int = 5,
+    val gridColumnCount: Int = 4,
     val gridIconSize: Int = 48,
     val gridLabels: Boolean = true,
 
