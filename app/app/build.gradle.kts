@@ -58,7 +58,7 @@ android {
             }
         }
         debug {
-            applicationIdSuffix = ".debug"
+            //applicationIdSuffix = ".debug"
             isDebuggable = true
         }
         create("nightly") {
