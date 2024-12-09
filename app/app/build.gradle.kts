@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.firebase) apply false
+    alias(libs.plugins.firebase)
     id("com.google.firebase.crashlytics")
 }
 
@@ -49,7 +49,7 @@ android {
 
     buildTypes {
         release {
-            applicationIdSuffix = ".release"
+            //applicationIdSuffix = ".release"
 
             postprocessing {
                 isRemoveUnusedCode = true
