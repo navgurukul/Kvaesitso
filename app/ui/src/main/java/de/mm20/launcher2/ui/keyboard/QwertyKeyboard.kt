@@ -117,7 +117,7 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
@@ -137,7 +137,7 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     ) {
         Text(
             text = "⌫",
-            fontSize = 25.sp,
+            fontSize = 26.sp,
             color = Color.Gray,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
