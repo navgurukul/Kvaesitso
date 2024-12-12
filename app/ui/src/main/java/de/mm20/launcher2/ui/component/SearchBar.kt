@@ -181,6 +181,7 @@ fun SearchBar(
                                 }
                                 .focusRequester(focusRequester)
                                 .fillMaxWidth()
+                                .padding(start = 20.dp)
                                 .semantics {
                                     contentDescription = context.getString(R.string.search_bar_placeholder)
                                 },
