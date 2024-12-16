@@ -146,7 +146,7 @@ internal class SearchServiceImpl(
 //                            if (customAttrs.contacts != null) contacts + customAttrs.contacts
 //                            else contacts
 //                        }
-                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
+                        .map { apps -> apps.filter { it.displayName.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
