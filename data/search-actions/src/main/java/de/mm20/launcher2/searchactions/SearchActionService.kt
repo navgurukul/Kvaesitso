@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import android.util.Xml
 import androidx.core.graphics.drawable.toBitmap
 import coil.imageLoader
@@ -67,8 +68,15 @@ internal class SearchActionServiceImpl(
 
         val builders = repository.getSearchActionBuilders()
 
-        return builders.map {
-            it.mapNotNull { it.build(context, classificationResult) }.toImmutableList()
+        return builders.map { builderList ->
+            builderList
+                .filter {
+                    it.label.startsWith(query, ignoreCase = true)
+                }
+                .mapNotNull {
+                    it.build(context, classificationResult)
+                }
+                .toImmutableList()
         }
     }
 
