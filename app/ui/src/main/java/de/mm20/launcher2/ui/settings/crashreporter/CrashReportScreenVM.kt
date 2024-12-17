@@ -35,10 +35,9 @@ class CrashReportScreenVM : ViewModel() {
                     "```\n\n" +
                     "## Device info\n" +
                     "${getDeviceInformation(context).replace("\n", "<br>")}\n"
-        val url = "https://github.com/MM2-0/Kvaesitso/issues/new?labels=crash+report&body=${
+        val url = "https://github.com/navgurukul/tez_launcher/issues/new${
             URLEncoder.encode(
-                body,
-                "utf8"
+                ""
             )
         }"
         context.startActivity(Intent(Intent.ACTION_VIEW).apply {

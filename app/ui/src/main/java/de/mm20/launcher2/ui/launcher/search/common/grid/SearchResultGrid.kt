@@ -49,9 +49,7 @@ fun SearchResultGrid(
                         if (item != null) {
                             key(item.key) {
                                 GridItem(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(4.dp),
+                                    modifier = modifier,
                                     item = item,
                                     showLabels = showLabels,
                                     highlight = item.key == highlightedItem?.key

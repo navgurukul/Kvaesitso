@@ -152,30 +152,30 @@ fun SearchSettingsScreen() {
                     enabled = hasAppShortcutsPermission == true
                 )
 
-                val calculator by viewModel.calculator.collectAsStateWithLifecycle(null)
-                SwitchPreference(
-                    title = stringResource(R.string.preference_search_calculator),
-                    summary = stringResource(R.string.preference_search_calculator_summary),
-                    icon = Icons.Rounded.Calculate,
-                    value = calculator == true,
-                    onValueChanged = {
-                        viewModel.setCalculator(it)
-                    }
-                )
-
-                val unitConverter by viewModel.unitConverter.collectAsStateWithLifecycle(null)
-                PreferenceWithSwitch(
-                    title = stringResource(R.string.preference_search_unitconverter),
-                    summary = stringResource(R.string.preference_search_unitconverter_summary),
-                    icon = Icons.Rounded.Loop,
-                    switchValue = unitConverter == true,
-                    onSwitchChanged = {
-                        viewModel.setUnitConverter(it)
-                    },
-                    onClick = {
-                        navController?.navigate("settings/search/unitconverter")
-                    }
-                )
+//                val calculator by viewModel.calculator.collectAsStateWithLifecycle(null)
+//                SwitchPreference(
+//                    title = stringResource(R.string.preference_search_calculator),
+//                    summary = stringResource(R.string.preference_search_calculator_summary),
+//                    icon = Icons.Rounded.Calculate,
+//                    value = calculator == true,
+//                    onValueChanged = {
+//                        viewModel.setCalculator(it)
+//                    }
+//                )
+//
+//                val unitConverter by viewModel.unitConverter.collectAsStateWithLifecycle(null)
+//                PreferenceWithSwitch(
+//                    title = stringResource(R.string.preference_search_unitconverter),
+//                    summary = stringResource(R.string.preference_search_unitconverter_summary),
+//                    icon = Icons.Rounded.Loop,
+//                    switchValue = unitConverter == true,
+//                    onSwitchChanged = {
+//                        viewModel.setUnitConverter(it)
+//                    },
+//                    onClick = {
+//                        navController?.navigate("settings/search/unitconverter")
+//                    }
+//                )
 
                 val wikipedia by viewModel.wikipedia.collectAsStateWithLifecycle(null)
                 PreferenceWithSwitch(

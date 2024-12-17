@@ -58,6 +58,7 @@ import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -212,7 +213,7 @@ fun PagerScaffold(
     }
 
     val fillClockHeight by viewModel.fillClockHeight.collectAsState()
-
+    val dockProvider by viewModelC.dockProvider.collectAsState()
     val showNavBarScrim by remember {
         derivedStateOf {
             if (isSearchOpen) {
@@ -553,11 +554,12 @@ fun PagerScaffold(
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,
                                 )
+                                val padding1 = if(dockProvider==null) 60.dp else 0.dp
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .align(Alignment.BottomCenter)
-                                        .padding(bottom = 60.dp)
+                                        .padding(bottom = padding1)
                                 ) {
 
                                     Column(
@@ -603,6 +605,7 @@ fun PagerScaffold(
                                                                         text = contact.displayName,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
+                                                                        color = contentColor
                                                                     )
                                                                 }
                                                             }
@@ -642,6 +645,7 @@ fun PagerScaffold(
                                                                     text = contact.displayName,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
+                                                                    color = contentColor
                                                                 )
                                                             }
                                                         }
@@ -653,7 +657,8 @@ fun PagerScaffold(
                                                         text = "No results found",
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
-                                                        fontSize = 16.sp
+                                                        fontSize = 16.sp,
+                                                        color = contentColor
                                                     )
                                                 }
                                             }
@@ -684,7 +689,6 @@ fun PagerScaffold(
                                                 }
                                             }
                                         )
-                                        val dockProvider by viewModelC.dockProvider.collectAsState()
                                         if (dockProvider != null) {
                                             Box(
                                                 modifier = Modifier.fillMaxWidth()
@@ -991,7 +995,8 @@ fun AppItem(app: SavableSearchable) {
             text = app.label,
             modifier = Modifier.padding(top = 8.dp),
             fontSize = 12.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = contentColor
         )
     }
 }

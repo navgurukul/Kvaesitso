@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -107,7 +109,7 @@ fun GridItem(
     }
 
     Column(
-        modifier = modifier
+        modifier = modifier.size(80.dp)
             .combinedClickable(
                 onClick = {
                     if (!launchOnPress || !viewModel.launch(context, bounds)) {
@@ -121,8 +123,8 @@ fun GridItem(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
             ) then if (!showLabels) Modifier.aspectRatio(1f) else Modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+       horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         val badge by viewModel.badge.collectAsStateWithLifecycle()
         val icon by viewModel.icon.collectAsStateWithLifecycle()
