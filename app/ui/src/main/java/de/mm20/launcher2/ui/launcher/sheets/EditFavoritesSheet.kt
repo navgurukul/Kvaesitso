@@ -489,7 +489,8 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                 FilledTonalIconButton(
                                     modifier = Modifier.offset(x = 4.dp),
                                     onClick = {
-                                        showAddMenu = true
+                                        showAddMenu = false
+                                        createTag = true
                                     }) {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
@@ -524,20 +525,20 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                     if (availableTags.isNotEmpty()) {
                                         HorizontalDivider()
                                     }
-                                    DropdownMenuItem(
-                                        leadingIcon = {
-                                            Icon(Icons.Rounded.Add, null)
-                                        },
-                                        text = {
-                                            Text(
-                                                stringResource(R.string.edit_favorites_dialog_new_tag),
-                                            )
-                                        },
-                                        onClick = {
-                                            createTag = true
-                                            showAddMenu = false
-                                        }
-                                    )
+//                                    DropdownMenuItem(
+//                                        leadingIcon = {
+//                                            Icon(Icons.Rounded.Add, null)
+//                                        },
+//                                        text = {
+//                                            Text(
+//                                                stringResource(R.string.edit_favorites_dialog_new_tag),
+//                                            )
+//                                        },
+//                                        onClick = {
+//                                            createTag = true
+//                                            showAddMenu = false
+//                                        }
+//                                    )
                                 }
                             }
 
