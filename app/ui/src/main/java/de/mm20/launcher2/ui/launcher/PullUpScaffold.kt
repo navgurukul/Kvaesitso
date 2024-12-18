@@ -563,7 +563,7 @@ fun PullUpScaffold(
                                                                         )
                                                                     }
                                                                     Text(
-                                                                        text = contact.displayName,
+                                                                        text = contact.label,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
                                                                         color = contentColor
@@ -603,7 +603,7 @@ fun PullUpScaffold(
                                                                     )
                                                                 }
                                                                 Text(
-                                                                    text = contact.displayName,
+                                                                    text = contact.label,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
                                                                     color = contentColor
