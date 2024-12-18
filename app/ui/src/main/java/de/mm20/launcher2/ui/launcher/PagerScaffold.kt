@@ -602,7 +602,7 @@ fun PagerScaffold(
                                                                         )
                                                                     }
                                                                     Text(
-                                                                        text = contact.displayName,
+                                                                        text = contact.label,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
                                                                         color = contentColor
@@ -642,7 +642,7 @@ fun PagerScaffold(
                                                                     )
                                                                 }
                                                                 Text(
-                                                                    text = contact.displayName,
+                                                                    text = contact.label,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
                                                                     color = contentColor
