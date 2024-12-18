@@ -110,14 +110,14 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(40.dp)
-            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .border(2.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
             .padding(6.dp)
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 16.sp,
+            fontSize = 20.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
@@ -137,7 +137,7 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     ) {
         Text(
             text = "⌫",
-            fontSize = 25.sp,
+            fontSize = 26.sp,
             color = Color.Gray,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
