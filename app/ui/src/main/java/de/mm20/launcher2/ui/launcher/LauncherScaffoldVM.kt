@@ -18,6 +18,7 @@ import de.mm20.launcher2.preferences.GestureAction
 import de.mm20.launcher2.preferences.ScreenOrientation
 import de.mm20.launcher2.preferences.SearchBarColors
 import de.mm20.launcher2.preferences.SearchBarStyle
+import de.mm20.launcher2.preferences.ui.ClockWidgetSettings
 import de.mm20.launcher2.preferences.ui.GestureSettings
 import de.mm20.launcher2.preferences.ui.UiSettings
 import de.mm20.launcher2.search.SavableSearchable
@@ -40,6 +41,7 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
     private val globalActionsService: GlobalActionsService by inject()
     private val permissionsManager: PermissionsManager by inject()
     private val searchableRepository: SavableSearchableRepository by inject()
+    private val settings: ClockWidgetSettings by inject()
 
     private var isSystemInDarkMode = MutableStateFlow(false)
 
@@ -68,6 +70,8 @@ class LauncherScaffoldVM : ViewModel(), KoinComponent {
     fun setSystemInDarkMode(darkMode: Boolean) {
         isSystemInDarkMode.value = darkMode
     }
+    val color = settings.color
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val baseLayout = uiSettings.baseLayout
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)

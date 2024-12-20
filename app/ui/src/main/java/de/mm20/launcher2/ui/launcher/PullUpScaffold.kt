@@ -1,6 +1,5 @@
 package de.mm20.launcher2.ui.launcher
 
-import android.util.Log
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -10,16 +9,13 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -32,10 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.VerticalPager
@@ -74,6 +67,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
@@ -92,17 +86,15 @@ import de.mm20.launcher2.ui.launcher.helper.WallpaperBlur
 import de.mm20.launcher2.ui.launcher.search.SearchColumn
 import de.mm20.launcher2.ui.launcher.search.SearchVM
 import de.mm20.launcher2.ui.launcher.searchbar.LauncherSearchBar
-import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import de.mm20.launcher2.applications.isAppAtFirstPage
+import de.mm20.launcher2.preferences.ClockWidgetColors
 import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -120,6 +112,20 @@ fun PullUpScaffold(
     val viewModel: LauncherScaffoldVM = viewModel()
     val viewModelC: ClockWidgetVM = viewModel()
     val searchVM: SearchVM = viewModel()
+
+    val color = viewModel.color.collectAsState()
+
+    val darkColors =
+        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
+
+    val contentColors =
+        if (darkColors) {
+            Color(0, 0, 0, 180)
+        } else {
+            Color.White
+        }
+
+
 
     val density = LocalDensity.current
     val context = LocalContext.current
@@ -540,7 +546,10 @@ fun PullUpScaffold(
                                                             modifier = Modifier.fillMaxWidth()
                                                         ) {
                                                             items(searchVM.appResults.value) { app ->
-                                                                AppItem(app = app)
+                                                                AppItem(
+                                                                    app = app,
+                                                                    contentColors = contentColors
+                                                                )
                                                             }
                                                         }
 
@@ -566,7 +575,8 @@ fun PullUpScaffold(
                                                                         text = contact.displayName,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
-                                                                        color = contentColor
+                                                                        color = contentColors,
+                                                                        fontWeight = FontWeight.Bold
                                                                     )
                                                                 }
                                                             }
@@ -579,7 +589,10 @@ fun PullUpScaffold(
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
                                                         items(searchVM.appResults.value) { app ->
-                                                            AppItem(app = app)
+                                                            AppItem(
+                                                                app = app,
+                                                                contentColors = contentColors
+                                                            )
                                                         }
                                                     }
                                                 }
@@ -606,7 +619,8 @@ fun PullUpScaffold(
                                                                     text = contact.displayName,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
-                                                                    color = contentColor
+                                                                    color = contentColors,
+                                                                    fontWeight = FontWeight.Bold
                                                                 )
                                                             }
                                                         }
@@ -619,7 +633,8 @@ fun PullUpScaffold(
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
                                                         fontSize = 16.sp,
-                                                        color = contentColor
+                                                        color = contentColors,
+                                                        fontWeight = FontWeight.Bold
                                                     )
                                                 }
                                             }
