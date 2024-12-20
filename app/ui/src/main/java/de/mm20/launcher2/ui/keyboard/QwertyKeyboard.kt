@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -98,6 +100,7 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
             .padding( vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
+        MenuKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
@@ -110,14 +113,14 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(40.dp)
-            .border(2.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .border(0.dp, Color.LightGray, RoundedCornerShape(4.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
-            .padding(6.dp)
+            .padding(4.dp)
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
@@ -137,10 +140,32 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     ) {
         Text(
             text = "⌫",
-            fontSize = 26.sp,
+            fontSize = 25.sp,
             color = Color.Gray,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
+        )
+    }
+}
+
+
+@Composable
+fun MenuKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(40.dp)
+            .clickable {
+
+            }
+            .padding(1.dp)
+            .background(Color.Gray, RoundedCornerShape(8.dp))
+
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Settings, // Replace with your icon
+            contentDescription = "Device Info",
+            modifier = Modifier.size(20.dp)
         )
     }
 }
