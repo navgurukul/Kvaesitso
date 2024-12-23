@@ -1,9 +1,6 @@
 package de.mm20.launcher2.ui.launcher
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -12,7 +9,6 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -20,12 +16,10 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -41,7 +35,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -52,7 +45,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -96,7 +88,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -104,13 +99,11 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import de.mm20.launcher2.badges.BadgeIcon
-import de.mm20.launcher2.icons.LauncherIcon
 import de.mm20.launcher2.icons.LauncherIconRenderSettings
 import de.mm20.launcher2.icons.StaticLauncherIcon
 import de.mm20.launcher2.applications.isAppAtFirstPage
+import de.mm20.launcher2.preferences.ClockWidgetColors
 import de.mm20.launcher2.preferences.SearchBarColors
 import de.mm20.launcher2.search.SavableSearchable
 import de.mm20.launcher2.searchactions.actions.SearchAction
@@ -126,16 +119,12 @@ import de.mm20.launcher2.ui.launcher.search.SearchColumn
 import de.mm20.launcher2.ui.launcher.search.SearchVM
 import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.searchbar.LauncherSearchBar
-import de.mm20.launcher2.ui.launcher.widgets.WidgetColumn
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalGridSettings
 import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.pow
@@ -153,6 +142,19 @@ fun PagerScaffold(
 ) {
     val viewModel: LauncherScaffoldVM = viewModel()
     val searchVM: SearchVM = viewModel()
+    val searchBarColor by viewModel.searchBarColor.collectAsState()
+    val color = viewModel.color.collectAsState()
+
+    val darkColors =
+        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
+
+    val contentColors =
+        if (darkColors) {
+            Color(0, 0, 0, 180)
+        } else {
+            Color.White
+        }
+
 
     val viewModelC: ClockWidgetVM = viewModel()
 
@@ -579,7 +581,7 @@ fun PagerScaffold(
                                                             modifier = Modifier.fillMaxWidth()
                                                         ) {
                                                             items(searchVM.appResults.value) { app ->
-                                                                AppItem(app = app)
+                                                                AppItem(app = app, contentColors)
                                                             }
                                                         }
 
@@ -605,7 +607,8 @@ fun PagerScaffold(
                                                                         text = contact.label,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Center,
-                                                                        color = contentColor
+                                                                        color = contentColors,
+                                                                        fontWeight = FontWeight.Bold
                                                                     )
                                                                 }
                                                             }
@@ -618,7 +621,10 @@ fun PagerScaffold(
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
                                                         items(searchVM.appResults.value) { app ->
-                                                            AppItem(app = app)
+                                                            AppItem(
+                                                                app = app,
+                                                                contentColors = contentColors
+                                                            )
                                                         }
                                                     }
                                                 }
@@ -645,7 +651,8 @@ fun PagerScaffold(
                                                                     text = contact.label,
                                                                     fontSize = 14.sp,
                                                                     textAlign = TextAlign.Center,
-                                                                    color = contentColor
+                                                                    color = contentColors,
+                                                                    fontWeight = FontWeight.Bold
                                                                 )
                                                             }
                                                         }
@@ -658,7 +665,8 @@ fun PagerScaffold(
                                                         modifier = Modifier.fillMaxWidth(),
                                                         textAlign = TextAlign.Center,
                                                         fontSize = 16.sp,
-                                                        color = contentColor
+                                                        color = contentColors,
+                                                        fontWeight = FontWeight.Bold
                                                     )
                                                 }
                                             }
@@ -789,7 +797,6 @@ fun PagerScaffold(
 
         val value by searchVM.searchQuery
 
-        val searchBarColor by viewModel.searchBarColor.collectAsState()
         val searchBarStyle by viewModel.searchBarStyle.collectAsState()
 
         val launchOnEnter by searchVM.launchOnEnter.collectAsState(false)
@@ -958,7 +965,7 @@ fun Modifier.pagerScaffoldScrollHandler(
 internal object DefaultNestedScrollConnection : NestedScrollConnection {}
 
 @Composable
-fun AppItem(app: SavableSearchable) {
+fun AppItem(app: SavableSearchable, contentColors: Color) {
     val context = LocalContext.current
     val defaultIconSize = LocalGridSettings.current.iconSize.dp
     val iconBitmap = remember { mutableStateOf<Bitmap?>(null) }
@@ -996,7 +1003,8 @@ fun AppItem(app: SavableSearchable) {
             modifier = Modifier.padding(top = 8.dp),
             fontSize = 12.sp,
             textAlign = TextAlign.Center,
-            color = contentColor
+            color = contentColors,
+            fontWeight = FontWeight.Bold
         )
     }
 }
