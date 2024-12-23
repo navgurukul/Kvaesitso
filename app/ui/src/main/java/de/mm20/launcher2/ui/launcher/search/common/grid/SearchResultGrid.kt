@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.mm20.launcher2.search.SavableSearchable
@@ -43,7 +44,9 @@ fun SearchResultGrid(
             verticalArrangement = if (reverse) Arrangement.BottomReversed else Arrangement.Top
         ) {
             for (i in 0 until ceil(items.size / columns.toFloat()).toInt()) {
-                Row {
+                Row(
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                ) {
                     for (j in 0 until columns) {
                         val item = items.getOrNull(i * columns + j)
                         if (item != null) {

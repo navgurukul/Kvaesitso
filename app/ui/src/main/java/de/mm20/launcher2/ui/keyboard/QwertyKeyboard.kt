@@ -1,5 +1,8 @@
 package de.mm20.launcher2.ui.keyboard
 
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,11 +18,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.launcher.search.SearchVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -100,7 +105,7 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
             .padding( vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        MenuKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
+        MenuKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f), SearchVM())
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
@@ -141,8 +146,8 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
         Text(
             text = "⌫",
             fontSize = 26.sp,
-            color = Color.Gray,
-            fontWeight = FontWeight.Medium,
+            color = Color.White,
+
             fontStyle = FontStyle.Normal
         )
     }
@@ -150,7 +155,8 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
 
 
 @Composable
-fun MenuKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
+fun MenuKey(onKeyPress: (String) -> Unit, modifier: Modifier, searchVM: SearchVM) {
+    val rightIcon = AnimatedImageVector.animatedVectorResource(R.drawable.anim_ic_menu_clear)
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -159,13 +165,16 @@ fun MenuKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
 
             }
             .padding(1.dp)
-            .background(Color.Gray, RoundedCornerShape(8.dp))
+            //.background(Color., RoundedCornerShape(8.dp))
 
     ) {
         Icon(
-            imageVector = Icons.Rounded.Settings, // Replace with your icon
-            contentDescription = "Device Info",
-            modifier = Modifier.size(20.dp)
+            painter = rememberAnimatedVectorPainter(
+                rightIcon,
+                atEnd = searchVM.searchQuery.value.isNotEmpty()
+            ),
+            contentDescription = stringResource(if (searchVM.searchQuery.value.isNotBlank()) R.string.action_clear else R.string.action_more_actions),
+            tint = Color.White
         )
     }
 }
