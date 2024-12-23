@@ -5,9 +5,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -31,9 +34,9 @@ fun SearchResultGrid(
     transitionKey: Any? = items
 ) {
     AnimatedContent(
-        items to transitionKey,
+        targetState = items to transitionKey,
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize() // Ensure parent fills the screen and takes available space
             .padding(4.dp),
         transitionSpec = {
             fadeIn() togetherWith fadeOut()
@@ -43,23 +46,40 @@ fun SearchResultGrid(
         Column(
             verticalArrangement = if (reverse) Arrangement.BottomReversed else Arrangement.Top
         ) {
-            for (i in 0 until ceil(items.size / columns.toFloat()).toInt()) {
+            val rows = ceil(items.size / columns.toFloat()).toInt()
+            for (i in 0 until rows) {
                 Row(
-                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                 ) {
                     for (j in 0 until columns) {
                         val item = items.getOrNull(i * columns + j)
                         if (item != null) {
-                            key(item.key) {
-                                GridItem(
-                                    modifier = modifier,
-                                    item = item,
-                                    showLabels = showLabels,
-                                    highlight = item.key == highlightedItem?.key
-                                )
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f) // Ensure each item gets equal space
+                                    .fillMaxHeight()
+                                    .padding(4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                key(item.key) {
+                                    GridItem(
+                                        modifier = Modifier.fillMaxSize(),
+                                        item = item,
+                                        showLabels = showLabels,
+                                        highlight = item.key == highlightedItem?.key
+                                    )
+                                }
                             }
                         } else {
-                            Spacer(modifier = Modifier.weight(1f))
+                            Spacer(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .padding(4.dp)
+                            )
                         }
                     }
                 }
