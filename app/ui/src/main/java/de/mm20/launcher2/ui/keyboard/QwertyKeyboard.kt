@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -87,10 +88,7 @@ fun QwertyKeyboard(
             KeyboardRowWithBackspace(
                 letters = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm'),
                 onKeyPress = onKeyPress,
-                modifier = Modifier.fillMaxWidth(0.8f),
-                searchVM = searchVM,
-                searchBarValue = searchVM.searchQuery.value,
-                onInputClear = { searchVM.searchQuery.value = "" }
+                modifier = Modifier.fillMaxWidth(0.8f)
             )
         }
     }
@@ -110,15 +108,13 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
 }
 
 @Composable
-fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier, searchVM: SearchVM,
-                             searchBarValue: String,
-                             onInputClear: () -> Unit) {
+fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = modifier
             .padding( vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        MenuKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f), searchVM, searchBarValue, onInputClear)
+        MenuKey(modifier = Modifier.weight(1f))
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
@@ -169,15 +165,10 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
 
 @Composable
 fun MenuKey(
-    onKeyPress: (String) -> Unit,
     modifier: Modifier,
-    searchVM: SearchVM,
-    searchBarValue: String,
-    onInputClear: () -> Unit
 ) {
     val context = LocalContext.current
     var showOverflowMenu by remember { mutableStateOf(false) }
-    val rightIcon = AnimatedImageVector.animatedVectorResource(R.drawable.anim_ic_menu_clear)
     val launcherVM: LauncherScaffoldVM = viewModel()
 
     Box(
@@ -188,11 +179,8 @@ fun MenuKey(
             .padding(1.dp)
     ) {
         Icon(
-            painter = rememberAnimatedVectorPainter(
-                rightIcon,
-                atEnd = searchVM.searchQuery.value.isNotEmpty()
-            ),
-            contentDescription = stringResource(if (searchVM.searchQuery.value.isNotBlank()) R.string.action_clear else R.string.action_more_actions),
+            painter = painterResource(id = R.drawable.baseline_more_vert_24),
+            contentDescription = "Menu",
             tint = Color.White
         )
     }
