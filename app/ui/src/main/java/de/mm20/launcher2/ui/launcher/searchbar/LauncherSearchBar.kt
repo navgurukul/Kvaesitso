@@ -97,57 +97,57 @@ fun LauncherSearchBar(
             },
             reverse = bottomSearchBar,
             darkColors = darkColors,
-//            menu = {
-//                AnimatedVisibility(
-//                    hiddenItemsButtonEnabled && isSearchOpen && hiddenItems.isNotEmpty(),
-//                    enter = scaleIn(tween(100)),
-//                    exit = scaleOut(tween(100))
-//                ) {
-//                    FilledIconButton(
-//                        onClick = { sheetManager.showHiddenItemsSheet() },
-//                        colors = if (sheetManager.hiddenItemsSheetShown.value) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.iconButtonColors()
-//                    ) {
-//                        Icon(imageVector = Icons.Rounded.VisibilityOff, contentDescription = null)
-//                    }
-//                }
-//                AnimatedVisibility(
-//                    isSearchOpen,
-//                    enter = scaleIn(tween(100)),
-//                    exit = scaleOut(tween(100))
-//                ) {
-//                    FilledIconButton(
-//                        onClick = {
-//                            searchVM.showFilters.value = !searchVM.showFilters.value
-//                        },
-//                        colors = if (searchVM.showFilters.value) IconButtonDefaults.filledTonalIconButtonColors()
-//                        else IconButtonDefaults.iconButtonColors()
-//                    ) {
-//                        Box {
-//                            Icon(imageVector = Icons.Rounded.FilterAlt, contentDescription = stringResource(
-//                                if (searchVM.showFilters.value) R.string.menu_hide_filters else R.string.menu_show_filters
-//                            ))
-//                            androidx.compose.animation.AnimatedVisibility(
-//                                !searchVM.filters.value.allCategoriesEnabled,
-//                                enter = scaleIn(tween(100)),
-//                                exit = scaleOut(tween(100)),
-//                                modifier = Modifier
-//                                    .align(Alignment.BottomEnd)
-//                                    .offset(-3.dp, -3.dp)
-//                            ) {
-//                                Badge(
-//                                    containerColor = MaterialTheme.colorScheme.tertiary,
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//                SearchBarMenu(searchBarValue = _value, onInputClear = {
-//                    searchVM.reset()
-//                    searchVM.showFilters.value = false
-//                })
-//            },
+            menu = {
+                AnimatedVisibility(
+                    hiddenItemsButtonEnabled && isSearchOpen && hiddenItems.isNotEmpty(),
+                    enter = scaleIn(tween(100)),
+                    exit = scaleOut(tween(100))
+                ) {
+                    FilledIconButton(
+                        onClick = { sheetManager.showHiddenItemsSheet() },
+                        colors = if (sheetManager.hiddenItemsSheetShown.value) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.iconButtonColors()
+                    ) {
+                        Icon(imageVector = Icons.Rounded.VisibilityOff, contentDescription = null)
+                    }
+                }
+                AnimatedVisibility(
+                    isSearchOpen,
+                    enter = scaleIn(tween(100)),
+                    exit = scaleOut(tween(100))
+                ) {
+                    FilledIconButton(
+                        onClick = {
+                            searchVM.showFilters.value = !searchVM.showFilters.value
+                        },
+                        colors = if (searchVM.showFilters.value) IconButtonDefaults.filledTonalIconButtonColors()
+                        else IconButtonDefaults.iconButtonColors()
+                    ) {
+                        Box {
+                            Icon(imageVector = Icons.Rounded.FilterAlt, contentDescription = stringResource(
+                                if (searchVM.showFilters.value) R.string.menu_hide_filters else R.string.menu_show_filters
+                            ))
+                            androidx.compose.animation.AnimatedVisibility(
+                                !searchVM.filters.value.allCategoriesEnabled,
+                                enter = scaleIn(tween(100)),
+                                exit = scaleOut(tween(100)),
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .offset(-3.dp, -3.dp)
+                            ) {
+                                Badge(
+                                    containerColor = MaterialTheme.colorScheme.tertiary,
+                                )
+                            }
+                        }
+                    }
+                }
+                SearchBarMenu(searchBarValue = searchVM.searchQuery.value, onInputClear = {
+                    searchVM.reset()
+                    searchVM.showFilters.value = false
+                })
+            },
 
-            //***// Removing the quick action from search bar
+          //  ***// Removing the quick action from search bar
 //            actions = {
 //                SearchBarActions(
 //                    actions = actions,

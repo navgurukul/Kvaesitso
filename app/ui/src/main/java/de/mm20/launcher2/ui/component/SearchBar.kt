@@ -60,7 +60,7 @@ fun SearchBar(
     onUnfocus: () -> Unit = {},
     reverse: Boolean = false,
     darkColors: Boolean = false,
-//    menu: @Composable RowScope.() -> Unit = {},
+    menu: @Composable RowScope.() -> Unit = {},
     actions: @Composable ColumnScope.() -> Unit = {},
     onKeyboardActionGo: (KeyboardActionScope.() -> Unit)? = null,
     showSearchElements: Boolean = false
@@ -202,11 +202,11 @@ fun SearchBar(
                             )
                         )
                     }
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically
-//                    ) {
-//                        menu()
-//                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        menu()
+                    }
                 }
                 this.actions()
             }
