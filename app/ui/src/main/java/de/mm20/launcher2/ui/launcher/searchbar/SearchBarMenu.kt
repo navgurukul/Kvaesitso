@@ -62,7 +62,7 @@ fun RowScope.SearchBarMenu(
 //    val viewModel: SearchSettingsScreenVM = viewModel()
 //    val context = LocalContext.current
 //    var showOverflowMenu by remember { mutableStateOf(false) }
-    val rightIcon = AnimatedImageVector.animatedVectorResource(R.drawable.anim_ic_menu_clear)
+//    val rightIcon = AnimatedImageVector.animatedVectorResource(R.drawable.anim_ic_menu_clear)
 //    val launcherVM: LauncherScaffoldVM = viewModel()
 //    val widgetsVM: WidgetsVM = viewModel()
 //    val permissionsManager: PermissionsManager by inject()
