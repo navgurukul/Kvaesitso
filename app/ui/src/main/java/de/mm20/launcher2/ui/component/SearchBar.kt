@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import de.mm20.launcher2.preferences.SearchBarStyle
 import de.mm20.launcher2.ui.R
+import de.mm20.launcher2.ui.gestures.Gesture
 import de.mm20.launcher2.ui.layout.BottomReversed
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 
@@ -104,9 +106,9 @@ fun SearchBar(
         }) {
         when {
             it == SearchBarLevel.Active -> LocalCardStyle.current.opacity
-            style != SearchBarStyle.Transparent -> 1f
+            style != SearchBarStyle.Transparent -> 0f
             it == SearchBarLevel.Resting -> 0f
-            else -> 1f
+            else -> 0f
         }
     }
 
@@ -131,12 +133,12 @@ fun SearchBar(
 
     val opacity by transition.animateFloat(label = "opacity") {
         if (style == SearchBarStyle.Hidden && it == SearchBarLevel.Resting) 0f
-        else 1f
+        else 0f
     }
 
     LauncherCard(
         modifier = modifier
-            .alpha(opacity),
+            .alpha(opacity).background(Color.Transparent),
         backgroundOpacity = backgroundOpacity,
         elevation = elevation
     ) {

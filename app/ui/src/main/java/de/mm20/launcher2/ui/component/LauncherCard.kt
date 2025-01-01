@@ -32,7 +32,7 @@ fun LauncherCard(
     elevation: Dp = 2.dp,
     backgroundOpacity: Float = LocalCardStyle.current.opacity,
     shape: Shape = MaterialTheme.shapes.medium,
-    color: Color = MaterialTheme.colorScheme.surface.copy(alpha = backgroundOpacity.coerceIn(0f, 1f)),
+    color: Color = MaterialTheme.colorScheme.surface.copy(alpha = backgroundOpacity.coerceIn(0f, 0f)),
     border: BorderStroke? = LocalCardStyle.current.borderWidth.takeIf { it > 0 }
         ?.let { BorderStroke(it.dp, MaterialTheme.colorScheme.surface) },
     content: @Composable () -> Unit = {}
@@ -44,7 +44,7 @@ fun LauncherCard(
         content = content,
         contentColor = MaterialTheme.colorScheme.onSurface,
         color = color,
-        shadowElevation = if (backgroundOpacity == 1f) elevation else 0.dp,
+        shadowElevation = if (backgroundOpacity == 0f) elevation else 0.dp,
         tonalElevation = elevation,
     )
 }
