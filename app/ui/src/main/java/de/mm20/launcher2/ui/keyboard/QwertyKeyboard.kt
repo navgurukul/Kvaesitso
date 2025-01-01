@@ -17,6 +17,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,9 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.mm20.launcher2.ktx.tryStartActivity
+import de.mm20.launcher2.preferences.ClockWidgetColors
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.launcher.LauncherScaffoldVM
 import de.mm20.launcher2.ui.launcher.search.SearchVM
+import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import de.mm20.launcher2.ui.settings.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -145,6 +148,19 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
 
 @Composable
 fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
+    val launcherVM: LauncherScaffoldVM = viewModel()
+    val color = launcherVM.color.collectAsState()
+
+    val darkColors =
+        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
+
+    val contentColors =
+        if (darkColors) {
+            Color(0, 0, 0, 180)
+        } else {
+            Color.White
+        }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -155,7 +171,7 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
         Text(
             text = "⌫",
             fontSize = 26.sp,
-            color = Color.White,
+            color = contentColors,
 
             fontStyle = FontStyle.Normal
         )
@@ -170,6 +186,17 @@ fun MenuKey(
     val context = LocalContext.current
     var showOverflowMenu by remember { mutableStateOf(false) }
     val launcherVM: LauncherScaffoldVM = viewModel()
+    val color = launcherVM.color.collectAsState()
+
+    val darkColors =
+        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
+
+    val contentColors =
+        if (darkColors) {
+            Color(0, 0, 0, 180)
+        } else {
+            Color.White
+        }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -181,7 +208,7 @@ fun MenuKey(
         Icon(
             painter = painterResource(id = R.drawable.baseline_more_vert_24),
             contentDescription = "Menu",
-            tint = Color.White
+            tint = contentColors
         )
     }
 
