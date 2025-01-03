@@ -132,7 +132,7 @@ fun SearchBar(
 
     val opacity by transition.animateFloat(label = "opacity") {
         if (style == SearchBarStyle.Hidden && it == SearchBarLevel.Resting) 0f
-        else 0f
+        else 1f
     }
 
     LauncherCard(
