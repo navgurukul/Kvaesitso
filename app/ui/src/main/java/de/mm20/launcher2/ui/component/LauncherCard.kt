@@ -32,7 +32,7 @@ fun LauncherCard(
     elevation: Dp = 2.dp,
     backgroundOpacity: Float = LocalCardStyle.current.opacity,
     shape: Shape = MaterialTheme.shapes.medium,
-    color: Color = MaterialTheme.colorScheme.surface.copy(alpha = backgroundOpacity.coerceIn(0f, 1f)),
+    color: Color,
     border: BorderStroke? = LocalCardStyle.current.borderWidth.takeIf { it > 0 }
         ?.let { BorderStroke(it.dp, MaterialTheme.colorScheme.surface) },
     content: @Composable () -> Unit = {}
@@ -60,7 +60,7 @@ fun PartialLauncherCard(
 ) {
 
     if (isTop && isBottom) {
-        LauncherCard(modifier = modifier, content = content)
+        //LauncherCard(modifier = modifier, content = content)
     } else if (!isTop && !isBottom) {
         CardMiddlePiece(modifier = modifier, elevation = elevation, content = content)
     } else {

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -104,9 +105,9 @@ fun SearchBar(
         }) {
         when {
             it == SearchBarLevel.Active -> LocalCardStyle.current.opacity
-            style != SearchBarStyle.Transparent -> 1f
+            style != SearchBarStyle.Transparent -> 0f
             it == SearchBarLevel.Resting -> 0f
-            else -> 1f
+            else -> 0f
         }
     }
 
@@ -131,14 +132,15 @@ fun SearchBar(
 
     val opacity by transition.animateFloat(label = "opacity") {
         if (style == SearchBarStyle.Hidden && it == SearchBarLevel.Resting) 0f
-        else 1f
+        else 0f
     }
 
     LauncherCard(
         modifier = modifier
             .alpha(opacity),
         backgroundOpacity = backgroundOpacity,
-        elevation = elevation
+        elevation = elevation,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = backgroundOpacity.coerceIn(0f, 0f))
     ) {
         CompositionLocalProvider(
             LocalContentColor provides contentColor

@@ -87,6 +87,7 @@ fun WidgetItem(
         modifier = modifier.zIndex(if (isDragged) 1f else 0f),
         elevation = elevation,
         backgroundOpacity = backgroundOpacity,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = backgroundOpacity.coerceIn(0f, 1f))
     ) {
         Column {
             AnimatedVisibility(editMode) {

@@ -41,7 +41,8 @@ fun CardsSettingsScreen() {
                     modifier = Modifier
                         .height(200.dp)
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 1f)
                 )
             }
         }

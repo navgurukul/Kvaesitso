@@ -275,7 +275,8 @@ fun ItemPopup(origin: Rect, searchable: Searchable, onDismissRequest: () -> Unit
                                 .getTop(LocalDensity.current).toFloat()
                         ),
                         animationProgress.value
-                    )
+                    ),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 1f)
             ) {
                 when (searchable) {
                     is Application -> {
