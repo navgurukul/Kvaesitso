@@ -130,13 +130,6 @@ import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-/***remove this comment after resolving this issues.
-
-1.  for pager gesture (right / left) there seems to be some issue with it's
- size (keyboard position isn't at the bottom it overlaps the clock and it's position is same as clock
-but for Pull Up it works fine s it should ).
-
-***/
 
 @Composable
 fun PagerScaffold(
