@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,10 +46,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import de.mm20.launcher2.ktx.tryStartActivity
 import de.mm20.launcher2.permissions.PermissionGroup
 import de.mm20.launcher2.permissions.PermissionsManager
+import de.mm20.launcher2.preferences.ClockWidgetColors
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.component.MissingPermissionBanner
 import de.mm20.launcher2.ui.launcher.LauncherScaffoldVM
 import de.mm20.launcher2.ui.launcher.widgets.WidgetsVM
+import de.mm20.launcher2.ui.locals.LocalPreferDarkContentOverWallpaper
 import de.mm20.launcher2.ui.settings.SettingsActivity
 import de.mm20.launcher2.ui.settings.search.SearchSettingsScreenVM
 import org.koin.androidx.compose.inject
@@ -67,6 +70,20 @@ fun RowScope.SearchBarMenu(
 //    val widgetsVM: WidgetsVM = viewModel()
 //    val permissionsManager: PermissionsManager by inject()
 
+    val launcherVM: LauncherScaffoldVM = viewModel()
+    val color = launcherVM.color.collectAsState()
+
+    val darkColors =
+        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
+
+    val contentColors =
+        if (darkColors) {
+            Color(0, 0, 0, 180)
+        } else {
+            Color.White
+        }
+
+
     if (searchBarValue.isNotEmpty()){
         Icon(
             imageVector = Icons.Rounded.Close,
@@ -74,7 +91,7 @@ fun RowScope.SearchBarMenu(
             modifier = Modifier.padding(end = 8.dp).clickable {
                 onInputClear()
             },
-            tint = LocalContentColor.current
+            tint = contentColors
         )
     }
 
