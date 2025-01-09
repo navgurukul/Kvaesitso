@@ -379,6 +379,18 @@ fun PullUpScaffold(
                         consumed
                     }
 
+                    pagerState.currentPage == 1 && (available.y > 0 || offsetY.value < 0 )-> {
+                        val consumed = available.y
+                        scope.launch{
+                            offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(0f, maxOffset)
+                            pagerState.animateScrollToPage(
+                                0,
+                                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                            )
+                        }
+                        consumed
+                    }
+
                     else -> 0f
                 }
 
@@ -446,9 +458,9 @@ fun PullUpScaffold(
                 VerticalPager(
                     modifier = Modifier
                         .fillMaxSize(),
-                    beyondViewportPageCount = 1,
+                    beyondViewportPageCount = 2,
                     state = pagerState,
-                    reverseLayout = true,
+                    reverseLayout = false,
                     userScrollEnabled = false,
                     pageNestedScrollConnection = nestedScrollConnection,
                 ) {
