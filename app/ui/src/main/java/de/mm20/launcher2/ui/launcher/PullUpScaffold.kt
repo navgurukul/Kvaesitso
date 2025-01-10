@@ -367,18 +367,6 @@ fun PullUpScaffold(
                 }
 
                 val consumed = when {
-                    canPullUp && available.y < 0 || offsetY.value < 0 -> {
-                        val consumed = available.y
-                        offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(-maxOffset, 0f)
-                        consumed
-                    }
-
-                    canPullDown && available.y > 0 || offsetY.value > 0 -> {
-                        val consumed = available.y
-                        offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(0f, maxOffset)
-                        consumed
-                    }
-
                     pagerState.currentPage == 1 && (available.y > 0 || offsetY.value < 0 )-> {
                         val consumed = available.y
                         scope.launch{
@@ -388,6 +376,18 @@ fun PullUpScaffold(
                                 animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
                             )
                         }
+                        consumed
+                    }
+                    pagerState.currentPage == 1 -> 0f
+                    canPullUp && available.y < 0 || offsetY.value < 0 -> {
+                        val consumed = available.y
+                        offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(-maxOffset, 0f)
+                        consumed
+                    }
+
+                    canPullDown && available.y > 0 || offsetY.value > 0 -> {
+                        val consumed = available.y
+                        offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(0f, maxOffset)
                         consumed
                     }
 
