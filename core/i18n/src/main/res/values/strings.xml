@@ -263,9 +263,9 @@
     <string name="widget_action_replace">Replace</string>
     <string name="menu_item_edit_favs">Edit favorites</string>
     <!-- Edit favorites, title for items that are frequently used but not pinned -->
-    <string name="edit_favorites_dialog_unpinned">Not pinned – frequently used</string>
+    <string name="edit_favorites_dialog_unpinned">Frequently used</string>
     <!-- Edit favorites, title for items that are pinned but have not been sorted by the user -->
-    <string name="edit_favorites_dialog_pinned_unsorted">Pinned – favorite apps</string>
+    <string name="edit_favorites_dialog_pinned_unsorted">Add favorite</string>
     <!-- Edit favorites, title for items that are pinned and have been sorted by the user -->
     <string name="edit_favorites_dialog_pinned_sorted">Pinned – manually sorted</string>
     <string name="edit_favorites_dialog_empty_section">Drag items here</string>
