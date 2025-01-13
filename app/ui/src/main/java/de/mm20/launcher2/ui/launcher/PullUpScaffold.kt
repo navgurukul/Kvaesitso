@@ -1,6 +1,7 @@
 package de.mm20.launcher2.ui.launcher
 
 import android.view.HapticFeedbackConstants
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -417,15 +418,8 @@ fun PullUpScaffold(
                     offsetY.animateTo(0f)
                     return available
                 }
-                if (pagerState.currentPage == 1 && available.y > 1000f) { // Arbitrary velocity threshold
-                    scope.launch {
-                        pagerState.animateScrollToPage(
-                            0,
-                            animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
-                        )
-                    }
-                    return Velocity(available.x, 0f)
-                }
+
+
 
                 return Velocity.Zero
             }
