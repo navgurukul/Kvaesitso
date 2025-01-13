@@ -121,7 +121,9 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
+        MicrophoneKey(onSpeechInput = onKeyPress, modifier = Modifier.weight(1f))
         BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
+
     }
 }
 @Composable
@@ -178,6 +180,35 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
     }
 }
 
+@Composable
+fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier) {
+    val launcherVM: LauncherScaffoldVM = viewModel()
+    val color = launcherVM.color.collectAsState()
+
+    val darkColors =
+        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
+
+    val contentColors =
+        if (darkColors) {
+            Color(0, 0, 0, 180)
+        } else {
+            Color.White
+        }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(40.dp)
+            .clickable { onSpeechInput("") }
+            .padding(2.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_mic_24),
+            contentDescription = "Microphone",
+            tint = contentColors
+        )
+    }
+}
 
 @Composable
 fun MenuKey(
