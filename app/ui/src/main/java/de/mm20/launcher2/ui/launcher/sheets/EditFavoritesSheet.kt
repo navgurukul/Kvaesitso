@@ -154,9 +154,10 @@ fun EditFavoritesSheet(
 fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: PaddingValues) {
     val items by viewModel.gridItems
     val columns = LocalGridSettings.current.columnCount
-
+    var description : String? = null
     val availableTags by viewModel.availableTags
     val pinnedTags by viewModel.pinnedTags
+    var title : Int
 
     var contextMenuItemKey by remember { mutableStateOf<String?>(null) }
 
@@ -291,10 +292,16 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                 }
 
                 is FavoritesSheetGridItem.Divider -> {
-                    val title = when (it.section) {
+                    when (it.section) {
 //                        FavoritesSheetSection.ManuallySorted -> R.string.edit_favorites_dialog_pinned_sorted
-                        FavoritesSheetSection.AutomaticallySorted -> R.string.edit_favorites_dialog_pinned_unsorted
-                        FavoritesSheetSection.FrequentlyUsed -> R.string.edit_favorites_dialog_unpinned
+                        FavoritesSheetSection.AutomaticallySorted -> {
+                            title = R.string.edit_favorites_dialog_pinned_unsorted
+                            description = "Favorite apps will appear here"
+                        }
+                        FavoritesSheetSection.FrequentlyUsed -> {
+                            title = R.string.edit_favorites_dialog_unpinned
+                            description = "Frequently used app will appear here"
+                        }
                     }
                     var showSettings by remember { mutableStateOf(false) }
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -308,7 +315,7 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                     .padding(end = 16.dp),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                text = stringResource(id = title),
+                                text = stringResource(title),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.secondary
                             )
@@ -419,45 +426,63 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                 }
 
                 is FavoritesSheetGridItem.EmptySection -> {
-                    val shape = MaterialTheme.shapes.medium
-                    val color = MaterialTheme.colorScheme.outline
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .drawBehind {
-                                drawOutline(
-                                    outline = shape.createOutline(
-                                        size,
-                                        layoutDirection,
-                                        Density(density, fontScale)
-                                    ),
-                                    color = color,
-                                    style = Stroke(
-                                        2.dp.toPx(),
-                                        pathEffect = PathEffect.dashPathEffect(
-                                            intervals = floatArrayOf(
-                                                4.dp.toPx(),
-                                                4.dp.toPx(),
-                                            )
-                                        )
-                                    )
-                                )
-                            }
-                    ) {
+                    description?.let { it1 ->
                         Text(
                             modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(
-                                    horizontal = 16.dp,
-                                    vertical = 24.dp,
-                                ),
-                            text = stringResource(R.string.edit_favorites_dialog_empty_section),
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            text = it1,
                             style = MaterialTheme.typography.labelSmall,
-                            textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.outline
                         )
                     }
+//                    val shape = MaterialTheme.shapes.medium
+//                    val color = MaterialTheme.colorScheme.outline
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(vertical = 4.dp),
+//                        text = stringResource(R.string.edit_favorites_dialog_tag_section_empty),
+//                        style = MaterialTheme.typography.labelSmall,
+//                        color = MaterialTheme.colorScheme.outline
+//                    )
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(vertical = 8.dp)
+//                            .drawBehind {
+//                                drawOutline(
+//                                    outline = shape.createOutline(
+//                                        size,
+//                                        layoutDirection,
+//                                        Density(density, fontScale)
+//                                    ),
+//                                    color = color,
+//                                    style = Stroke(
+//                                        2.dp.toPx(),
+//                                        pathEffect = PathEffect.dashPathEffect(
+//                                            intervals = floatArrayOf(
+//                                                4.dp.toPx(),
+//                                                4.dp.toPx(),
+//                                            )
+//                                        )
+//                                    )
+//                                )
+//                            }
+//                    ) {
+//                        Text(
+//                            modifier = Modifier
+//                                .align(Alignment.Center)
+//                                .padding(
+//                                    horizontal = 16.dp,
+//                                    vertical = 24.dp,
+//                                ),
+//                            text = stringResource(R.string.edit_favorites_dialog_empty_section),
+//                            style = MaterialTheme.typography.labelSmall,
+//                            textAlign = TextAlign.Center,
+//                            color = MaterialTheme.colorScheme.outline
+//                        )
+//                    }
                 }
 
                 is FavoritesSheetGridItem.Spacer -> {
