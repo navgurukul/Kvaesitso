@@ -70,11 +70,11 @@ class FavoritesService(
     }
 
     fun updateFavorites(
-        manuallySorted: List<SavableSearchable>,
+        //manuallySorted: List<SavableSearchable>,
         automaticallySorted: List<SavableSearchable>
     ) {
         searchableRepository.updateFavorites(
-            manuallySorted = manuallySorted,
+            //manuallySorted = manuallySorted,
             automaticallySorted = automaticallySorted
         )
     }

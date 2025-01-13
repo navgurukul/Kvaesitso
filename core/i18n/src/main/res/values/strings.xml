@@ -265,7 +265,7 @@
     <!-- Edit favorites, title for items that are frequently used but not pinned -->
     <string name="edit_favorites_dialog_unpinned">Not pinned – frequently used</string>
     <!-- Edit favorites, title for items that are pinned but have not been sorted by the user -->
-    <string name="edit_favorites_dialog_pinned_unsorted">Pinned – automatically sorted</string>
+    <string name="edit_favorites_dialog_pinned_unsorted">Pinned – favorite apps</string>
     <!-- Edit favorites, title for items that are pinned and have been sorted by the user -->
     <string name="edit_favorites_dialog_pinned_sorted">Pinned – manually sorted</string>
     <string name="edit_favorites_dialog_empty_section">Drag items here</string>

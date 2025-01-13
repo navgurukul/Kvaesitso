@@ -292,7 +292,7 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
 
                 is FavoritesSheetGridItem.Divider -> {
                     val title = when (it.section) {
-                        FavoritesSheetSection.ManuallySorted -> R.string.edit_favorites_dialog_pinned_sorted
+//                        FavoritesSheetSection.ManuallySorted -> R.string.edit_favorites_dialog_pinned_sorted
                         FavoritesSheetSection.AutomaticallySorted -> R.string.edit_favorites_dialog_pinned_unsorted
                         FavoritesSheetSection.FrequentlyUsed -> R.string.edit_favorites_dialog_unpinned
                     }
@@ -708,7 +708,7 @@ sealed interface FavoritesSheetGridItem {
 }
 
 enum class FavoritesSheetSection {
-    ManuallySorted,
+ //   ManuallySorted,
     AutomaticallySorted,
     FrequentlyUsed
 }
