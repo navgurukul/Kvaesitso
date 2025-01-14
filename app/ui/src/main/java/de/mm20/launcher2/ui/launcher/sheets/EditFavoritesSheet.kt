@@ -154,7 +154,7 @@ fun EditFavoritesSheet(
 fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: PaddingValues) {
     val items by viewModel.gridItems
     val columns = LocalGridSettings.current.columnCount
-    var description : String? = null
+    var description : Int = 0
     val availableTags by viewModel.availableTags
     val pinnedTags by viewModel.pinnedTags
     var title : Int
@@ -296,11 +296,9 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
 //                        FavoritesSheetSection.ManuallySorted -> R.string.edit_favorites_dialog_pinned_sorted
                         FavoritesSheetSection.AutomaticallySorted -> {
                             title = R.string.edit_favorites_dialog_pinned_unsorted
-                            description = "Favorite apps will appear here"
                         }
                         FavoritesSheetSection.FrequentlyUsed -> {
                             title = R.string.edit_favorites_dialog_unpinned
-                            description = "Frequently used app will appear here"
                         }
                     }
                     var showSettings by remember { mutableStateOf(false) }
@@ -320,6 +318,7 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                 color = MaterialTheme.colorScheme.secondary
                             )
                             if (it.section == FavoritesSheetSection.FrequentlyUsed) {
+                                description = R.string.Frequently_used_will_appear_here
                                 FilledTonalIconToggleButton(
                                     modifier = Modifier.offset(x = 4.dp),
                                     checked = showSettings,
@@ -330,10 +329,11 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                     )
                                 }
                             } else {
+                                description = R.string.Favorite_apps_will_appear_here
                                 FilledTonalIconButton(
                                     modifier = Modifier.offset(x = 4.dp),
                                     onClick = {
-                                        viewModel.pickShortcut(it.section)
+                                        //viewModel.pickShortcut(it.section)
                                     }) {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
@@ -426,16 +426,15 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                 }
 
                 is FavoritesSheetGridItem.EmptySection -> {
-                    description?.let { it1 ->
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
-                            text = it1,
+                            text = stringResource(description),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline
                         )
-                    }
+
 //                    val shape = MaterialTheme.shapes.medium
 //                    val color = MaterialTheme.colorScheme.outline
 //                    Box(

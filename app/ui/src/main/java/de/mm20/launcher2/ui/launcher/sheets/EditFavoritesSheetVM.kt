@@ -234,6 +234,10 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
         createShortcutTarget.value = null
     }
 
+    fun addAppAsFavorite(){
+
+    }
+
     fun remove(key: String) {
         val gridItems = gridItems.value?.toMutableList() ?: return
         val item =
