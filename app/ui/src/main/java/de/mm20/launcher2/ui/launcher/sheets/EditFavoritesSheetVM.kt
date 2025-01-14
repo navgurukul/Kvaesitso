@@ -124,7 +124,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
     }
 
     fun moveItem(from: LazyGridItemInfo, to: LazyGridItemInfo) {
-        gridItems.value?.getOrNull(from.index)?.takeIf { it is FavoritesSheetGridItem.Favorite }
+        gridItems.value.getOrNull(from.index)?.takeIf { it is FavoritesSheetGridItem.Favorite }
             ?: return
         gridItems.value?.getOrNull(to.index)
             ?.takeIf {
@@ -143,7 +143,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
                 automaticallySorted.removeAt(from.index - 2)
             }
             else -> {
-                frequentlyUsed.removeAt(from.index - 4 - automaticallySortedSize)
+                frequentlyUsed.removeAt(from.index - 3 - automaticallySortedSize)
            }
         }
 
@@ -160,7 +160,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
             }
             else -> {
                 frequentlyUsed.add(
-                    (to.index - 4 - automaticallySortedSize).coerceAtMost(
+                    (to.index - 3 - automaticallySortedSize).coerceAtMost(
                         frequentlyUsed.size
                     ),
                     item

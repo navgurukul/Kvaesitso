@@ -1,12 +1,18 @@
 package de.mm20.launcher2.ui.launcher.sheets
 
 import android.app.Activity
+import android.graphics.Bitmap
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,16 +25,20 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material.icons.rounded.Tag
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -38,14 +48,17 @@ import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,11 +68,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -70,19 +87,25 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import de.mm20.launcher2.badges.Badge
 import de.mm20.launcher2.icons.LauncherIcon
+import de.mm20.launcher2.icons.LauncherIconRenderSettings
+import de.mm20.launcher2.icons.StaticLauncherIcon
+import de.mm20.launcher2.search.Application
 import de.mm20.launcher2.search.SavableSearchable
 import de.mm20.launcher2.search.data.Tag
 import de.mm20.launcher2.ui.R
 import de.mm20.launcher2.ui.common.TagChip
 import de.mm20.launcher2.ui.component.BottomSheetDialog
+import de.mm20.launcher2.ui.component.DefaultToolbarAction
 import de.mm20.launcher2.ui.component.MissingPermissionBanner
 import de.mm20.launcher2.ui.component.ShapedLauncherIcon
+import de.mm20.launcher2.ui.component.ToolbarAction
 import de.mm20.launcher2.ui.component.dragndrop.DraggableItem
 import de.mm20.launcher2.ui.component.dragndrop.LazyDragAndDropRow
 import de.mm20.launcher2.ui.component.dragndrop.LazyVerticalDragAndDropGrid
@@ -90,6 +113,11 @@ import de.mm20.launcher2.ui.component.dragndrop.rememberLazyDragAndDropGridState
 import de.mm20.launcher2.ui.component.dragndrop.rememberLazyDragAndDropListState
 import de.mm20.launcher2.ui.ktx.splitLeadingEmoji
 import de.mm20.launcher2.ui.ktx.toPixels
+import de.mm20.launcher2.ui.launcher.AppItem
+import de.mm20.launcher2.ui.launcher.search.SearchVM
+import de.mm20.launcher2.ui.launcher.search.common.SearchableItemVM
+import de.mm20.launcher2.ui.launcher.search.listItemViewModel
+import de.mm20.launcher2.ui.locals.LocalFavoritesEnabled
 import de.mm20.launcher2.ui.locals.LocalGridSettings
 import de.mm20.launcher2.ui.settings.tags.EditTagSheet
 import kotlin.math.roundToInt
@@ -105,29 +133,28 @@ fun EditFavoritesSheet(
     }
 
     val loading by viewModel.loading
-    val createShortcutTarget by viewModel.createShortcutTarget
+    //val createShortcutTarget by viewModel.createShortcutTarget
 
     BottomSheetDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                if (createShortcutTarget == null) {
+//                if (createShortcutTarget == null) {
                     stringResource(id = R.string.menu_item_edit_favs)
-                } else {
-                    stringResource(id = R.string.create_app_shortcut)
-                }
+//                } else {
+//                    stringResource(id = R.string.create_app_shortcut)
+//                }
             )
         },
-        dismissible = {
-            createShortcutTarget == null
-        },
-        confirmButton = if (createShortcutTarget != null) {
-            {
-                OutlinedButton(onClick = { viewModel.cancelPickShortcut() }) {
-                    Text(stringResource(id = android.R.string.cancel))
-                }
-            }
-        } else null
+//        dismissible = { !loading
+//        },
+//        confirmButton = //if (createShortcutTarget != null) {
+//            {
+//                OutlinedButton(onClick = { viewModel.cancelPickShortcut() }) {
+//                    Text(stringResource(id = android.R.string.cancel))
+//                }
+//            }
+////        } else null
     ) {
         if (loading) {
             Box(
@@ -142,8 +169,8 @@ fun EditFavoritesSheet(
                         .align(Alignment.Center)
                 )
             }
-        } else if (createShortcutTarget != null) {
-            ShortcutPicker(viewModel, it)
+//        } else if (createShortcutTarget != null) {
+//            ShortcutPicker(viewModel, it)
         } else {
             ReorderFavoritesGrid(viewModel, it)
         }
@@ -159,7 +186,9 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
     val pinnedTags by viewModel.pinnedTags
     var title : Int
 
+    var showDialog by remember { mutableStateOf(false) }
     var contextMenuItemKey by remember { mutableStateOf<String?>(null) }
+    val vm : SearchVM = viewModel()
 
     val contextMenuCloseDistance = 8.dp.toPixels()
 
@@ -333,7 +362,7 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                 FilledTonalIconButton(
                                     modifier = Modifier.offset(x = 4.dp),
                                     onClick = {
-                                        //viewModel.pickShortcut(it.section)
+                                        showDialog = true
                                     }) {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
@@ -628,6 +657,29 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
             }
         )
     }
+    if (showDialog){
+        BottomSheetDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(stringResource(R.string.edit_favorites_dialog_pinned_unsorted))
+            },
+            confirmButton = {
+                OutlinedButton(onClick = { showDialog = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        ){
+            LazyColumn (
+
+            ){
+                items(
+                    vm.appResults.value
+                ){
+                    AppItems(app = it, apps = it)
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -735,4 +787,90 @@ enum class FavoritesSheetSection {
  //   ManuallySorted,
     AutomaticallySorted,
     FrequentlyUsed
+}
+
+@Composable
+fun AppItems(app: SavableSearchable, apps: Application) {
+    val context = LocalContext.current
+    val defaultIconSize = LocalGridSettings.current.iconSize.dp
+    val iconBitmap = remember { mutableStateOf<Bitmap?>(null) }
+    val viewModel: SearchableItemVM = listItemViewModel(key = "search-${apps.key}")
+    val isPinned by viewModel.isPinned.collectAsState(false)
+
+    val settings = LauncherIconRenderSettings(
+        size = defaultIconSize.toPixels().toInt(),
+        fgThemeColor = MaterialTheme.colorScheme.onPrimaryContainer.toArgb(),
+        bgThemeColor = MaterialTheme.colorScheme.primaryContainer.toArgb(),
+        fgTone = 1,
+        bgTone = 1
+    )
+
+    LaunchedEffect(app) {
+        val icon = app.loadIcon(context, 48, false) as? StaticLauncherIcon
+        iconBitmap.value = icon?.render(settings)
+    }
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp, horizontal = 12.dp)
+            .clickable {
+                if (isPinned){
+                    viewModel.unpin()
+                    Toast.makeText(context, "${app.label} is removed from favorite", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.pin()
+                    Toast.makeText(context, "${app.label} is added as favorite", Toast.LENGTH_SHORT).show()
+                }
+            }
+    ){
+        Row(
+            modifier = Modifier
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            iconBitmap.value?.let { bitmap ->
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = app.label,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .padding(4.dp)
+                )
+            }
+            Text(
+                text = app.label,
+                modifier = Modifier.padding(start = 16.dp),
+                style = MaterialTheme.typography.titleSmall
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape),
+                contentAlignment = Alignment.CenterEnd
+            ){
+                if (isPinned) {
+                    Icon(
+                        imageVector = Icons.Rounded.Star,
+                        contentDescription = stringResource(R.string.menu_favorites_unpin),
+                        modifier = Modifier.align(Alignment.Center).clickable {
+                            viewModel.unpin()
+                            Toast.makeText(context, "${app.label} is removed from favorite", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+               } else {
+                    Icon(
+                        imageVector = Icons.Rounded.StarOutline,
+                        contentDescription = stringResource(R.string.menu_favorites_pin),
+                        modifier = Modifier.align(Alignment.Center).clickable {
+                            viewModel.pin()
+                            Toast.makeText(context, "${app.label} is added as favorite", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            }
+        }
+    }
+
 }
