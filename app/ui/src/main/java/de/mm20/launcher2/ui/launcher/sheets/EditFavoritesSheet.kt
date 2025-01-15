@@ -65,6 +65,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -120,6 +121,7 @@ import de.mm20.launcher2.ui.launcher.search.listItemViewModel
 import de.mm20.launcher2.ui.locals.LocalFavoritesEnabled
 import de.mm20.launcher2.ui.locals.LocalGridSettings
 import de.mm20.launcher2.ui.settings.tags.EditTagSheet
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
@@ -669,9 +671,7 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                 }
             }
         ){
-            LazyColumn (
-
-            ){
+            LazyColumn (){
                 items(
                     vm.appResults.value
                 ){
@@ -796,6 +796,8 @@ fun AppItems(app: SavableSearchable, apps: Application) {
     val iconBitmap = remember { mutableStateOf<Bitmap?>(null) }
     val viewModel: SearchableItemVM = listItemViewModel(key = "search-${apps.key}")
     val isPinned by viewModel.isPinned.collectAsState(false)
+    val viewModel1: EditFavoritesSheetVM = viewModel()
+    val scope = rememberCoroutineScope()
 
     val settings = LauncherIconRenderSettings(
         size = defaultIconSize.toPixels().toInt(),
@@ -817,9 +819,15 @@ fun AppItems(app: SavableSearchable, apps: Application) {
                 if (isPinned){
                     viewModel.unpin()
                     Toast.makeText(context, "${app.label} is removed from favorite", Toast.LENGTH_SHORT).show()
+                    scope.launch {
+                        viewModel1.reload()
+                    }
                 } else {
                     viewModel.pin()
                     Toast.makeText(context, "${app.label} is added as favorite", Toast.LENGTH_SHORT).show()
+                    scope.launch {
+                        viewModel1.reload()
+                    }
                 }
             }
     ){
@@ -857,6 +865,9 @@ fun AppItems(app: SavableSearchable, apps: Application) {
                         modifier = Modifier.align(Alignment.Center).clickable {
                             viewModel.unpin()
                             Toast.makeText(context, "${app.label} is removed from favorite", Toast.LENGTH_SHORT).show()
+                            scope.launch {
+                                viewModel1.reload()
+                            }
                         }
                     )
                } else {
@@ -866,6 +877,9 @@ fun AppItems(app: SavableSearchable, apps: Application) {
                         modifier = Modifier.align(Alignment.Center).clickable {
                             viewModel.pin()
                             Toast.makeText(context, "${app.label} is added as favorite", Toast.LENGTH_SHORT).show()
+                            scope.launch {
+                                viewModel1.reload()
+                            }
                         }
                     )
                 }
