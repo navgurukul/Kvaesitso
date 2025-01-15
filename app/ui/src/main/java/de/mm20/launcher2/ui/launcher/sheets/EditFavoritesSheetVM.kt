@@ -50,7 +50,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
 
     val createShortcutTarget = mutableStateOf<FavoritesSheetSection?>(null)
 
-    //private var manuallySorted: MutableList<SavableSearchable> = mutableListOf()
+    private var manuallySorted: MutableList<SavableSearchable> = mutableListOf()
     private var automaticallySorted: MutableList<SavableSearchable> = mutableListOf()
     private var frequentlyUsed: MutableList<SavableSearchable> = mutableListOf()
 
@@ -59,11 +59,11 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
 
     suspend fun reload(showLoadingIndicator: Boolean = true) {
         loading.value = showLoadingIndicator
-//        manuallySorted = mutableListOf()
-//        manuallySorted = favoritesService.getFavorites(
-//            minPinnedLevel = PinnedLevel.ManuallySorted,
-//            excludeTypes = listOf("tag"),
-//        ).first().toMutableList()
+        manuallySorted = mutableListOf()
+        manuallySorted = favoritesService.getFavorites(
+            minPinnedLevel = PinnedLevel.ManuallySorted,
+            excludeTypes = listOf("tag"),
+        ).first().toMutableList()
         automaticallySorted = favoritesService.getFavorites(
             minPinnedLevel = PinnedLevel.AutomaticallySorted,
             maxPinnedLevel = PinnedLevel.AutomaticallySorted,
@@ -173,10 +173,10 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
 
     private fun save() {
         favoritesService.updateFavorites(
-//            manuallySorted = buildList {
-//                pinnedTags.value?.let { addAll(it) }
-//                addAll(manuallySorted)
-//            },
+            manuallySorted = buildList {
+                pinnedTags.value?.let { addAll(it) }
+                addAll(manuallySorted)
+            },
             automaticallySorted = buildList {
                 addAll(automaticallySorted)
             },
@@ -295,7 +295,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
             gridItems.find { it is FavoritesSheetGridItem.Favorite && it.item.key == key } as FavoritesSheetGridItem.Favorite?
         if (item != null) {
             automaticallySorted.removeAll { it.key == item.item.key }
-                    //|| manuallySorted.removeAll { it.key == item.item.key }
+                    || manuallySorted.removeAll { it.key == item.item.key }
                     || frequentlyUsed.removeAll { it.key == item.item.key }
             buildItemList()
             customAttributesRepository.addTag(item.item, tag)

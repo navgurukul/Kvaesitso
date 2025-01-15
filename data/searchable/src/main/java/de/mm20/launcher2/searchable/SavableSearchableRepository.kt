@@ -90,7 +90,7 @@ interface SavableSearchableRepository : Backupable {
     fun isPinned(searchable: SavableSearchable): Flow<Boolean>
     fun getVisibility(searchable: SavableSearchable): Flow<VisibilityLevel>
     fun updateFavorites(
-        //manuallySorted: List<SavableSearchable>,
+        manuallySorted: List<SavableSearchable>,
         automaticallySorted: List<SavableSearchable>,
     )
 
@@ -320,50 +320,11 @@ internal class SavableSearchableRepositoryImpl(
         }
     }
 
-    override fun updateFavorites(automaticallySorted: List<SavableSearchable>) {
-        val dao = database.searchableDao()
-        scope.launch {
-            database.withTransaction {
-                dao.unpinAll()
-                dao.upsert(
-                    automaticallySorted.mapNotNull { savableSearchable ->
-                        SavedSearchableUpdatePinEntity(
-                            key = savableSearchable.key,
-                            type = savableSearchable.domain,
-                            pinPosition = 1,
-                            serializedSearchable = savableSearchable.serialize()
-                                ?: return@mapNotNull null,
-                        )
-                    }
-                )
-            }
-        }
-    }
-
-    override fun delete(searchable: SavableSearchable) {
-        scope.launch {
-            database.searchableDao().delete(searchable.key)
-        }
-    }
-
-//    override fun updateFavorites(
-//        automaticallySorted: List<SavableSearchable>
-//    ) {
+//    override fun updateFavorites(automaticallySorted: List<SavableSearchable>) {
 //        val dao = database.searchableDao()
 //        scope.launch {
 //            database.withTransaction {
 //                dao.unpinAll()
-//                dao.upsert(
-//                    manuallySorted.mapIndexedNotNull { index, savableSearchable ->
-//                        SavedSearchableUpdatePinEntity(
-//                            key = savableSearchable.key,
-//                            type = savableSearchable.domain,
-//                            pinPosition = manuallySorted.size - index + 1,
-//                            serializedSearchable = savableSearchable.serialize()
-//                                ?: return@mapIndexedNotNull null,
-//                        )
-//                    }
-//                )
 //                dao.upsert(
 //                    automaticallySorted.mapNotNull { savableSearchable ->
 //                        SavedSearchableUpdatePinEntity(
@@ -378,6 +339,46 @@ internal class SavableSearchableRepositoryImpl(
 //            }
 //        }
 //    }
+
+    override fun delete(searchable: SavableSearchable) {
+        scope.launch {
+            database.searchableDao().delete(searchable.key)
+        }
+    }
+
+    override fun updateFavorites(
+        manuallySorted: List<SavableSearchable>,
+        automaticallySorted: List<SavableSearchable>
+    ) {
+        val dao = database.searchableDao()
+        scope.launch {
+            database.withTransaction {
+                dao.unpinAll()
+                dao.upsert(
+                    manuallySorted.mapIndexedNotNull { index, savableSearchable ->
+                        SavedSearchableUpdatePinEntity(
+                            key = savableSearchable.key,
+                            type = savableSearchable.domain,
+                            pinPosition = manuallySorted.size - index + 1,
+                            serializedSearchable = savableSearchable.serialize()
+                                ?: return@mapIndexedNotNull null,
+                        )
+                    }
+                )
+                dao.upsert(
+                    automaticallySorted.mapNotNull { savableSearchable ->
+                        SavedSearchableUpdatePinEntity(
+                            key = savableSearchable.key,
+                            type = savableSearchable.domain,
+                            pinPosition = 1,
+                            serializedSearchable = savableSearchable.serialize()
+                                ?: return@mapNotNull null,
+                        )
+                    }
+                )
+            }
+        }
+    }
 
     override fun sortByRelevance(keys: List<String>): Flow<List<String>> {
         if (keys.size > 999) return flowOf(emptyList())

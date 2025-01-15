@@ -156,24 +156,24 @@ fun EditFavoritesSheet(
 //            }
 ////        } else null
     ) {
-        if (loading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .padding(it)
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .align(Alignment.Center)
-                )
-            }
-//        } else if (createShortcutTarget != null) {
-//            ShortcutPicker(viewModel, it)
-        } else {
+//        if (loading) {
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .aspectRatio(1f)
+//                    .padding(it)
+//            ) {
+//                CircularProgressIndicator(
+//                    modifier = Modifier
+//                        .size(48.dp)
+//                        .align(Alignment.Center)
+//                )
+//            }
+////        } else if (createShortcutTarget != null) {
+////            ShortcutPicker(viewModel, it)
+//        } else {
             ReorderFavoritesGrid(viewModel, it)
-        }
+//        }
     }
 }
 
