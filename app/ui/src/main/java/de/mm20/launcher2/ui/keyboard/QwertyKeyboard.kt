@@ -131,14 +131,14 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(40.dp)
-            .border(0.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
+            .border(0.dp, Color.LightGray, RoundedCornerShape(6.dp))
+            .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(6.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
             .padding(4.dp)
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 20.sp,
+            fontSize = 21.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
