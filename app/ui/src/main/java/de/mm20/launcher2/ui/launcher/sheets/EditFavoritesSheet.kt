@@ -48,6 +48,8 @@ import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconToggleButtonColors
 import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -346,12 +348,20 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                 overflow = TextOverflow.Ellipsis,
                                 text = stringResource(title),
                                 style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.primary
                             )
                             if (it.section == FavoritesSheetSection.FrequentlyUsed) {
                                 description = R.string.Frequently_used_will_appear_here
                                 FilledTonalIconToggleButton(
                                     modifier = Modifier.offset(x = 4.dp),
+                                    colors = IconToggleButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        disabledContentColor = MaterialTheme.colorScheme.primary,
+                                        checkedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        checkedContentColor = MaterialTheme.colorScheme.primary
+                                    ),
                                     checked = showSettings,
                                     onCheckedChange = { showSettings = it }) {
                                     Icon(
@@ -363,12 +373,19 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                 description = R.string.Favorite_apps_will_appear_here
                                 FilledTonalIconButton(
                                     modifier = Modifier.offset(x = 4.dp),
+                                    colors = IconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        disabledContentColor = MaterialTheme.colorScheme.primary
+                                    ),
                                     onClick = {
                                         showDialog = true
                                     }) {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
-                                        contentDescription = null
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
@@ -538,17 +555,24 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                 overflow = TextOverflow.Ellipsis,
                                 text = stringResource(R.string.edit_favorites_dialog_tags),
                                 style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.primary
                             )
                             Box() {
                                 FilledTonalIconButton(
                                     modifier = Modifier.offset(x = 4.dp),
+                                    colors = IconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.primary,
+                                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        disabledContentColor = MaterialTheme.colorScheme.primary
+                                    ),
                                     onClick = {
                                         showAddMenu = true
                                     }) {
                                     Icon(
                                         imageVector = Icons.Rounded.Add,
-                                        contentDescription = null
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                                 DropdownMenu(
@@ -567,7 +591,7 @@ fun ReorderFavoritesGrid(viewModel: EditFavoritesSheetVM, paddingValues: Padding
                                                         textAlign = TextAlign.Center,
                                                     )
                                                 } else {
-                                                    Icon(Icons.Rounded.Tag, null)
+                                                    Icon(Icons.Rounded.Tag, null, tint = MaterialTheme.colorScheme.primary)
                                                 }
                                             },
                                             text = { Text(tagName ?: "") },

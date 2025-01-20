@@ -5,6 +5,7 @@ import androidx.compose.animation.EnterExitState
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.mm20.launcher2.search.data.Tag
@@ -80,6 +83,10 @@ fun FavoritesTagSelector(
                         FilterChip(
                             modifier = Modifier
                                 .padding(start = 16.dp),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.outline
+                            ),
                             selected = selectedTag == null,
                             onClick = { onSelectTag(null) },
                             leadingIcon = {
@@ -87,6 +94,7 @@ fun FavoritesTagSelector(
                                     imageVector = Icons.Rounded.Star,
                                     contentDescription = null,
                                     modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             },
                             label = { Text(stringResource(R.string.favorites)) }
@@ -95,6 +103,10 @@ fun FavoritesTagSelector(
                             TagChip(
                                 modifier = Modifier
                                     .padding(start = 8.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.outline
+                                ),
                                 tag = tag,
                                 selected = selectedTag == tag.tag,
                                 onClick = {
@@ -144,6 +156,10 @@ fun FavoritesTagSelector(
                         FilterChip(
                             modifier = Modifier
                                 .padding(end = 8.dp),
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.outline
+                            ),
                             selected = selectedTag == null,
                             onClick = { onSelectTag(null) },
                             leadingIcon = {
@@ -151,6 +167,7 @@ fun FavoritesTagSelector(
                                     imageVector = Icons.Rounded.Star,
                                     contentDescription = null,
                                     modifier = Modifier.size(FilterChipDefaults.IconSize),
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             },
                             label = { Text(stringResource(R.string.favorites)) }
@@ -158,7 +175,11 @@ fun FavoritesTagSelector(
                         for (tag in tags) {
                             TagChip(
                                 modifier = Modifier
-                                    .padding(end = 8.dp),
+                                .padding(start = 8.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.outline
+                                ),
                                 tag = tag,
                                 selected = selectedTag == tag.tag,
                                 onClick = {
