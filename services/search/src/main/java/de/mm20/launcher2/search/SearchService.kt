@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -109,10 +110,11 @@ internal class SearchServiceImpl(
             if (filters.apps) {
                 launch {
                     appRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { apps, customAttrs ->
-                            if (customAttrs.apps != null) apps + customAttrs.apps
-                            else apps
-                        }
+//                        .combine(customAttrResults) { apps, customAttrs ->
+//                            if (customAttrs.apps != null) apps + customAttrs.apps
+//                            else apps
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -124,10 +126,11 @@ internal class SearchServiceImpl(
             if (filters.shortcuts) {
                 launch {
                     appShortcutRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { shortcuts, customAttrs ->
-                            if (customAttrs.shortcuts != null) shortcuts + customAttrs.shortcuts
-                            else shortcuts
-                        }
+//                        .combine(customAttrResults) { shortcuts, customAttrs ->
+//                            if (customAttrs.shortcuts != null) shortcuts + customAttrs.shortcuts
+//                            else shortcuts
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -139,10 +142,11 @@ internal class SearchServiceImpl(
             if (filters.contacts) {
                 launch {
                     contactRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { contacts, customAttrs ->
-                            if (customAttrs.contacts != null) contacts + customAttrs.contacts
-                            else contacts
-                        }
+//                        .combine(customAttrResults) { contacts, customAttrs ->
+//                            if (customAttrs.contacts != null) contacts + customAttrs.contacts
+//                            else contacts
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -154,10 +158,11 @@ internal class SearchServiceImpl(
             if (filters.events) {
                 launch {
                     calendarRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { calendars, customAttrs ->
-                            if (customAttrs.calendars != null) calendars + customAttrs.calendars
-                            else calendars
-                        }
+//                        .combine(customAttrResults) { calendars, customAttrs ->
+//                            if (customAttrs.calendars != null) calendars + customAttrs.calendars
+//                            else calendars
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -188,10 +193,11 @@ internal class SearchServiceImpl(
             if (filters.websites) {
                 launch {
                     websiteRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { websites, customAttrs ->
-                            if (customAttrs.websites != null) websites + customAttrs.websites
-                            else websites
-                        }
+//                        .combine(customAttrResults) { websites, customAttrs ->
+//                            if (customAttrs.websites != null) websites + customAttrs.websites
+//                            else websites
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -204,10 +210,11 @@ internal class SearchServiceImpl(
                 launch {
                     delay(750)
                     articleRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { articles, customAttrs ->
-                            if (customAttrs.wikipedia != null) articles + customAttrs.wikipedia
-                            else articles
-                        }
+//                        .combine(customAttrResults) { articles, customAttrs ->
+//                            if (customAttrs.wikipedia != null) articles + customAttrs.wikipedia
+//                            else articles
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -219,10 +226,11 @@ internal class SearchServiceImpl(
             if (filters.places) {
                 launch {
                     locationRepository.search(query, filters.allowNetwork)
-                        .combine(customAttrResults) { locations, customAttrs ->
-                            if (customAttrs.locations != null) locations + customAttrs.locations
-                            else locations
-                        }
+//                        .combine(customAttrResults) { locations, customAttrs ->
+//                            if (customAttrs.locations != null) locations + customAttrs.locations
+//                            else locations
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -237,10 +245,11 @@ internal class SearchServiceImpl(
                         query,
                         filters.allowNetwork
                     )
-                        .combine(customAttrResults) { files, customAttrs ->
-                            if (customAttrs.files != null) files + customAttrs.files
-                            else files
-                        }
+//                        .combine(customAttrResults) { files, customAttrs ->
+//                            if (customAttrs.files != null) files + customAttrs.files
+//                            else files
+//                        }
+                        .map { apps -> apps.filter { it.label.startsWith(query,ignoreCase = true) } }
                         .withCustomLabels(customAttributesRepository)
                         .collectLatest { r ->
                             results.update {
@@ -309,10 +318,10 @@ internal class SearchServiceImpl(
 
 
         return AllContactsResults(
-            homeContact = homeContacts.sortedBy { it.displayName },
-            mobileContact = mobileContacts.sortedBy { it.displayName },
-            workContact = workContacts.sortedBy { it.displayName },
-            otherContacts = otherContacts.sortedBy { it.displayName }
+            homeContact = homeContacts.sortedBy { it.label },
+            mobileContact = mobileContacts.sortedBy { it.label },
+            workContact = workContacts.sortedBy { it.label },
+            otherContacts = otherContacts.sortedBy { it.label }
         )
     }
 

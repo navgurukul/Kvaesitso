@@ -62,7 +62,8 @@ fun SearchBar(
     darkColors: Boolean = false,
     menu: @Composable RowScope.() -> Unit = {},
     actions: @Composable ColumnScope.() -> Unit = {},
-    onKeyboardActionGo: (KeyboardActionScope.() -> Unit)? = null
+    onKeyboardActionGo: (KeyboardActionScope.() -> Unit)? = null,
+    showSearchElements: Boolean = false
 ) {
 
     val transition = updateTransition(level, label = "Searchbar")
@@ -149,16 +150,21 @@ fun SearchBar(
                     modifier = Modifier.height(48.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        modifier = Modifier.padding(12.dp),
-                        imageVector = androidx.compose.material.icons.Icons.Rounded.Search,
-                        contentDescription = null,
-                        tint = contentColor
-                    )
+
+                    if (showSearchElements) {
+                        Icon(
+                            modifier = Modifier.padding(12.dp),
+                            imageVector = androidx.compose.material.icons.Icons.Rounded.Search,
+                            contentDescription = null,
+                            tint = contentColor
+                        )
+                    }
+
                     Box(
                         modifier = Modifier.weight(1f)
                     ) {
-                        if (value.isEmpty()) {
+
+                        if (showSearchElements && value.isEmpty()) {
                             Text(
                                 text = stringResource(R.string.search_bar_placeholder),
                                 style = MaterialTheme.typography.titleMedium,
@@ -175,6 +181,7 @@ fun SearchBar(
                                 }
                                 .focusRequester(focusRequester)
                                 .fillMaxWidth()
+                                .padding(start = 20.dp)
                                 .semantics {
                                     contentDescription = context.getString(R.string.search_bar_placeholder)
                                 },

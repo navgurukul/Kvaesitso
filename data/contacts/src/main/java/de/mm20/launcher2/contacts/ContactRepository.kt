@@ -130,9 +130,9 @@ internal class ContactRepository(
                         }
 
                     ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE -> {
-                        firstName = dataCursor.getStringOrNull(givenNameColumn) ?: ""
-                        lastName = dataCursor.getStringOrNull(familyNameColumn) ?: ""
-                        displayName = dataCursor.getStringOrNull(displayNameColumn) ?: ""
+                        firstName = dataCursor.getStringOrNull(givenNameColumn)?.replace(" ", "\n") ?: ""
+                        lastName = dataCursor.getStringOrNull(familyNameColumn)?.replace(" ", "\n") ?: ""
+                        displayName = "$firstName\n$lastName".trim()
                     }
 
                     else -> {
