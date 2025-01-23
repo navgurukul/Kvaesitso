@@ -141,13 +141,13 @@ fun LauncherSearchBar(
                         }
                     }
                 }
-                SearchBarMenu(searchBarValue = _value, onInputClear = {
+                SearchBarMenu(searchBarValue = searchVM.searchQuery.value, onInputClear = {
                     searchVM.reset()
                     searchVM.showFilters.value = false
                 })
             },
 
-            //***// Removing the quick action from search bar
+          //  ***// Removing the quick action from search bar
 //            actions = {
 //                SearchBarActions(
 //                    actions = actions,

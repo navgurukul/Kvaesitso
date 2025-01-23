@@ -1,6 +1,7 @@
 package de.mm20.launcher2.ui.launcher
 
 import android.view.HapticFeedbackConstants
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -367,6 +368,18 @@ fun PullUpScaffold(
                 }
 
                 val consumed = when {
+                    pagerState.currentPage == 1 && (available.y > 0 || offsetY.value < 0 )-> {
+                        val consumed = available.y
+                        scope.launch{
+                            offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(0f, maxOffset)
+                            pagerState.animateScrollToPage(
+                                0,
+                                animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                            )
+                        }
+                        consumed
+                    }
+                    pagerState.currentPage == 1 -> 0f
                     canPullUp && available.y < 0 || offsetY.value < 0 -> {
                         val consumed = available.y
                         offsetY.value = (offsetY.value + (consumed * 0.5f)).coerceIn(-maxOffset, 0f)
@@ -405,6 +418,9 @@ fun PullUpScaffold(
                     offsetY.animateTo(0f)
                     return available
                 }
+
+
+
                 return Velocity.Zero
             }
         }
@@ -446,9 +462,9 @@ fun PullUpScaffold(
                 VerticalPager(
                     modifier = Modifier
                         .fillMaxSize(),
-                    beyondViewportPageCount = 1,
+                    beyondViewportPageCount = 2,
                     state = pagerState,
-                    reverseLayout = true,
+                    reverseLayout = false,
                     userScrollEnabled = false,
                     pageNestedScrollConnection = nestedScrollConnection,
                 ) {

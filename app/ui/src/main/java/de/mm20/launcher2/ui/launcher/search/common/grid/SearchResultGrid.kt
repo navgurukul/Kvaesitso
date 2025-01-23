@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
@@ -36,7 +37,7 @@ fun SearchResultGrid(
     AnimatedContent(
         targetState = items to transitionKey,
         modifier = modifier
-            .fillMaxSize() // Ensure parent fills the screen and takes available space
+            .wrapContentSize() // Ensure parent fills the screen and takes available space
             .padding(4.dp),
         transitionSpec = {
             fadeIn() togetherWith fadeOut()
@@ -44,7 +45,7 @@ fun SearchResultGrid(
         contentKey = { it.second }
     ) { (items, _) ->
         Column(
-            verticalArrangement = if (reverse) Arrangement.BottomReversed else Arrangement.Top
+            verticalArrangement = Arrangement.Bottom
         ) {
             val rows = ceil(items.size / columns.toFloat()).toInt()
             for (i in 0 until rows) {
@@ -60,13 +61,13 @@ fun SearchResultGrid(
                             Box(
                                 modifier = Modifier
                                     .weight(1f) // Ensure each item gets equal space
-                                    .fillMaxHeight()
+                                    .wrapContentSize()
                                     .padding(4.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 key(item.key) {
                                     GridItem(
-                                        modifier = Modifier.fillMaxSize(),
+                                        modifier = Modifier.wrapContentSize(),
                                         item = item,
                                         showLabels = showLabels,
                                         highlight = item.key == highlightedItem?.key
