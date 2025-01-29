@@ -563,6 +563,7 @@
     <string name="preference_screen_weatherwidget">Weather</string>
     <string name="preference_category_media_apps">Media apps</string>
     <string name="preference_screen_clockwidget">Clock</string>
+    <string name="preference_screen_clockwidget2">Custom Widget</string>
     <string name="preference_screen_clockwidget_summary">Configure clock style and components</string>
     <string name="preference_clockwidget_layout_vertical">Default</string>
     <string name="preference_clockwidget_layout_horizontal">Compact</string>

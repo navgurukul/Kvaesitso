@@ -29,12 +29,20 @@ class ClockWidgetSettingsScreenVM : ViewModel(), KoinComponent {
             ClockWidgetStyle.Orbit,
             ClockWidgetStyle.Segment,
             ClockWidgetStyle.Binary,
-            custom,
             ClockWidgetStyle.Empty,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
+    val customWidgetStyle = combine(settings.digital1, settings.custom) {digital1, custom ->
+        listOf(
+            custom
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
     val clockStyle = settings.clockStyle
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    val customStyle = settings.custom
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     fun setClockStyle(clockStyle: ClockWidgetStyle) {

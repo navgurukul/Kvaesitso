@@ -121,7 +121,7 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
-        MicrophoneKey(onSpeechInput = onKeyPress, modifier = Modifier.weight(1f))
+//        MicrophoneKey(onSpeechInput = onKeyPress, modifier = Modifier.weight(1f))
         BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
 
     }

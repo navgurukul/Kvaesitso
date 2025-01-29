@@ -30,6 +30,7 @@ import androidx.compose.material.icons.rounded.Height
 import androidx.compose.material.icons.rounded.HorizontalSplit
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Today
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material.icons.rounded.VerticalSplit
@@ -119,6 +120,8 @@ fun ClockWidget(
     AnimatedContent(editMode, label = "ClockWidget") {
         if (it) {
             var configure by remember { mutableStateOf(false) }
+            var hideElementsForWidget by remember { mutableStateOf(false) }
+
             Column {
                 Surface(
                     modifier = Modifier
@@ -129,33 +132,64 @@ fun ClockWidget(
                     shadowElevation = 2.dp,
                     tonalElevation = 2.dp,
                 ) {
-                    Row(
-                        modifier = Modifier.padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(modifier = Modifier.size(4.dp))
-                        Text(
-                            text = stringResource(id = R.string.preference_screen_clockwidget),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 8.dp),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                        IconButton(onClick = {
-                            configure = true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Tune,
-                                contentDescription = stringResource(R.string.settings)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.size(4.dp))
+                            Text(
+                                text = stringResource(id = R.string.preference_screen_clockwidget),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
                             )
+                            IconButton(onClick = {
+                                configure = true
+                                hideElementsForWidget = true
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Tune,
+                                    contentDescription = stringResource(R.string.settings)
+                                )
+                            }
+                        }
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.size(4.dp))
+                            Text(
+                                text = stringResource(id = R.string.preference_screen_clockwidget2),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                            IconButton(onClick = {
+                                configure = true
+                                hideElementsForWidget = false
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Settings,
+                                    contentDescription = stringResource(R.string.settings)
+                                )
+                            }
                         }
                     }
+
                 }
                 HorizontalDivider()
                 if (configure) {
-                    ConfigureClockWidgetSheet(onDismiss = { configure = false })
+                    ConfigureClockWidgetSheet(
+                        onDismiss = { configure = false },
+                        hideElementForWidget = hideElementsForWidget
+                    )
                 }
             }
         } else {
@@ -338,6 +372,7 @@ fun DynamicZone(
 @Composable
 fun ConfigureClockWidgetSheet(
     onDismiss: () -> Unit,
+    hideElementForWidget: Boolean = false
 ) {
     val viewModel: ClockWidgetSettingsScreenVM = viewModel()
     val compact by viewModel.compact.collectAsState()
@@ -356,56 +391,75 @@ fun ConfigureClockWidgetSheet(
                 .fillMaxWidth()
                 .padding(it)
         ) {
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                SegmentedButton(
-                    selected = compact == false,
-                    onClick = {
-                        viewModel.setCompact(false)
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
-                    icon = {
-                        SegmentedButtonDefaults.Icon(
-                            active = compact == false,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.HorizontalSplit,
-                                contentDescription = null,
-                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                            )
-                        }
-                    }
+
+            if (hideElementForWidget) {
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(text = stringResource(R.string.preference_clockwidget_layout_vertical))
-                }
-                SegmentedButton(
-                    selected = compact == true,
-                    onClick = {
-                        viewModel.setCompact(true)
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
-                    icon = {
-                        SegmentedButtonDefaults.Icon(
-                            active = compact == true,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.VerticalSplit,
-                                contentDescription = null,
-                                modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                            )
+                    SegmentedButton(
+                        selected = compact == false,
+                        onClick = {
+                            viewModel.setCompact(false)
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+                        icon = {
+                            SegmentedButtonDefaults.Icon(
+                                active = compact == false,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.HorizontalSplit,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+                                )
+                            }
                         }
+                    ) {
+                        Text(text = stringResource(R.string.preference_clockwidget_layout_vertical))
                     }
-                ) {
-                    Text(text = stringResource(R.string.preference_clockwidget_layout_horizontal))
+                    SegmentedButton(
+                        selected = compact == true,
+                        onClick = {
+                            viewModel.setCompact(true)
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+                        icon = {
+                            SegmentedButtonDefaults.Icon(
+                                active = compact == true,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.VerticalSplit,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+                                )
+                            }
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.preference_clockwidget_layout_horizontal))
+                    }
                 }
             }
 
-            val availableStyles by viewModel.availableClockStyles.collectAsState()
 
-            if (color != null && compact != null && availableStyles.isNotEmpty()) {
+            if (hideElementForWidget){
+                val availableStyles by viewModel.availableClockStyles.collectAsState()
+                if (color != null && compact != null && availableStyles.isNotEmpty()) {
+                    WatchFaceSelector(
+                        styles = availableStyles,
+                        compact = compact!!,
+                        colors = color!!,
+                        themeColors = useAccentColor,
+                        selected = style,
+                        onSelect = {
+                            viewModel.setClockStyle(it)
+                        })
+                }
+            }
+
+            val customWidgetStyle by viewModel.customWidgetStyle.collectAsState()
+
+            if (color != null && compact != null && customWidgetStyle.isNotEmpty()) {
                 WatchFaceSelector(
-                    styles = availableStyles,
+                    styles = customWidgetStyle,
                     compact = compact!!,
                     colors = color!!,
                     themeColors = useAccentColor,
@@ -414,200 +468,204 @@ fun ConfigureClockWidgetSheet(
                         viewModel.setClockStyle(it)
                     })
             }
+//
+//            SingleChoiceSegmentedButtonRow(
+//                modifier = Modifier.fillMaxWidth(),
+//            ) {
+//                SegmentedButton(
+//                    selected = color == ClockWidgetColors.Auto,
+//                    onClick = {
+//                        viewModel.setColor(ClockWidgetColors.Auto)
+//                    },
+//                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3),
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Rounded.AutoAwesome,
+//                        contentDescription = null,
+//                        modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+//                    )
+//                }
+//                SegmentedButton(
+//                    selected = color == ClockWidgetColors.Dark,
+//                    onClick = {
+//                        viewModel.setColor(ClockWidgetColors.Dark)
+//                    },
+//                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3),
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Rounded.LightMode,
+//                        contentDescription = null,
+//                        modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+//                    )
+//                }
+//                SegmentedButton(
+//                    selected = color == ClockWidgetColors.Light,
+//                    onClick = {
+//                        viewModel.setColor(ClockWidgetColors.Light)
+//                    },
+//                    shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3),
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Rounded.DarkMode,
+//                        contentDescription = null,
+//                        modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
+//                    )
+//                }
+//            }
 
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                SegmentedButton(
-                    selected = color == ClockWidgetColors.Auto,
-                    onClick = {
-                        viewModel.setColor(ClockWidgetColors.Auto)
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3),
+            if (hideElementForWidget){
+
+                OutlinedCard(
+                    modifier = Modifier.padding(top = 16.dp),
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.AutoAwesome,
-                        contentDescription = null,
-                        modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                    )
-                }
-                SegmentedButton(
-                    selected = color == ClockWidgetColors.Dark,
-                    onClick = {
-                        viewModel.setColor(ClockWidgetColors.Dark)
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3),
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.LightMode,
-                        contentDescription = null,
-                        modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                    )
-                }
-                SegmentedButton(
-                    selected = color == ClockWidgetColors.Light,
-                    onClick = {
-                        viewModel.setColor(ClockWidgetColors.Light)
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3),
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.DarkMode,
-                        contentDescription = null,
-                        modifier = Modifier.size(SegmentedButtonDefaults.IconSize)
-                    )
-                }
-            }
-            OutlinedCard(
-                modifier = Modifier.padding(top = 16.dp),
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    SwitchPreference(
-                        title = stringResource(R.string.widget_use_theme_colors),
-                        icon = Icons.Rounded.ColorLens,
-                        value = useAccentColor,
-                        onValueChanged = {
-                            viewModel.setUseThemeColor(it)
-                        }
-                    )
-                    AnimatedVisibility(compact == false && style !is ClockWidgetStyle.Custom) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         SwitchPreference(
-                            title = stringResource(R.string.preference_clock_widget_show_seconds),
-                            icon = Icons.Rounded.AccessTime,
-                            value = showSeconds,
+                            title = stringResource(R.string.widget_use_theme_colors),
+                            icon = Icons.Rounded.ColorLens,
+                            value = useAccentColor,
                             onValueChanged = {
-                                viewModel.setShowSeconds(it)
+                                viewModel.setUseThemeColor(it)
                             }
                         )
-                    }
-                }
-            }
-            OutlinedCard(
-                modifier = Modifier.padding(top = 16.dp),
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    SwitchPreference(
-                        title = stringResource(R.string.preference_clock_widget_fill_height),
-                        icon = Icons.Rounded.Height,
-                        value = fillHeight == true,
-                        onValueChanged = {
-                            viewModel.setFillHeight(it)
-                        }
-                    )
-                    AnimatedVisibility(fillHeight == true) {
-                        var showDropdown by remember { mutableStateOf(false) }
-                        Preference(
-                            title = stringResource(R.string.preference_clock_widget_alignment),
-                            summary = when (alignment) {
-                                ClockWidgetAlignment.Top -> stringResource(R.string.preference_clock_widget_alignment_top)
-                                ClockWidgetAlignment.Center -> stringResource(R.string.preference_clock_widget_alignment_center)
-                                else -> stringResource(R.string.preference_clock_widget_alignment_bottom)
-                            },
-                            icon = when (alignment) {
-                                ClockWidgetAlignment.Top -> Icons.Rounded.AlignVerticalTop
-                                ClockWidgetAlignment.Center -> Icons.Rounded.AlignVerticalCenter
-                                else -> Icons.Rounded.AlignVerticalBottom
-                            },
-                            onClick = {
-                                showDropdown = true
-                            }
-                        )
-                        DropdownMenu(
-                            expanded = showDropdown,
-                            onDismissRequest = { showDropdown = false }) {
-                            DropdownMenuItem(
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Rounded.AlignVerticalTop,
-                                        null
-                                    )
-                                },
-                                text = { Text(stringResource(R.string.preference_clock_widget_alignment_top)) },
-                                onClick = {
-                                    viewModel.setAlignment(ClockWidgetAlignment.Top)
-                                    showDropdown = false
+                        AnimatedVisibility(compact == false && style !is ClockWidgetStyle.Custom) {
+                            SwitchPreference(
+                                title = stringResource(R.string.preference_clock_widget_show_seconds),
+                                icon = Icons.Rounded.AccessTime,
+                                value = showSeconds,
+                                onValueChanged = {
+                                    viewModel.setShowSeconds(it)
                                 }
                             )
-                            DropdownMenuItem(
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Rounded.AlignVerticalCenter,
-                                        null
-                                    )
-                                },
-                                text = { Text(stringResource(R.string.preference_clock_widget_alignment_center)) },
-                                onClick = {
-                                    viewModel.setAlignment(ClockWidgetAlignment.Center)
-                                    showDropdown = false
-                                })
-                            DropdownMenuItem(
-                                leadingIcon = {
-                                    Icon(
-                                        Icons.Rounded.AlignVerticalBottom,
-                                        null
-                                    )
-                                },
-                                text = { Text(stringResource(R.string.preference_clock_widget_alignment_bottom)) },
-                                onClick = {
-                                    viewModel.setAlignment(ClockWidgetAlignment.Bottom)
-                                    showDropdown = false
-                                })
                         }
                     }
                 }
-            }
-            Text(
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.secondary,
-                text = stringResource(R.string.preference_clockwidget_dynamic_zone)
-            )
-            OutlinedCard(
-                modifier = Modifier,
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
+                OutlinedCard(
+                    modifier = Modifier.padding(top = 16.dp),
                 ) {
-                    SwitchPreference(
-                        title = stringResource(R.string.preference_clockwidget_date_part),
-                        summary = stringResource(R.string.preference_clockwidget_date_part_summary),
-                        icon = Icons.Rounded.Today,
-                        value = parts?.date == true,
-                        onValueChanged = {
-                            viewModel.setDatePart(it)
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        SwitchPreference(
+                            title = stringResource(R.string.preference_clock_widget_fill_height),
+                            icon = Icons.Rounded.Height,
+                            value = fillHeight == true,
+                            onValueChanged = {
+                                viewModel.setFillHeight(it)
+                            }
+                        )
+                        AnimatedVisibility(fillHeight == true) {
+                            var showDropdown by remember { mutableStateOf(false) }
+                            Preference(
+                                title = stringResource(R.string.preference_clock_widget_alignment),
+                                summary = when (alignment) {
+                                    ClockWidgetAlignment.Top -> stringResource(R.string.preference_clock_widget_alignment_top)
+                                    ClockWidgetAlignment.Center -> stringResource(R.string.preference_clock_widget_alignment_center)
+                                    else -> stringResource(R.string.preference_clock_widget_alignment_bottom)
+                                },
+                                icon = when (alignment) {
+                                    ClockWidgetAlignment.Top -> Icons.Rounded.AlignVerticalTop
+                                    ClockWidgetAlignment.Center -> Icons.Rounded.AlignVerticalCenter
+                                    else -> Icons.Rounded.AlignVerticalBottom
+                                },
+                                onClick = {
+                                    showDropdown = true
+                                }
+                            )
+                            DropdownMenu(
+                                expanded = showDropdown,
+                                onDismissRequest = { showDropdown = false }) {
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Rounded.AlignVerticalTop,
+                                            null
+                                        )
+                                    },
+                                    text = { Text(stringResource(R.string.preference_clock_widget_alignment_top)) },
+                                    onClick = {
+                                        viewModel.setAlignment(ClockWidgetAlignment.Top)
+                                        showDropdown = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Rounded.AlignVerticalCenter,
+                                            null
+                                        )
+                                    },
+                                    text = { Text(stringResource(R.string.preference_clock_widget_alignment_center)) },
+                                    onClick = {
+                                        viewModel.setAlignment(ClockWidgetAlignment.Center)
+                                        showDropdown = false
+                                    })
+                                DropdownMenuItem(
+                                    leadingIcon = {
+                                        Icon(
+                                            Icons.Rounded.AlignVerticalBottom,
+                                            null
+                                        )
+                                    },
+                                    text = { Text(stringResource(R.string.preference_clock_widget_alignment_bottom)) },
+                                    onClick = {
+                                        viewModel.setAlignment(ClockWidgetAlignment.Bottom)
+                                        showDropdown = false
+                                    })
+                            }
                         }
-                    )
-                    SwitchPreference(
-                        title = stringResource(R.string.preference_clockwidget_music_part),
-                        summary = stringResource(R.string.preference_clockwidget_music_part_summary),
-                        icon = Icons.Rounded.MusicNote,
-                        value = parts?.music == true,
-                        onValueChanged = {
-                            viewModel.setMusicPart(it)
-                        }
-                    )
-                    SwitchPreference(
-                        title = stringResource(R.string.preference_clockwidget_alarm_part),
-                        summary = stringResource(R.string.preference_clockwidget_alarm_part_summary),
-                        icon = Icons.Rounded.Alarm,
-                        value = parts?.alarm == true,
-                        onValueChanged = {
-                            viewModel.setAlarmPart(it)
-                        }
-                    )
-                    SwitchPreference(
-                        title = stringResource(R.string.preference_clockwidget_battery_part),
-                        summary = stringResource(R.string.preference_clockwidget_battery_part_summary),
-                        icon = Icons.Rounded.BatteryFull,
-                        value = parts?.battery == true,
-                        onValueChanged = {
-                            viewModel.setBatteryPart(it)
-                        }
-                    )
+                    }
+                }
+                Text(
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                    text = stringResource(R.string.preference_clockwidget_dynamic_zone)
+                )
+                OutlinedCard(
+                    modifier = Modifier,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        SwitchPreference(
+                            title = stringResource(R.string.preference_clockwidget_date_part),
+                            summary = stringResource(R.string.preference_clockwidget_date_part_summary),
+                            icon = Icons.Rounded.Today,
+                            value = parts?.date == true,
+                            onValueChanged = {
+                                viewModel.setDatePart(it)
+                            }
+                        )
+                        SwitchPreference(
+                            title = stringResource(R.string.preference_clockwidget_music_part),
+                            summary = stringResource(R.string.preference_clockwidget_music_part_summary),
+                            icon = Icons.Rounded.MusicNote,
+                            value = parts?.music == true,
+                            onValueChanged = {
+                                viewModel.setMusicPart(it)
+                            }
+                        )
+                        SwitchPreference(
+                            title = stringResource(R.string.preference_clockwidget_alarm_part),
+                            summary = stringResource(R.string.preference_clockwidget_alarm_part_summary),
+                            icon = Icons.Rounded.Alarm,
+                            value = parts?.alarm == true,
+                            onValueChanged = {
+                                viewModel.setAlarmPart(it)
+                            }
+                        )
+                        SwitchPreference(
+                            title = stringResource(R.string.preference_clockwidget_battery_part),
+                            summary = stringResource(R.string.preference_clockwidget_battery_part_summary),
+                            icon = Icons.Rounded.BatteryFull,
+                            value = parts?.battery == true,
+                            onValueChanged = {
+                                viewModel.setBatteryPart(it)
+                            }
+                        )
+                    }
                 }
             }
         }
