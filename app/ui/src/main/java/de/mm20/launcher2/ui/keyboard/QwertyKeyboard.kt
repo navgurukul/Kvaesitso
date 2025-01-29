@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -132,7 +133,7 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(40.dp)
-            .border(0.dp, Color.LightGray, RoundedCornerShape(4.dp))
+            .border(0.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
             .padding(4.dp)

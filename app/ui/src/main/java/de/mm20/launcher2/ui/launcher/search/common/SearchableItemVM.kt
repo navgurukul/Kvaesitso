@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.geometry.Rect
 import androidx.core.app.ActivityOptionsCompat
 import de.mm20.launcher2.applications.AppRepository

@@ -1,6 +1,7 @@
 package de.mm20.launcher2.ui.launcher
 
 import android.view.HapticFeedbackConstants
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -446,9 +447,9 @@ fun PullUpScaffold(
                 VerticalPager(
                     modifier = Modifier
                         .fillMaxSize(),
-                    beyondViewportPageCount = 1,
+                    beyondViewportPageCount = 2,
                     state = pagerState,
-                    reverseLayout = true,
+                    reverseLayout = false,
                     userScrollEnabled = false,
                     pageNestedScrollConnection = nestedScrollConnection,
                 ) {

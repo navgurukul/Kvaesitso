@@ -320,6 +320,26 @@ internal class SavableSearchableRepositoryImpl(
         }
     }
 
+//    override fun updateFavorites(automaticallySorted: List<SavableSearchable>) {
+//        val dao = database.searchableDao()
+//        scope.launch {
+//            database.withTransaction {
+//                dao.unpinAll()
+//                dao.upsert(
+//                    automaticallySorted.mapNotNull { savableSearchable ->
+//                        SavedSearchableUpdatePinEntity(
+//                            key = savableSearchable.key,
+//                            type = savableSearchable.domain,
+//                            pinPosition = 1,
+//                            serializedSearchable = savableSearchable.serialize()
+//                                ?: return@mapNotNull null,
+//                        )
+//                    }
+//                )
+//            }
+//        }
+//    }
+
     override fun delete(searchable: SavableSearchable) {
         scope.launch {
             database.searchableDao().delete(searchable.key)

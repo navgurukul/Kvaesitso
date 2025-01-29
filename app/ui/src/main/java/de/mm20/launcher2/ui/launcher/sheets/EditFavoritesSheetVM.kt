@@ -96,13 +96,13 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
 
         items.add(FavoritesSheetGridItem.Tags)
 
-        items.add(FavoritesSheetGridItem.Divider(FavoritesSheetSection.ManuallySorted))
-        if (manuallySorted.isEmpty()) {
-            items.add(FavoritesSheetGridItem.EmptySection)
-        } else {
-            items.addAll(manuallySorted.map { FavoritesSheetGridItem.Favorite(it) })
-            items.add(FavoritesSheetGridItem.Spacer())
-        }
+        //items.add(FavoritesSheetGridItem.Divider(FavoritesSheetSection.ManuallySorted))
+//        if (manuallySorted.isEmpty()) {
+//            items.add(FavoritesSheetGridItem.EmptySection)
+//        } else {
+//            items.addAll(manuallySorted.map { FavoritesSheetGridItem.Favorite(it) })
+//            items.add(FavoritesSheetGridItem.Spacer())
+//        }
 
         items.add(FavoritesSheetGridItem.Divider(FavoritesSheetSection.AutomaticallySorted))
         if (automaticallySorted.isEmpty()) {
@@ -124,7 +124,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
     }
 
     fun moveItem(from: LazyGridItemInfo, to: LazyGridItemInfo) {
-        gridItems.value?.getOrNull(from.index)?.takeIf { it is FavoritesSheetGridItem.Favorite }
+        gridItems.value.getOrNull(from.index)?.takeIf { it is FavoritesSheetGridItem.Favorite }
             ?: return
         gridItems.value?.getOrNull(to.index)
             ?.takeIf {
@@ -133,34 +133,34 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
                         it is FavoritesSheetGridItem.Spacer
             }
             ?: return
-        val manuallySortedSize = manuallySorted.size + 1
+        //val manuallySortedSize = manuallySorted.size + 1
         val automaticallySortedSize = automaticallySorted.size + 1
         val item = when {
-            from.index < manuallySortedSize + 2 -> {
-                manuallySorted.removeAt(from.index - 2)
-            }
-            from.index < manuallySortedSize + automaticallySortedSize + 3 -> {
-                automaticallySorted.removeAt(from.index - 3 - manuallySortedSize)
+////            from.index < manuallySortedSize + 2 -> {
+////                manuallySorted.removeAt(from.index - 2)
+////            }
+            from.index < automaticallySortedSize + 2 -> {
+                automaticallySorted.removeAt(from.index - 2)
             }
             else -> {
-                frequentlyUsed.removeAt(from.index - 4 - manuallySortedSize - automaticallySortedSize)
-            }
+                frequentlyUsed.removeAt(from.index - 3 - automaticallySortedSize)
+           }
         }
 
         when {
-            to.index < manuallySortedSize + 2 -> {
-                manuallySorted.add((to.index - 2).coerceAtMost(manuallySorted.size), item)
-            }
-            to.index < manuallySortedSize + automaticallySortedSize + 3 -> {
+//            to.index < manuallySortedSize + 2 -> {
+//                manuallySorted.add((to.index - 2).coerceAtMost(manuallySorted.size), item)
+//            }
+            to.index < automaticallySortedSize + 2 -> {
                 automaticallySorted.add(
-                    (to.index - 3 - manuallySortedSize).coerceAtMost(
+                    (to.index - 2).coerceAtMost(
                         automaticallySorted.size
                     ), item
                 )
             }
             else -> {
                 frequentlyUsed.add(
-                    (to.index - 4 - manuallySortedSize - automaticallySortedSize).coerceAtMost(
+                    (to.index - 3 - automaticallySortedSize).coerceAtMost(
                         frequentlyUsed.size
                     ),
                     item
@@ -219,19 +219,23 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
             return
         }
 
-        if (!manuallySorted.any { it.key == shortcut.key }
-            && !automaticallySorted.any { it.key == shortcut.key }
+        if (
+             !automaticallySorted.any { it.key == shortcut.key }
             && !frequentlyUsed.any { it.key == shortcut.key }
         ) {
-            if (createShortcutTarget.value == FavoritesSheetSection.ManuallySorted) {
-                manuallySorted.add(shortcut)
-            } else {
+//            if (createShortcutTarget.value == FavoritesSheetSection.ManuallySorted) {
+//                manuallySorted.add(shortcut)
+//            } else {
                 automaticallySorted.add(shortcut)
-            }
+//            }
         }
         save()
         buildItemList()
         createShortcutTarget.value = null
+    }
+
+    fun addAppAsFavorite(){
+
     }
 
     fun remove(key: String) {
@@ -241,7 +245,7 @@ class EditFavoritesSheetVM : ViewModel(), KoinComponent {
         if (item != null) {
             favoritesService.reset(item.item)
             automaticallySorted.removeAll { it.key == item.item.key }
-                    || manuallySorted.removeAll { it.key == item.item.key }
+                    //|| manuallySorted.removeAll { it.key == item.item.key }
                     || frequentlyUsed.removeAll { it.key == item.item.key }
             buildItemList()
         }

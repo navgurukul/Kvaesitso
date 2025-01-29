@@ -263,9 +263,11 @@
     <string name="widget_action_replace">Replace</string>
     <string name="menu_item_edit_favs">Edit favorites</string>
     <!-- Edit favorites, title for items that are frequently used but not pinned -->
-    <string name="edit_favorites_dialog_unpinned">Not pinned – frequently used</string>
+    <string name="edit_favorites_dialog_unpinned">Frequently used</string>
     <!-- Edit favorites, title for items that are pinned but have not been sorted by the user -->
-    <string name="edit_favorites_dialog_pinned_unsorted">Pinned – automatically sorted</string>
+    <string name="edit_favorites_dialog_pinned_unsorted">Add favorite</string>
+    <string name="Favorite_apps_will_appear_here">Favorites will appear here</string>
+    <string name="Frequently_used_will_appear_here">Frequently used will appear here</string>
     <!-- Edit favorites, title for items that are pinned and have been sorted by the user -->
     <string name="edit_favorites_dialog_pinned_sorted">Pinned – manually sorted</string>
     <string name="edit_favorites_dialog_empty_section">Drag items here</string>
@@ -694,7 +696,7 @@
     <string name="apps_profile_work">Work</string>
     <string name="apps_profile_private">Private</string>
     <string name="favorites">Favorites</string>
-    <string name="favorites_empty">Pinned and frequently used items will appear here</string>
+    <string name="favorites_empty">Favorite and frequently used items will appear here</string>
     <string name="favorites_empty_tag">There are no items with this tag</string>
     <string name="create_app_shortcut">Create shortcut</string>
     <string name="frequently_used_show_in_favorites">Show in favorites</string>
