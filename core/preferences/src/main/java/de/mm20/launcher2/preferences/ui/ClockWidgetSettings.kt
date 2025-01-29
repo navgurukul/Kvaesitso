@@ -118,6 +118,13 @@ class ClockWidgetSettings internal constructor(
             )
         }
     }
+    fun setCustomWidgetStyle(customStyle: ClockWidgetStyle) {
+        launcherDataStore.update {
+            it.copy(
+                clockWidgetCustom = if (customStyle is ClockWidgetStyle.Custom) customStyle else it.clockWidgetCustom,
+                )
+        }
+    }
 
     val color
         get() = launcherDataStore.data.map { it.clockWidgetColors }

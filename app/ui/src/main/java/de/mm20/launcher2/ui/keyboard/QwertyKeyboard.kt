@@ -118,12 +118,13 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
             .padding( vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
-        MenuKey(modifier = Modifier.weight(1f))
+        MenuKey(modifier = Modifier.weight(1f), onKeyPress = onKeyPress)
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
 //        MicrophoneKey(onSpeechInput = onKeyPress, modifier = Modifier.weight(1f))
         BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
+
 
     }
 }
@@ -133,14 +134,14 @@ fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = t
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(40.dp)
-            .border(0.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(8.dp))
+            .border(0.dp, Color.LightGray, RoundedCornerShape(6.dp))
+            .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(6.dp))
             .clickable(enabled) { onKeyPress(letter.toString()) } // Trigger key press
             .padding(4.dp)
     ) {
         Text(
             text = letter.toString(),
-            fontSize = 20.sp,
+            fontSize = 21.sp,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontStyle = FontStyle.Normal
@@ -214,6 +215,7 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier) {
 @Composable
 fun MenuKey(
     modifier: Modifier,
+    onKeyPress: (String) -> Unit,
 ) {
     val context = LocalContext.current
     var showOverflowMenu by remember { mutableStateOf(false) }
@@ -238,7 +240,7 @@ fun MenuKey(
             .padding(1.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.baseline_more_vert_24),
+            painter = painterResource(id = R.drawable.baseline_settings),
             contentDescription = "Menu",
             tint = contentColors
         )
@@ -247,6 +249,7 @@ fun MenuKey(
     DropdownMenu(expanded = showOverflowMenu, onDismissRequest = { showOverflowMenu = false }) {
         DropdownMenuItem(
             onClick = {
+                onKeyPress(" ")
                 context.startActivity(
                     Intent.createChooser(
                         Intent(Intent.ACTION_SET_WALLPAPER),

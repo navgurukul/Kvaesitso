@@ -55,6 +55,9 @@ class ClockWidgetVM : ViewModel(), KoinComponent {
     val clockStyle = settings.clockStyle
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
+    val customStyle = settings.custom
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
     val color = settings.color
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 

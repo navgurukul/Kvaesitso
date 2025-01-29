@@ -49,6 +49,10 @@ class ClockWidgetSettingsScreenVM : ViewModel(), KoinComponent {
         settings.setClockStyle(clockStyle)
     }
 
+    fun setCustomStyle(customStyle: ClockWidgetStyle) {
+        settings.setCustomWidgetStyle(customStyle)
+    }
+
     val color = settings.color
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     fun setColor(color: ClockWidgetColors) {

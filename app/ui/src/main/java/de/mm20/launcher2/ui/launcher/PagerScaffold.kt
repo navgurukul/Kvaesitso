@@ -121,6 +121,8 @@ import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.searchbar.LauncherSearchBar
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidget
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
+import de.mm20.launcher2.ui.launcher.widgets.clock.CustomWidget
+import de.mm20.launcher2.ui.launcher.widgets.music.CustomActions
 import de.mm20.launcher2.ui.locals.LocalCardStyle
 import de.mm20.launcher2.ui.locals.LocalDarkTheme
 import de.mm20.launcher2.ui.locals.LocalGridSettings
@@ -553,6 +555,13 @@ fun PagerScaffold(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .then(clockHeight?.let { Modifier.height(it) } ?: Modifier)
+                                        .padding(bottom = clockPadding),
+                                    editMode = isWidgetEditMode,
+                                    fillScreenHeight = fillClockHeight,
+                                )
+                                CustomWidget(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
                                         .padding(bottom = clockPadding),
                                     editMode = isWidgetEditMode,
                                     fillScreenHeight = fillClockHeight,

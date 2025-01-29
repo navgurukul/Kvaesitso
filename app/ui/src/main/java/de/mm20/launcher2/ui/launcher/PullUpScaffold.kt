@@ -96,6 +96,7 @@ import de.mm20.launcher2.preferences.ClockWidgetColors
 import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
+import de.mm20.launcher2.ui.launcher.widgets.clock.CustomWidget
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -125,7 +126,6 @@ fun PullUpScaffold(
         } else {
             Color.White
         }
-
 
 
     val density = LocalDensity.current
@@ -226,7 +226,13 @@ fun PullUpScaffold(
     val colorSurface = MaterialTheme.colorScheme.surface
     val isDarkTheme = LocalDarkTheme.current
     val dockProvider by viewModelC.dockProvider.collectAsState()
-    LaunchedEffect(isWidgetEditMode, darkStatusBarIcons, colorSurface, showStatusBarScrim, isSearchOpen) {
+    LaunchedEffect(
+        isWidgetEditMode,
+        darkStatusBarIcons,
+        colorSurface,
+        showStatusBarScrim,
+        isSearchOpen
+    ) {
         if (isWidgetEditMode) {
             systemUiController.setStatusBarColor(
                 colorSurface
@@ -361,7 +367,7 @@ fun PullUpScaffold(
                     searchVM.bestMatch.value = null
                 }
                 val canPullDown = isSearchOpen && isSearchAtTop
-                val canPullUp = if (isSearchOpen){
+                val canPullUp = if (isSearchOpen) {
                     isSearchAtBottom
                 } else {
                     isWidgetsAtStart
@@ -418,7 +424,11 @@ fun PullUpScaffold(
         modifier = modifier
             .drawBehind {
                 drawRect(
-                    color = colorSurfaceContainer.copy(alpha = -pagerState.getOffsetDistanceInPages(0) * 0.85f * cardStyle.opacity),
+                    color = colorSurfaceContainer.copy(
+                        alpha = -pagerState.getOffsetDistanceInPages(
+                            0
+                        ) * 0.85f * cardStyle.opacity
+                    ),
                 )
             }
             .pointerInput(Unit) {
@@ -459,7 +469,7 @@ fun PullUpScaffold(
                             isAppAtFirstPage = true
                             val clockPadding by animateDpAsState(
                                 if (isWidgetsAtStart && fillClockHeight)
-                                    insets.calculateBottomPadding() + if (bottomSearchBar) 64.dp else 0.dp
+                                    insets.calculateBottomPadding() + if (bottomSearchBar) 44.dp else 0.dp
                                 else 0.dp
 
                             )
@@ -513,15 +523,30 @@ fun PullUpScaffold(
                                     )
                                     .padding(top = editModePadding)
                             ) {
-                                ClockWidget(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .then(clockHeight?.let { Modifier.height(it) } ?: Modifier)
-                                        .padding(bottom = clockPadding),
-                                    editMode = isWidgetEditMode,
-                                    fillScreenHeight = fillClockHeight,
-                                )
-                                val padding1 = if(dockProvider==null) 60.dp else 0.dp
+
+                                Column(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    ClockWidget(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .then(clockHeight?.let { Modifier.height(it) }
+                                                ?: Modifier)
+                                            .padding(bottom = clockPadding),
+                                        editMode = isWidgetEditMode,
+                                        fillScreenHeight = fillClockHeight,
+                                    )
+                                    CustomWidget(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .padding(bottom = clockPadding),
+                                        editMode = isWidgetEditMode,
+                                        fillScreenHeight = fillClockHeight,
+                                    )
+                                }
+                                val padding1 = if (dockProvider == null) 60.dp else 0.dp
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -533,9 +558,10 @@ fun PullUpScaffold(
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
-                                    ){
+                                    ) {
                                         val appResults = searchVM.appResults.value ?: emptyList()
-                                        val contactResults = searchVM.contactResults.value ?: emptyList()
+                                        val contactResults =
+                                            searchVM.contactResults.value ?: emptyList()
 
 //
                                         if (searchVM.searchQuery.value.isNotEmpty()) {
@@ -561,7 +587,12 @@ fun PullUpScaffold(
                                                                 Column(
                                                                     horizontalAlignment = Alignment.CenterHorizontally,
                                                                     modifier = Modifier
-                                                                        .clickable { contact.launch(context, null) }
+                                                                        .clickable {
+                                                                            contact.launch(
+                                                                                context,
+                                                                                null
+                                                                            )
+                                                                        }
                                                                         .padding(2.dp)
                                                                 ) {
                                                                     Box {
@@ -597,6 +628,7 @@ fun PullUpScaffold(
                                                         }
                                                     }
                                                 }
+
                                                 contactResults.isNotEmpty() -> {
                                                     LazyRow(
                                                         modifier = Modifier.fillMaxWidth()
@@ -605,7 +637,12 @@ fun PullUpScaffold(
                                                             Column(
                                                                 horizontalAlignment = Alignment.CenterHorizontally,
                                                                 modifier = Modifier
-                                                                    .clickable { contact.launch(context, null) }
+                                                                    .clickable {
+                                                                        contact.launch(
+                                                                            context,
+                                                                            null
+                                                                        )
+                                                                    }
                                                                     .padding(2.dp)
                                                             ) {
                                                                 Box {
@@ -648,21 +685,30 @@ fun PullUpScaffold(
                                             onKeyPress = { key ->
                                                 val currentQuery = searchVM.searchQuery.value
                                                 if (key == "") { // Backspace key
-                                                    searchVM.searchQuery.value = currentQuery.dropLast(1)
+                                                    searchVM.searchQuery.value =
+                                                        currentQuery.dropLast(1)
                                                 } else {
                                                     searchVM.searchQuery.value = currentQuery + key
                                                 }
 
-                                                searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
-                                                searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+                                                searchVM.isSearchEmpty.value =
+                                                    searchVM.searchQuery.value.isEmpty()
+                                                searchVM.search(
+                                                    searchVM.searchQuery.value,
+                                                    forceRestart = true
+                                                )
 
                                                 scope.launch {
-                                                    searchVM.searchService.getAllApps().collect { results ->
-                                                        searchVM.appResults.value = results.standardProfileApps
-                                                    }
-                                                    searchVM.searchService.getAllContacts().collect{
-                                                        searchVM.contactResults.value= it.homeContact
-                                                    }
+                                                    searchVM.searchService.getAllApps()
+                                                        .collect { results ->
+                                                            searchVM.appResults.value =
+                                                                results.standardProfileApps
+                                                        }
+                                                    searchVM.searchService.getAllContacts()
+                                                        .collect {
+                                                            searchVM.contactResults.value =
+                                                                it.homeContact
+                                                        }
                                                 }
                                             }
                                         )
@@ -670,7 +716,7 @@ fun PullUpScaffold(
                                             Box(
                                                 modifier = Modifier.fillMaxWidth(),
                                                 contentAlignment = Alignment.BottomCenter
-                                            ){
+                                            ) {
                                                 dockProvider?.Component(false)
                                             }
                                         }
@@ -755,7 +801,10 @@ fun PullUpScaffold(
                 },
                 navigationIcon = {
                     IconButton(onClick = { viewModel.setWidgetEditMode(false) }) {
-                        Icon(imageVector = Icons.Rounded.Done, contentDescription = stringResource(R.string.action_done))
+                        Icon(
+                            imageVector = Icons.Rounded.Done,
+                            contentDescription = stringResource(R.string.action_done)
+                        )
                     }
                 }
             )
@@ -783,38 +832,38 @@ fun PullUpScaffold(
         val searchBarStyle by viewModel.searchBarStyle.collectAsState()
 
         val launchOnEnter by searchVM.launchOnEnter.collectAsState(false)
-    if (pagerState.currentPage == 0) {
-        LauncherSearchBar(
-            modifier = Modifier
-                .fillMaxSize(),
-            style = searchBarStyle,
-            level = { searchBarLevel },
-            value = { value },
-            focused = searchBarFocused,
-            onFocusChange = {
-                if (it) viewModel.openSearch()
-                viewModel.setSearchbarFocus(it)
-            },
-            actions = actions,
-            highlightedAction = searchVM.bestMatch.value as? SearchAction,
-            isSearchOpen = isSearchOpen,
-            darkColors = LocalPreferDarkContentOverWallpaper.current && searchBarColor == SearchBarColors.Auto || searchBarColor == SearchBarColors.Dark,
-            bottomSearchBar = false,
-            searchBarOffset = {
-                (if (searchBarFocused || fixedSearchBar) 0 else searchBarOffset.value.toInt() * (if (bottomSearchBar) 1 else -1)) +
-                        with(density) {
-                            (editModeSearchBarOffset - if (bottomSearchBar) keyboardFilterBarPadding else 0.dp)
-                                .toPx()
-                                .roundToInt()
-                        }
+        if (pagerState.currentPage == 0) {
+            LauncherSearchBar(
+                modifier = Modifier
+                    .fillMaxSize(),
+                style = searchBarStyle,
+                level = { searchBarLevel },
+                value = { value },
+                focused = searchBarFocused,
+                onFocusChange = {
+                    if (it) viewModel.openSearch()
+                    viewModel.setSearchbarFocus(it)
+                },
+                actions = actions,
+                highlightedAction = searchVM.bestMatch.value as? SearchAction,
+                isSearchOpen = isSearchOpen,
+                darkColors = LocalPreferDarkContentOverWallpaper.current && searchBarColor == SearchBarColors.Auto || searchBarColor == SearchBarColors.Dark,
+                bottomSearchBar = false,
+                searchBarOffset = {
+                    (if (searchBarFocused || fixedSearchBar) 0 else searchBarOffset.value.toInt() * (if (bottomSearchBar) 1 else -1)) +
+                            with(density) {
+                                (editModeSearchBarOffset - if (bottomSearchBar) keyboardFilterBarPadding else 0.dp)
+                                    .toPx()
+                                    .roundToInt()
+                            }
 //                (if (searchBarFocused || fixedSearchBar) 0 else searchBarOffset.value.toInt())
 
-            },
-            onKeyboardActionGo = if (launchOnEnter) {
-                { searchVM.launchBestMatchOrAction(context) }
-            } else null
-        )
-    }
+                },
+                onKeyboardActionGo = if (launchOnEnter) {
+                    { searchVM.launchBestMatchOrAction(context) }
+                } else null
+            )
+        }
 
     }
     LauncherGestureHandler(

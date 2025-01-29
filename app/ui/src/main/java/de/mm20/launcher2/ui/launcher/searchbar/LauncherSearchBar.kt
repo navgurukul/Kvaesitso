@@ -123,9 +123,9 @@ fun LauncherSearchBar(
                         else IconButtonDefaults.iconButtonColors()
                     ) {
                         Box {
-                            Icon(imageVector = Icons.Rounded.FilterAlt, contentDescription = stringResource(
-                                if (searchVM.showFilters.value) R.string.menu_hide_filters else R.string.menu_show_filters
-                            ))
+//                            Icon(imageVector = Icons.Rounded.FilterAlt, contentDescription = stringResource(
+//                                if (searchVM.showFilters.value) R.string.menu_hide_filters else R.string.menu_show_filters
+//                            ))
                             androidx.compose.animation.AnimatedVisibility(
                                 !searchVM.filters.value.allCategoriesEnabled,
                                 enter = scaleIn(tween(100)),

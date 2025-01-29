@@ -27,9 +27,9 @@ data class LauncherSettingsData internal constructor(
     val clockWidgetCompact: Boolean = false,
     @Deprecated("")
     @SerialName("clockWidgetStyle")
-    val _clockWidgetStyle: ClockWidgetStyle = ClockWidgetStyle.Digital1(),
+    val _clockWidgetStyle: ClockWidgetStyle = ClockWidgetStyle.Digital2,
     @SerialName("clockWidgetStyle2")
-    internal val clockWidgetStyle: ClockWidgetStyleEnum = ClockWidgetStyleEnum.Digital1,
+    internal val clockWidgetStyle: ClockWidgetStyleEnum = ClockWidgetStyleEnum.Digital2,
     val clockWidgetDigital1: ClockWidgetStyle.Digital1 = ClockWidgetStyle.Digital1(),
     val clockWidgetCustom: ClockWidgetStyle.Custom = ClockWidgetStyle.Custom(),
     val clockWidgetColors: ClockWidgetColors = ClockWidgetColors.Auto,

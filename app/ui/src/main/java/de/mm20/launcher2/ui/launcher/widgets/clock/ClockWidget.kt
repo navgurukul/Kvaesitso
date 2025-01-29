@@ -120,7 +120,7 @@ fun ClockWidget(
     AnimatedContent(editMode, label = "ClockWidget") {
         if (it) {
             var configure by remember { mutableStateOf(false) }
-            var hideElementsForWidget by remember { mutableStateOf(false) }
+            var customConfigure by remember { mutableStateOf(false) }
 
             Column {
                 Surface(
@@ -149,7 +149,6 @@ fun ClockWidget(
                             )
                             IconButton(onClick = {
                                 configure = true
-                                hideElementsForWidget = true
                             }) {
                                 Icon(
                                     imageVector = Icons.Rounded.Tune,
@@ -172,8 +171,7 @@ fun ClockWidget(
                                 maxLines = 1
                             )
                             IconButton(onClick = {
-                                configure = true
-                                hideElementsForWidget = false
+                                customConfigure = true
                             }) {
                                 Icon(
                                     imageVector = Icons.Rounded.Settings,
@@ -188,7 +186,11 @@ fun ClockWidget(
                 if (configure) {
                     ConfigureClockWidgetSheet(
                         onDismiss = { configure = false },
-                        hideElementForWidget = hideElementsForWidget
+                    )
+                }
+                if (customConfigure){
+                    ConfigureCustomWidgetSheet(
+                        onDismiss = { customConfigure = false },
                     )
                 }
             }
@@ -271,15 +273,6 @@ fun ClockWidget(
                         }
                     }
                 }
-//                val dockProvider by viewModel.dockProvider.collectAsState()
-//                if (dockProvider != null) {
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(bottom = 16.dp)
-//                    ) {
-//                        dockProvider?.Component(false)
-//                    }
                 }
             }
         }
@@ -372,7 +365,6 @@ fun DynamicZone(
 @Composable
 fun ConfigureClockWidgetSheet(
     onDismiss: () -> Unit,
-    hideElementForWidget: Boolean = false
 ) {
     val viewModel: ClockWidgetSettingsScreenVM = viewModel()
     val compact by viewModel.compact.collectAsState()
@@ -392,7 +384,6 @@ fun ConfigureClockWidgetSheet(
                 .padding(it)
         ) {
 
-            if (hideElementForWidget) {
                 SingleChoiceSegmentedButtonRow(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -437,10 +428,8 @@ fun ConfigureClockWidgetSheet(
                         Text(text = stringResource(R.string.preference_clockwidget_layout_horizontal))
                     }
                 }
-            }
 
 
-            if (hideElementForWidget){
                 val availableStyles by viewModel.availableClockStyles.collectAsState()
                 if (color != null && compact != null && availableStyles.isNotEmpty()) {
                     WatchFaceSelector(
@@ -453,21 +442,7 @@ fun ConfigureClockWidgetSheet(
                             viewModel.setClockStyle(it)
                         })
                 }
-            }
 
-            val customWidgetStyle by viewModel.customWidgetStyle.collectAsState()
-
-            if (color != null && compact != null && customWidgetStyle.isNotEmpty()) {
-                WatchFaceSelector(
-                    styles = customWidgetStyle,
-                    compact = compact!!,
-                    colors = color!!,
-                    themeColors = useAccentColor,
-                    selected = style,
-                    onSelect = {
-                        viewModel.setClockStyle(it)
-                    })
-            }
 //
 //            SingleChoiceSegmentedButtonRow(
 //                modifier = Modifier.fillMaxWidth(),
@@ -512,8 +487,6 @@ fun ConfigureClockWidgetSheet(
 //                    )
 //                }
 //            }
-
-            if (hideElementForWidget){
 
                 OutlinedCard(
                     modifier = Modifier.padding(top = 16.dp),
@@ -667,6 +640,45 @@ fun ConfigureClockWidgetSheet(
                         )
                     }
                 }
+
+        }
+    }
+}
+
+@Composable
+fun ConfigureCustomWidgetSheet(
+    onDismiss: () -> Unit,
+) {
+    val viewModel: ClockWidgetSettingsScreenVM = viewModel()
+    val compact by viewModel.compact.collectAsState()
+    val color by viewModel.color.collectAsState()
+    val customStyle by viewModel.customStyle.collectAsState()
+    val fillHeight by viewModel.fillHeight.collectAsState()
+    val alignment by viewModel.alignment.collectAsState()
+    val showSeconds by viewModel.showSeconds.collectAsState()
+    val useAccentColor by viewModel.useThemeColor.collectAsState()
+    val parts by viewModel.parts.collectAsState()
+
+    BottomSheetDialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+                .padding(it)
+        ) {
+
+            val customWidgetStyle by viewModel.customWidgetStyle.collectAsState()
+
+            if (color != null && compact != null && customWidgetStyle.isNotEmpty()) {
+                CustomWidgetSelector(
+                    styles = customWidgetStyle,
+                    compact = compact!!,
+                    colors = color!!,
+                    themeColors = useAccentColor,
+                    selected = customStyle,
+                    onSelect = {
+                        viewModel.setCustomStyle(it)
+                    })
             }
         }
     }
