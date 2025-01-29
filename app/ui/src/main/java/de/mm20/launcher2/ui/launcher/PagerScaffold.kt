@@ -551,21 +551,28 @@ fun PagerScaffold(
                                     )
                                     .padding(top = editModePadding)
                             ) {
-                                ClockWidget(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .then(clockHeight?.let { Modifier.height(it) } ?: Modifier)
-                                        .padding(bottom = clockPadding),
-                                    editMode = isWidgetEditMode,
-                                    fillScreenHeight = fillClockHeight,
-                                )
-                                CustomWidget(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = clockPadding),
-                                    editMode = isWidgetEditMode,
-                                    fillScreenHeight = fillClockHeight,
-                                )
+                                Column(
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    ClockWidget(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .then(clockHeight?.let { Modifier.height(it) }
+                                                ?: Modifier)
+                                            .padding(bottom = clockPadding),
+                                        editMode = isWidgetEditMode,
+                                        fillScreenHeight = fillClockHeight,
+                                    )
+                                    CustomWidget(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .padding(bottom = clockPadding),
+                                        editMode = isWidgetEditMode,
+                                        fillScreenHeight = fillClockHeight,
+                                    )
+                                }
                                 val padding1 = if(dockProvider==null) 60.dp else 0.dp
                                 Box(
                                     modifier = Modifier
