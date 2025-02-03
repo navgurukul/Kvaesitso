@@ -716,9 +716,6 @@ fun PullUpScaffold(
 
                                                 searchVM.searchQuery.value = currentQuery + it
 
-
-//                                                searchVM.isSearchEmpty.value =
-//                                                    searchVM.searchQuery.value.isEmpty()
                                                 searchVM.search(
                                                     searchVM.searchQuery.value,
                                                     forceRestart = true

@@ -74,8 +74,6 @@ fun QwertyKeyboard(
     onMicPress : (String) -> Unit = { speachText ->
         val currentQuery = searchVM.searchQuery.value
         searchVM.searchQuery.value = currentQuery + speachText
-
-//        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
         searchVM.search(searchVM.searchQuery.value, forceRestart = true)
 
         scope.launch {
@@ -211,7 +209,7 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier, enabled: B
     val voiceToText = remember { VoiceToText(context) }
 
     val launcherVM: LauncherScaffoldVM = viewModel()
-    val color = launcherVM.color.collectAsState()
+
 
 
     var canRecord by remember { mutableStateOf(false) }

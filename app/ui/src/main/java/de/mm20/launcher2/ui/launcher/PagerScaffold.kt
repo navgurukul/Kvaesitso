@@ -712,6 +712,29 @@ fun PagerScaffold(
                                                         searchVM.contactResults.value= it.homeContact
                                                     }
                                                 }
+                                            },
+                                            onMicPress = {
+                                                val currentQuery = searchVM.searchQuery.value
+
+                                                searchVM.searchQuery.value = currentQuery + it
+
+                                                searchVM.search(
+                                                    searchVM.searchQuery.value,
+                                                    forceRestart = true
+                                                )
+
+                                                scope.launch {
+                                                    searchVM.searchService.getAllApps()
+                                                        .collect { results ->
+                                                            searchVM.appResults.value =
+                                                                results.standardProfileApps
+                                                        }
+                                                    searchVM.searchService.getAllContacts()
+                                                        .collect {
+                                                            searchVM.contactResults.value =
+                                                                it.homeContact
+                                                        }
+                                                }
                                             }
                                         )
                                         if (dockProvider != null) {
