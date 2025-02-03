@@ -2,21 +2,28 @@ package de.mm20.launcher2.ui.keyboard
 
 import android.content.Intent
 import android.provider.Settings
-import androidx.compose.animation.graphics.res.animatedVectorResource
-import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
-import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.HelpOutline
+import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material.icons.rounded.Wallpaper
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,19 +51,31 @@ import de.mm20.launcher2.ui.settings.SettingsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun QwertyKeyboard(
     searchVM: SearchVM,
     scope: CoroutineScope = rememberCoroutineScope(),
     onKeyPress : (String) -> Unit = { key ->
         val currentQuery = searchVM.searchQuery.value
-        if (key == "") { // Backspace key
-            searchVM.searchQuery.value = currentQuery.dropLast(1)
-        } else {
+
             searchVM.searchQuery.value = currentQuery + key
-        }
+
 
         searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
+        searchVM.search(searchVM.searchQuery.value, forceRestart = true)
+
+        scope.launch {
+            searchVM.searchService.getAllApps().collect { results ->
+                searchVM.appResults.value = results.standardProfileApps
+            }
+        }
+    },
+    onMicPress : (String) -> Unit = { speachText ->
+        val currentQuery = searchVM.searchQuery.value
+        searchVM.searchQuery.value = currentQuery + speachText
+
+//        searchVM.isSearchEmpty.value = searchVM.searchQuery.value.isEmpty()
         searchVM.search(searchVM.searchQuery.value, forceRestart = true)
 
         scope.launch {
@@ -92,6 +110,7 @@ fun QwertyKeyboard(
             KeyboardRowWithBackspace(
                 letters = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm'),
                 onKeyPress = onKeyPress,
+                onMicPress = onMicPress,
                 modifier = Modifier.fillMaxWidth(0.8f)
             )
         }
@@ -112,7 +131,12 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
 }
 
 @Composable
-fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
+fun KeyboardRowWithBackspace(
+    letters: List<Char>,
+    onKeyPress: (String) -> Unit,
+    modifier: Modifier,
+    onMicPress: (String) -> Unit
+) {
     Row(
         modifier = modifier
             .padding( vertical = 4.dp, horizontal = 4.dp),
@@ -122,7 +146,7 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
         letters.forEach { letter ->
             KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
         }
-//        MicrophoneKey(onSpeechInput = onKeyPress, modifier = Modifier.weight(1f))
+        MicrophoneKey(onSpeechInput = onMicPress, modifier = Modifier.weight(1f))
         BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
 
 
@@ -176,16 +200,34 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
             text = "⌫",
             fontSize = 26.sp,
             color = contentColors,
-
             fontStyle = FontStyle.Normal
         )
     }
 }
 
 @Composable
-fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier) {
+fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier, enabled: Boolean = true) {
+    val context = LocalContext.current
+    val voiceToText by lazy {
+        VoiceToText(app = context)
+    }
+
     val launcherVM: LauncherScaffoldVM = viewModel()
     val color = launcherVM.color.collectAsState()
+
+
+    var canRecord by remember { mutableStateOf(false) }
+
+    val recordAudioLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { canRecord = it }
+    )
+
+    LaunchedEffect(key1 = recordAudioLauncher)  {
+        recordAudioLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+    }
+
+    val state by voiceToText.state.collectAsState()
 
     val darkColors =
         color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
@@ -201,14 +243,35 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier) {
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(40.dp)
-            .clickable { onSpeechInput("") }
-            .padding(2.dp)
+            .border(0.dp, Color.Transparent, RoundedCornerShape(6.dp))
+            .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(6.dp))
+            .clickable {
+                Toast.makeText(context, "Clicked! isSpeaking = ${state.isSpeaking}", Toast.LENGTH_SHORT).show()
+                if (state.isSpeaking) {
+                    Toast.makeText(context, "Stopping listening", Toast.LENGTH_SHORT).show()
+                    voiceToText.stopListening()
+                    onSpeechInput(state.spokenText)
+                } else {
+                    Toast.makeText(context, "Starting listening", Toast.LENGTH_SHORT).show()
+                    voiceToText.startListening("en-US")
+                }
+            },
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_mic_24),
-            contentDescription = "Microphone",
-            tint = contentColors
-        )
+        AnimatedContent(state.isSpeaking)  {isSpeaking ->
+            if (isSpeaking){
+                Icon(
+                    imageVector = Icons.Default.Stop,
+                    contentDescription = "Stop",
+                    tint = Color.White
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Mic,
+                    contentDescription = "Mic",
+                    tint = Color.White
+                )
+            }
+        }
     }
 }
 
@@ -302,5 +365,4 @@ fun MenuKey(
         )
     }
 }
-
 
