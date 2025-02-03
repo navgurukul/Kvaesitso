@@ -244,11 +244,9 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier, enabled: B
             .border(0.dp, Color.Transparent, RoundedCornerShape(6.dp))
             .background(if (enabled) Color(0x80000000) else Color.Gray, RoundedCornerShape(6.dp))
             .clickable {
-                Toast.makeText(context, "Clicked! isSpeaking = ${state.isSpeaking}", Toast.LENGTH_SHORT).show()
                 if (state.isSpeaking) {
                     Toast.makeText(context, "Stopping listening", Toast.LENGTH_SHORT).show()
                     voiceToText.stopListening()
-                    onSpeechInput(state.spokenText)
                 } else {
                     Toast.makeText(context, "Starting listening", Toast.LENGTH_SHORT).show()
                     voiceToText.startListening("en-US")
@@ -269,6 +267,14 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier, enabled: B
                     tint = Color.White
                 )
             }
+        }
+    }
+
+    LaunchedEffect (
+        state.spokenText
+    ){
+        if (state.spokenText.isNotBlank()) {
+            onSpeechInput(state.spokenText)
         }
     }
 }
