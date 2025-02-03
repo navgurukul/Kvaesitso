@@ -227,16 +227,6 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier, enabled: B
 
     val state by voiceToText.state.collectAsState()
 
-    val darkColors =
-        color.value == ClockWidgetColors.Auto && LocalPreferDarkContentOverWallpaper.current || color.value == ClockWidgetColors.Dark
-
-    val contentColors =
-        if (darkColors) {
-            Color(0, 0, 0, 180)
-        } else {
-            Color.White
-        }
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
