@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 fun QwertyKeyboard(
     searchVM: SearchVM,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onKeyPress : (String) -> Unit = { key ->
+    onKeyPress: (String) -> Unit = { key ->
         val currentQuery = searchVM.searchQuery.value
         if (key == "") { // Backspace key
             searchVM.searchQuery.value = currentQuery.dropLast(1)
@@ -72,11 +72,11 @@ fun QwertyKeyboard(
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-        ){
+        ) {
             KeyboardRow(
                 letters = listOf('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'),
                 onKeyPress = onKeyPress,
@@ -106,21 +106,35 @@ fun KeyboardRow(letters: List<Char>, onKeyPress: (String) -> Unit, modifier: Mod
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress,true, modifier = Modifier.weight(1f))
+            KeyboardKey(
+                letter = letter,
+                onKeyPress = onKeyPress,
+                true,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
 
 @Composable
-fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, modifier: Modifier) {
+fun KeyboardRowWithBackspace(
+    letters: List<Char>,
+    onKeyPress: (String) -> Unit,
+    modifier: Modifier
+) {
     Row(
         modifier = modifier
-            .padding( vertical = 4.dp, horizontal = 4.dp),
+            .padding(vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
     ) {
         MenuKey(modifier = Modifier.weight(1f), onKeyPress = onKeyPress)
         letters.forEach { letter ->
-            KeyboardKey(letter = letter, onKeyPress = onKeyPress, enabled = true, modifier = Modifier.weight(1f))
+            KeyboardKey(
+                letter = letter,
+                onKeyPress = onKeyPress,
+                enabled = true,
+                modifier = Modifier.weight(1f)
+            )
         }
 //        MicrophoneKey(onSpeechInput = onKeyPress, modifier = Modifier.weight(1f))
         BackspaceKey(onKeyPress = onKeyPress, modifier = Modifier.weight(1f))
@@ -128,8 +142,14 @@ fun KeyboardRowWithBackspace(letters: List<Char>,onKeyPress: (String) -> Unit, m
 
     }
 }
+
 @Composable
-fun KeyboardKey(letter: Char, onKeyPress: (String) -> Unit, enabled: Boolean = true, modifier: Modifier) {
+fun KeyboardKey(
+    letter: Char,
+    onKeyPress: (String) -> Unit,
+    enabled: Boolean = true,
+    modifier: Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -183,7 +203,7 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier) {
+fun MicrophoneKey(onSpeechInput: (String) -> Unit, modifier: Modifier) {
     val launcherVM: LauncherScaffoldVM = viewModel()
     val color = launcherVM.color.collectAsState()
 
@@ -211,6 +231,29 @@ fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier) {
         )
     }
 }
+
+@Composable
+fun SpaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .height(40.dp)
+            .fillMaxWidth()
+            .border(0.dp, Color.LightGray, RoundedCornerShape(6.dp))
+            .background(Color(0x80000000), RoundedCornerShape(6.dp))
+            .clickable { onKeyPress(" ") } // Adds a space character when clicked
+            .padding(4.dp)
+    ) {
+        Text(
+            text = "⎵", // Space key symbol
+            fontSize = 21.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Medium,
+            fontStyle = FontStyle.Normal
+        )
+    }
+}
+
 
 @Composable
 fun MenuKey(

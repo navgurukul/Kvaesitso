@@ -53,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -97,6 +98,9 @@ import de.mm20.launcher2.ui.keyboard.QwertyKeyboard
 import de.mm20.launcher2.ui.launcher.search.contacts.ContactItem
 import de.mm20.launcher2.ui.launcher.widgets.clock.ClockWidgetVM
 import de.mm20.launcher2.ui.launcher.widgets.clock.CustomWidget
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.min
@@ -555,85 +559,79 @@ fun PullUpScaffold(
 
                                 ) {
 
+                                    var searchJob by remember { mutableStateOf<Job?>(null) }
+                                    var isSearching by remember { mutableStateOf(false) }
+                                    var isLoading by remember { mutableStateOf(false) }
+
+
                                     Column(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
-                                        val appResults = searchVM.appResults.value ?: emptyList()
-                                        val contactResults =
-                                            searchVM.contactResults.value ?: emptyList()
+                                        val appResults by remember {
+                                            derivedStateOf {
+                                                searchVM.appResults.value ?: emptyList()
+                                            }
+                                        }
+                                        val contactResults by remember {
+                                            derivedStateOf {
+                                                searchVM.contactResults.value ?: emptyList()
+                                            }
+                                        }
 
-//
                                         if (searchVM.searchQuery.value.isNotEmpty()) {
-                                            when {
-                                                // If both appResults and contactResults have results
-                                                appResults.isNotEmpty() && contactResults.isNotEmpty() -> {
-                                                    Column {
-                                                        LazyRow(
-                                                            modifier = Modifier.fillMaxWidth()
-                                                        ) {
-                                                            items(searchVM.appResults.value) { app ->
+                                            LaunchedEffect(searchVM.searchQuery.value) {
+                                                searchJob?.cancel()
+                                                isSearching = true
+                                                isLoading = true
+                                                searchJob = scope.launch {
+                                                    delay(300)
+                                                    val query = searchVM.searchQuery.value
+                                                    if (query.isNotEmpty()) {
+                                                        val apps =
+                                                            searchVM.searchService.getAllApps()
+                                                                .first().standardProfileApps
+                                                                .filter {
+                                                                    it.label.startsWith(
+                                                                        query,
+                                                                        ignoreCase = true
+                                                                    )
+                                                                }
+
+                                                        val contacts =
+                                                            searchVM.searchService.getAllContacts()
+                                                                .first().homeContact
+                                                                .filter {
+                                                                    it.label.startsWith(
+                                                                        query,
+                                                                        ignoreCase = true
+                                                                    )
+                                                                }
+
+                                                        searchVM.appResults.value = apps
+                                                        searchVM.contactResults.value = contacts
+                                                    }
+                                                    isLoading = false
+                                                }
+                                            }
+
+                                            Column {
+                                                if (!isLoading) {
+                                                    if (appResults.isNotEmpty()) {
+                                                        LazyRow(modifier = Modifier.fillMaxWidth()) {
+                                                            items(appResults) { app ->
                                                                 AppItem(
                                                                     app = app,
                                                                     contentColors = contentColors
                                                                 )
                                                             }
                                                         }
-
-                                                        LazyRow(
-                                                            modifier = Modifier.fillMaxWidth()
-                                                        ) {
-                                                            items(searchVM.contactResults.value) { contact ->
-                                                                Column(
-                                                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                                                    modifier = Modifier
-                                                                        .clickable {
-                                                                            contact.launch(
-                                                                                context,
-                                                                                null
-                                                                            )
-                                                                        }
-                                                                        .padding(2.dp)
-                                                                ) {
-                                                                    Box {
-                                                                        ContactItem(
-                                                                            modifier = Modifier.fillMaxWidth(),
-                                                                            contact = contact,
-                                                                            showDetails = false,
-                                                                            onBack = {}
-                                                                        )
-                                                                    }
-                                                                    Text(
-                                                                        text = contact.label,
-                                                                        fontSize = 14.sp,
-                                                                        textAlign = TextAlign.Center,
-                                                                        color = contentColors,
-                                                                        fontWeight = FontWeight.Bold
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
                                                     }
                                                 }
 
-                                                appResults.isNotEmpty() -> {
-                                                    LazyRow(
-                                                        modifier = Modifier.fillMaxWidth()
-                                                    ) {
-                                                        items(searchVM.appResults.value) { app ->
-                                                            AppItem(
-                                                                app = app,
-                                                                contentColors = contentColors
-                                                            )
-                                                        }
-                                                    }
-                                                }
-
-                                                contactResults.isNotEmpty() -> {
-                                                    LazyRow(
-                                                        modifier = Modifier.fillMaxWidth()
-                                                    ) {
-                                                        items(searchVM.contactResults.value) { contact ->
+                                                if (!isLoading && contactResults.isNotEmpty()) {
+                                                    LazyRow(modifier = Modifier.fillMaxWidth()) {
+                                                        items(contactResults) { contact ->
                                                             Column(
                                                                 horizontalAlignment = Alignment.CenterHorizontally,
                                                                 modifier = Modifier
@@ -665,7 +663,7 @@ fun PullUpScaffold(
                                                     }
                                                 }
 
-                                                else -> {
+                                                if (appResults.isEmpty() && contactResults.isEmpty() && !isLoading) {
                                                     Text(
                                                         text = "No results found",
                                                         modifier = Modifier.fillMaxWidth(),
@@ -678,40 +676,56 @@ fun PullUpScaffold(
                                             }
                                         }
 
-//
                                         QwertyKeyboard(
                                             searchVM = searchVM,
                                             scope = scope,
                                             onKeyPress = { key ->
                                                 val currentQuery = searchVM.searchQuery.value
-                                                if (key == "") { // Backspace key
-                                                    searchVM.searchQuery.value =
-                                                        currentQuery.dropLast(1)
+                                                val newQuery = if (key == "") { // Backspace key
+                                                    currentQuery.dropLast(1)
                                                 } else {
-                                                    searchVM.searchQuery.value = currentQuery + key
+                                                    currentQuery + key
                                                 }
 
-                                                searchVM.isSearchEmpty.value =
-                                                    searchVM.searchQuery.value.isEmpty()
-                                                searchVM.search(
-                                                    searchVM.searchQuery.value,
-                                                    forceRestart = true
-                                                )
+                                                searchVM.searchQuery.value = newQuery
+                                                searchVM.isSearchEmpty.value = newQuery.isEmpty()
 
-                                                scope.launch {
-                                                    searchVM.searchService.getAllApps()
-                                                        .collect { results ->
-                                                            searchVM.appResults.value =
-                                                                results.standardProfileApps
-                                                        }
-                                                    searchVM.searchService.getAllContacts()
-                                                        .collect {
-                                                            searchVM.contactResults.value =
-                                                                it.homeContact
-                                                        }
+                                                val currentAppResults = searchVM.appResults.value
+                                                val currentContactResults =
+                                                    searchVM.contactResults.value
+
+                                                val shouldSearch =
+                                                    currentAppResults.isEmpty() || currentAppResults.none {
+                                                        it.label.startsWith(
+                                                            newQuery,
+                                                            ignoreCase = true
+                                                        )
+                                                    } ||currentContactResults.isEmpty() || currentContactResults.none {
+                                                        it.label.startsWith(
+                                                            newQuery,
+                                                            ignoreCase = true
+                                                        )
+                                                    }
+
+                                                if (shouldSearch) {
+                                                    searchVM.search(newQuery, forceRestart = true)
+
+                                                    scope.launch {
+                                                        searchVM.searchService.getAllApps()
+                                                            .collect { results ->
+                                                                searchVM.appResults.value =
+                                                                    results.standardProfileApps
+                                                            }
+                                                        searchVM.searchService.getAllContacts()
+                                                            .collect {
+                                                                searchVM.contactResults.value =
+                                                                    it.homeContact
+                                                            }
+                                                    }
                                                 }
                                             }
                                         )
+
                                         if (dockProvider != null) {
                                             Box(
                                                 modifier = Modifier.fillMaxWidth(),
@@ -724,14 +738,6 @@ fun PullUpScaffold(
                                     }
                                 }
 
-
-//                                WidgetColumn(
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    editMode = isWidgetEditMode,
-//                                    onEditModeChange = {
-//                                        viewModel.setWidgetEditMode(it)
-//                                    }
-//                                )
                             }
                         }
 
