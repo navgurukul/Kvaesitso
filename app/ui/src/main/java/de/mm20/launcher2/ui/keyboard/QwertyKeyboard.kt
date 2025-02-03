@@ -208,9 +208,7 @@ fun BackspaceKey(onKeyPress: (String) -> Unit, modifier: Modifier) {
 @Composable
 fun MicrophoneKey(onSpeechInput: (String)-> Unit, modifier: Modifier, enabled: Boolean = true) {
     val context = LocalContext.current
-    val voiceToText by lazy {
-        VoiceToText(app = context)
-    }
+    val voiceToText = remember { VoiceToText(context) }
 
     val launcherVM: LauncherScaffoldVM = viewModel()
     val color = launcherVM.color.collectAsState()
